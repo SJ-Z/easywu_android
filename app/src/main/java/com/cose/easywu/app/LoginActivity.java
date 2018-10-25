@@ -1,4 +1,4 @@
-package com.cose.easywu.activity;
+package com.cose.easywu.app;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -15,9 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cose.easywu.R;
-import com.cose.easywu.activityManage.BaseActivity;
+import com.cose.easywu.base.BaseActivity;
 import com.cose.easywu.gson.LoginMsg;
-import com.cose.easywu.gson.RegistMsg;
 import com.cose.easywu.gson.User;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.EditTextClearTools;
@@ -112,7 +111,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
         if (intent != null) {
             startActivity(intent);
-            finish();
         }
     }
 

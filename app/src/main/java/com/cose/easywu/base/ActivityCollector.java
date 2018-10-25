@@ -1,4 +1,4 @@
-package com.cose.easywu.activityManage;
+package com.cose.easywu.base;
 
 import android.app.Activity;
 

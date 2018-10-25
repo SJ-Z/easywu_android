@@ -1,16 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_main_exit"
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <RadioGroup
+        android:id="@+id/rg_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="退出登录"
-        android:textSize="20sp"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"/>
+        android:background="@drawable/home_bottom_parent_bg"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingTop="8dp"
+        android:paddingBottom="2dp">
 
-</RelativeLayout>
+        <RadioButton
+            android:id="@+id/rb_home"
+            style="@style/MainButtonStyle"
+            android:drawableTop="@drawable/home_bottom_selector"
+            android:text="首页" />
+
+        <RadioButton
+            android:id="@+id/rb_cart"
+            style="@style/MainButtonStyle"
+            android:drawableTop="@drawable/cart_bottom_selector"
+            android:text="购物车" />
+
+        <RadioButton
+            android:id="@+id/rb_release"
+            style="@style/MainButtonStyle"
+            android:drawableTop="@drawable/community_bottom_selector"
+            android:text="发布" />
+
+        <RadioButton
+            android:id="@+id/rb_message"
+            style="@style/MainButtonStyle"
+            android:drawableTop="@drawable/type_bottom_selector"
+            android:text="消息" />
+
+        <RadioButton
+            android:id="@+id/rb_user"
+            style="@style/MainButtonStyle"
+            android:drawableTop="@drawable/user_bottom_selector"
+            android:text="个人中心" />
+    </RadioGroup>
+
+</LinearLayout>
