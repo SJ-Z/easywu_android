@@ -1,13 +1,13 @@
-package com.cose.easywu.gson;
+package com.cose.easywu.gson.msg;
 
-public class RegistMsg {
-    private String code;
-    private String msg;
+public class BaseMsg {
+    protected String code;
+    protected String msg;
 
-    public RegistMsg() {
+    public BaseMsg() {
     }
 
-    public RegistMsg(String code, String msg) {
+    public BaseMsg(String code, String msg) {
         this.code = code;
         this.msg = msg;
     }

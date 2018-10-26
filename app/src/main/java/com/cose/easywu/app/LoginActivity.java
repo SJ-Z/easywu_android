@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
-import com.cose.easywu.gson.LoginMsg;
+import com.cose.easywu.gson.msg.LoginMsg;
 import com.cose.easywu.gson.User;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.EditTextClearTools;
@@ -147,7 +147,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         String json = new Gson().toJson(user);
         String address = Constant.LOGIN_URL;
 
-        HttpUtil.sendPostRequest(address, "user", json, new Callback() {
+        HttpUtil.sendPostRequest(address, json, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {

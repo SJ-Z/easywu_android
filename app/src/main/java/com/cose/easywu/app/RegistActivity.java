@@ -17,8 +17,8 @@ import android.widget.Toast;
 import com.cose.easywu.R;
 import com.cose.easywu.base.ActivityCollector;
 import com.cose.easywu.base.BaseActivity;
-import com.cose.easywu.gson.RegistMsg;
 import com.cose.easywu.gson.User;
+import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.EditTextClearTools;
 import com.cose.easywu.utils.HttpUtil;
@@ -135,7 +135,7 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
         String json = new Gson().toJson(user);
         String address = Constant.REGIST_URL;
 
-        HttpUtil.sendPostRequest(address, "user", json, new Callback() {
+        HttpUtil.sendPostRequest(address, json, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {
@@ -155,20 +155,20 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
                 }
 
                 String responseText = URLDecoder.decode(response.body().string(), "utf-8");
-                final RegistMsg registMsg = Utility.handleRegistResponse(responseText);
-                if (null == registMsg) {
+                final BaseMsg msg = Utility.handleBaseMsgResponse(responseText);
+                if (null == msg) {
                     return;
                 }
-                if (registMsg.getCode().equals("0")) { // 注册失败
+                if (msg.getCode().equals("0")) { // 注册失败
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             progressDialog.dismiss();
-                            Toast.makeText(RegistActivity.this, registMsg.getMsg(),
+                            Toast.makeText(RegistActivity.this, msg.getMsg(),
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
-                } else if (registMsg.getCode().equals("1")) { // 注册成功
+                } else if (msg.getCode().equals("1")) { // 注册成功
                     // 将注册邮箱、密码写入sd卡
                     editor.putString("email", mEtEmail.getText().toString().trim());
                     editor.putString("pwd", mEtPwd.getText().toString().trim());
@@ -182,7 +182,7 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
                             progressDialog.dismiss();
                             startActivity(new Intent(RegistActivity.this, LoginActivity.class));
                             finish();
-                            Toast.makeText(RegistActivity.this, registMsg.getMsg(),
+                            Toast.makeText(RegistActivity.this, msg.getMsg(),
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -231,6 +231,8 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
             Toast.makeText(this, "昵称长度必须小于7", Toast.LENGTH_SHORT).show();
             return false;
         }
+
+        // 验证密码格式
         pattern = Pattern.compile("^[a-zA-Z]+\\w*");
         matcher = pattern.matcher(pwd);
         if (!matcher.matches()) {

@@ -2,24 +2,25 @@ package com.cose.easywu.utils;
 
 import android.text.TextUtils;
 
-import com.cose.easywu.gson.LoginMsg;
-import com.cose.easywu.gson.RegistMsg;
+import com.cose.easywu.gson.msg.BaseMsg;
+import com.cose.easywu.gson.msg.LoginMsg;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Utility {
+
     /**
-     * 解析和处理服务器返回的注册数据
+     * 解析和处理服务器返回的基本消息数据
      */
-    public static RegistMsg handleRegistResponse(String response) {
+    public static BaseMsg handleBaseMsgResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
             try {
                 JSONObject msgObject = new JSONObject(response);
-                RegistMsg registMsg = new RegistMsg();
-                registMsg.setCode(msgObject.getString("code"));
-                registMsg.setMsg(msgObject.getString("msg"));
-                return registMsg;
+                BaseMsg baseMsg = new BaseMsg();
+                baseMsg.setCode(msgObject.getString("code"));
+                baseMsg.setMsg(msgObject.getString("msg"));
+                return baseMsg;
             } catch (JSONException e) {
                 e.printStackTrace();
             }

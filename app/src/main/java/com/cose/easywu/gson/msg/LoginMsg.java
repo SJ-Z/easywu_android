@@ -1,8 +1,6 @@
-package com.cose.easywu.gson;
+package com.cose.easywu.gson.msg;
 
-public class LoginMsg {
-    private String code;
-    private String msg;
+public class LoginMsg extends BaseMsg {
     private String u_id; // 用户id
 
     public LoginMsg() {
@@ -12,22 +10,6 @@ public class LoginMsg {
         this.code = code;
         this.msg = msg;
         this.u_id = u_id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 
     public String getU_id() {
