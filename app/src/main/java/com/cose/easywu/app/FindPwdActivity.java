@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +25,8 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -90,6 +93,19 @@ public class FindPwdActivity extends BaseActivity implements View.OnClickListene
             Toast.makeText(this, "邮箱不能为空", Toast.LENGTH_SHORT).show();
             return;
         }
+        // 验证邮箱格式
+        if (email.length() > 30) {
+            Toast.makeText(this, "邮箱长度非法", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Pattern pattern = Pattern.compile("^[0-9a-zA-Z]+\\w*@([0-9a-zA-Z]+\\.)+[0-9a-zA-Z]+$");
+        Matcher matcher = pattern.matcher(email);
+        if (!matcher.matches()) {
+            Toast.makeText(this, "邮箱格式错误", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 显示进度条
         mPb.setVisibility(View.VISIBLE);
         // 去服务器验证邮箱
         verifyFromServer(email);
@@ -97,10 +113,9 @@ public class FindPwdActivity extends BaseActivity implements View.OnClickListene
 
     // 去服务器验证邮箱
     private void verifyFromServer(final String email) {
-        String json = new Gson().toJson(email);
         String address = Constant.FINDPWD_URL;
 
-        HttpUtil.sendPostRequest(address, json, new Callback() {
+        HttpUtil.sendPostRequest(address, email, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {
