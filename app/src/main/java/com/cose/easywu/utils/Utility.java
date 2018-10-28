@@ -2,8 +2,11 @@ package com.cose.easywu.utils;
 
 import android.text.TextUtils;
 
+import com.cose.easywu.gson.User;
 import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.gson.msg.LoginMsg;
+import com.cose.easywu.gson.msg.PersonMsg;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,19 +14,23 @@ import org.json.JSONObject;
 public class Utility {
 
     /**
+     * 解析和处理服务器返回的个人中心数据
+     */
+    public static PersonMsg handlePersonMsgResponse(String response) {
+        if (!TextUtils.isEmpty(response)) {
+            PersonMsg personMsg = new Gson().fromJson(response, PersonMsg.class);
+            return personMsg;
+        }
+        return null;
+    }
+
+    /**
      * 解析和处理服务器返回的基本消息数据
      */
     public static BaseMsg handleBaseMsgResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
-            try {
-                JSONObject msgObject = new JSONObject(response);
-                BaseMsg baseMsg = new BaseMsg();
-                baseMsg.setCode(msgObject.getString("code"));
-                baseMsg.setMsg(msgObject.getString("msg"));
-                return baseMsg;
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            BaseMsg baseMsg = new Gson().fromJson(response, BaseMsg.class);
+            return baseMsg;
         }
         return null;
     }
@@ -33,16 +40,8 @@ public class Utility {
      */
     public static LoginMsg handleLoginResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
-            try {
-                JSONObject msgObject = new JSONObject(response);
-                LoginMsg loginMsg = new LoginMsg();
-                loginMsg.setCode(msgObject.getString("code"));
-                loginMsg.setMsg(msgObject.getString("msg"));
-                loginMsg.setU_id(msgObject.getString("u_id"));
-                return loginMsg;
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            LoginMsg loginMsg = new Gson().fromJson(response, LoginMsg.class);
+            return loginMsg;
         }
         return null;
     }

@@ -1,11 +1,21 @@
 package com.cose.easywu.app;
 
+import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.LayoutInflaterCompat;
+import android.support.v4.view.LayoutInflaterFactory;
+import android.support.v7.app.AppCompatDelegate;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.cose.easywu.R;
 import com.cose.easywu.base.ActivityCollector;
@@ -16,9 +26,14 @@ import com.cose.easywu.message.fragment.MessageFragment;
 import com.cose.easywu.release.fragment.ReleaseFragment;
 import com.cose.easywu.user.fragment.UserFragment;
 
+import org.litepal.LitePal;
+
 import java.util.ArrayList;
 
 public class MainActivity extends FragmentActivity {
+
+    public static Typeface typeface;
+    public static Typeface typeface1;
 
     FrameLayout frameLayout;
     RadioGroup rgMain;
@@ -33,6 +48,8 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ActivityCollector.addActivity(this);
+        // 创建数据库
+        LitePal.getDatabase();
 
         initView();
         // 初始化Fragment

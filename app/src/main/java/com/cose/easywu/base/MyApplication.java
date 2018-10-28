@@ -5,6 +5,8 @@ import android.content.Context;
 
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import org.litepal.LitePal;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -21,6 +23,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
+        LitePal.initialize(context);
         // 初始化OkhttpUtils
         initOkhttpClient();
     }
