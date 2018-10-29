@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,6 +39,12 @@ public class EditUserInfoActivity extends BaseActivity implements View.OnClickLi
     private TextView mTvNick, mTvEmail, mTvUid, mTvSex, mTvEditPwd;
 
     private User user;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initData();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,13 +99,20 @@ public class EditUserInfoActivity extends BaseActivity implements View.OnClickLi
 
                 break;
             case R.id.ll_userinfo_nick:
-
+//                editNick();
+                startActivity(new Intent(EditUserInfoActivity.this, EditNickActivity.class));
                 break;
             case R.id.ll_userinfo_sex:
                 chooseSex();
                 break;
         }
     }
+
+//    // 修改昵称
+//    private void editNick() {
+//        String originNick = user.getU_nick();
+//
+//    }
 
     // 选择性别
     private void chooseSex() {

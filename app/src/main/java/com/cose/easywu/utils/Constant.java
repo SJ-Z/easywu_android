@@ -11,5 +11,6 @@ public class Constant {
     public static String PERSONAL_CENTER_URL = BASE_URL + "/user/personalCenter"; // 个人中心
     public static String EDITPWD_URL = BASE_URL + "/user/editPwd"; // 修改密码
     public static String EDITSEX_URL = BASE_URL + "/user/editSex"; // 修改性别
+    public static String EDITNICK_URL = BASE_URL + "/user/editNick"; // 修改昵称
 
 }
