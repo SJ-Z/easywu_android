@@ -3,6 +3,7 @@ package com.cose.easywu.user.fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +29,8 @@ import com.cose.easywu.utils.Utility;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import org.litepal.LitePal;
+
 import java.io.IOException;
 import java.net.URLDecoder;
 
@@ -46,6 +49,18 @@ public class UserFragment extends BaseFragment {
 
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 更新名称、性别、头像
+        com.cose.easywu.db.User user = LitePal.findFirst(com.cose.easywu.db.User.class);
+        mTvNick.setText(user.getU_nick());
+        mIvSex.setImageResource(user.getU_sex()==0 ? R.drawable.ic_female : R.drawable.ic_male);
+        if (!TextUtils.isEmpty(user.getU_photo())) {
+            Glide.with(getActivity()).load(user.getU_photo()).into(mIvPhoto);
+        }
+    }
 
     @Override
     public void initData() {

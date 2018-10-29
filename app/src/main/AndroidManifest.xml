@@ -25,7 +25,8 @@
         <activity android:name=".app.FindPwdActivity" />
         <activity android:name=".app.CheckVerifyCodeActivity" />
         <activity android:name=".app.ResetPwdActivity" />
-        <activity android:name=".user.activity.EditUserInfoActivity"></activity>
+        <activity android:name=".user.activity.EditUserInfoActivity" />
+        <activity android:name=".user.activity.EditPwdActivity"></activity>
     </application>
 
 </manifest>

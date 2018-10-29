@@ -91,7 +91,6 @@
         android:background="@color/colorCut"/>
 
     <LinearLayout
-        android:id="@+id/ll_userinfo_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"

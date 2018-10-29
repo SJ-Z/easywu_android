@@ -81,4 +81,16 @@ public class User extends LitePalSupport {
         this.u_state = u_state;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "u_id='" + u_id + '\'' +
+                ", u_email='" + u_email + '\'' +
+                ", u_nick='" + u_nick + '\'' +
+                ", u_photo='" + u_photo + '\'' +
+                ", u_sex=" + u_sex +
+                ", u_gain=" + u_gain +
+                ", u_state=" + u_state +
+                '}';
+    }
 }

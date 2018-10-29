@@ -10,6 +10,7 @@ public class User {
     private String u_code;
     private double u_gain;
     private int u_state;
+    private String u_oldpwd;
 
     public User() {
     }
@@ -97,6 +98,14 @@ public class User {
         this.u_state = u_state;
     }
 
+    public String getU_oldpwd() {
+        return u_oldpwd;
+    }
+
+    public void setU_oldpwd(String u_oldpwd) {
+        this.u_oldpwd = u_oldpwd;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -109,6 +118,7 @@ public class User {
                 ", u_code='" + u_code + '\'' +
                 ", u_gain=" + u_gain +
                 ", u_state=" + u_state +
+                ", u_oldpwd='" + u_oldpwd + '\'' +
                 '}';
     }
 }

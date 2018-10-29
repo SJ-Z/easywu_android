@@ -5,7 +5,7 @@
     <!--<color name="colorAccent">#D81B60</color>-->
     <color name="colorPrimary">#FF4200</color>
     <color name="colorPrimaryDark">#FF4200</color>
-    <color name="colorAccent">#cccccc</color>
+    <color name="colorAccent">#FF4200</color>
 
     <color name="colorLogin">#FF8C00</color>
     <color name="colorLoginButton">#FF4200</color>
