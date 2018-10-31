@@ -1,12 +1,15 @@
 package com.cose.easywu.app;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,13 +17,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
-import com.cose.easywu.gson.msg.LoginMsg;
 import com.cose.easywu.gson.User;
+import com.cose.easywu.gson.msg.LoginMsg;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.EditTextClearTools;
 import com.cose.easywu.utils.HttpUtil;
+import com.cose.easywu.utils.ImageUtils;
 import com.cose.easywu.utils.Utility;
 import com.google.gson.Gson;
 
@@ -44,6 +49,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private Button mBtnLogin;
 
     private ProgressDialog progressDialog;
+    private SharedPreferences pref;
     private SharedPreferences.Editor editor;
 
     @Override
@@ -63,7 +69,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         Typeface typeface = Typeface.createFromAsset(getAssets(),"hzgb.ttf");
         mTvTitle.setTypeface(typeface);
         // 设置自动输入用户名、密码
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
         String email = pref.getString("email", "");
         String pwd = pref.getString("pwd", "");
         mEtEmail.setText(email);
@@ -141,9 +147,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     // 去服务器验证账号信息
     private void loginOnServer() {
-        String email = mEtEmail.getText().toString().trim();
-        String pwd = mEtPwd.getText().toString().trim();
-        User user = new User(email, pwd);
+        final String email = mEtEmail.getText().toString().trim();
+        final String pwd = mEtPwd.getText().toString().trim();
+        final User user = new User(email, pwd);
         String json = new Gson().toJson(user);
         String address = Constant.LOGIN_URL;
 
@@ -183,6 +189,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 } else if (loginMsg.getCode().equals("1")) { // 登录成功
                     // 将用户id及自动登录写入SharedPreferences
                     editor.putString("u_id", loginMsg.getU_id());
+                    editor.putString("email", email);
+                    editor.putString("pwd", pwd);
                     editor.putBoolean("autoLogin", true);
                     editor.apply();
 

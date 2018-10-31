@@ -9,6 +9,7 @@
 
     <color name="colorLogin">#FF8C00</color>
     <color name="colorLoginButton">#FF4200</color>
+    <color name="colorLightOrange">#FF9900</color>
     <color name="colorCursor">#cccccc</color>
     <color name="colorCut">#edeaea</color>
     <color name="colorHint">#afa8a6</color>

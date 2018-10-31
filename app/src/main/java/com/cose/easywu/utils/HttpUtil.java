@@ -1,5 +1,11 @@
 package com.cose.easywu.utils;
 
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
+
+import java.io.File;
+import java.util.Map;
+
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -21,5 +27,15 @@ public class HttpUtil {
         RequestBody requestBody = RequestBody.create(JSON, json);
         Request request = new Request.Builder().url(address).post(requestBody).build();
         client.newCall(request).enqueue(callback);
+    }
+
+    public static void upLoadImageToServer(String address, String key, String filename, File file,
+                                     Map<String, String> params, StringCallback stringCallback) {
+        OkHttpUtils.post()
+                .addFile(key, filename, file)
+                .params(params)
+                .url(address)
+                .build()
+                .execute(stringCallback);
     }
 }

@@ -4,30 +4,24 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.cose.easywu.R;
 import com.cose.easywu.app.LoginActivity;
-import com.cose.easywu.app.MainActivity;
 import com.cose.easywu.base.ActivityCollector;
 import com.cose.easywu.base.BaseFragment;
 import com.cose.easywu.base.MyApplication;
 import com.cose.easywu.gson.User;
-import com.cose.easywu.gson.msg.LoginMsg;
 import com.cose.easywu.gson.msg.PersonMsg;
 import com.cose.easywu.user.activity.EditUserInfoActivity;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
 import com.cose.easywu.utils.Utility;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
 
 import org.litepal.LitePal;
 
@@ -42,23 +36,30 @@ import okhttp3.Response;
 public class UserFragment extends BaseFragment {
 
     private TextView mTvNick, mTvGain, mTvMyreleaseCount, mTvMysellCount, mTvMybuyCount, mTvMylikeCount;
-    private CircleImageView mIvPhoto;
+    private static CircleImageView mIvPhoto;
     private ImageView mIvSex;
     private LinearLayout mLlMyrelease, mLlMysell, mLlMybuy, mLlMylike, mLlSettinng, mLlClear;
     private Button mBtnExit;
 
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
+    private com.cose.easywu.db.User dbUser;
 
     @Override
     public void onResume() {
         super.onResume();
         // 更新名称、性别、头像
-        com.cose.easywu.db.User user = LitePal.findFirst(com.cose.easywu.db.User.class);
-        mTvNick.setText(user.getU_nick());
-        mIvSex.setImageResource(user.getU_sex()==0 ? R.drawable.ic_female : R.drawable.ic_male);
-        if (!TextUtils.isEmpty(user.getU_photo())) {
-            Glide.with(getActivity()).load(user.getU_photo()).into(mIvPhoto);
+        String u_id = pref.getString("u_id", "");
+        com.cose.easywu.db.User dbUser = LitePal.where("u_id=?", u_id).findFirst(com.cose.easywu.db.User.class);
+        if (dbUser != null) {
+            mTvNick.setText(dbUser.getU_nick());
+            mIvSex.setImageResource(dbUser.getU_sex()==0 ? R.drawable.ic_female : R.drawable.ic_male);
+            if (!TextUtils.isEmpty(dbUser.getU_photo())) {
+                if (getActivity() != null) {
+                    String address = Constant.BASE_PHOTO_URL + dbUser.getU_photo();
+                    Glide.with(this).load(address).into(mIvPhoto);
+                }
+            }
         }
     }
 
@@ -67,14 +68,18 @@ public class UserFragment extends BaseFragment {
         super.initData();
         pref = PreferenceManager.getDefaultSharedPreferences(MyApplication.getContext());
         editor = pref.edit();
+        final String u_id = pref.getString("u_id", "");
+        dbUser = LitePal.where("u_id=?", u_id).findFirst(com.cose.easywu.db.User.class);
+        if (dbUser == null) {
+            dbUser = new com.cose.easywu.db.User();
+        }
         // 联网请求个人中心的数据
-        getDataFromServer();
+        getDataFromServer(u_id);
     }
 
-    private void getDataFromServer() {
-        String json = pref.getString("u_id", "");
+    private void getDataFromServer(String u_id) {
         String address = Constant.PERSONAL_CENTER_URL;
-        HttpUtil.sendPostRequest(address, json, new Callback() {
+        HttpUtil.sendPostRequest(address, u_id, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -100,26 +105,26 @@ public class UserFragment extends BaseFragment {
             return;
         }
 
+        final User user = personMsg.getUser();
+
         // 更新界面
         if (getActivity() == null) {
             return;
         }
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                User user = personMsg.getUser();
                 mTvNick.setText(user.getU_nick());
                 mTvGain.setText(String.valueOf(user.getU_gain()));
-                String photo = user.getU_photo();
-                if (null != photo) {
-                    Glide.with(getActivity()).load(photo).into(mIvPhoto);
-                }
                 boolean male = user.getU_sex() == 1;
                 if (male) {
                     Glide.with(getActivity()).load(R.drawable.ic_male).into(mIvSex);
                 } else {
                     Glide.with(getActivity()).load(R.drawable.ic_female).into(mIvSex);
                 }
+                final String address = Constant.BASE_PHOTO_URL + user.getU_photo();
+                Glide.with(getActivity()).load(address).into(mIvPhoto);
             }
         });
 
@@ -130,8 +135,14 @@ public class UserFragment extends BaseFragment {
     // 保存用户数据到本地数据库
     private void saveToDatabase(PersonMsg personMsg) {
         User user = personMsg.getUser();
-        com.cose.easywu.db.User dbUser = new com.cose.easywu.db.User(user.getU_id(), user.getU_email(),
-                user.getU_nick(), user.getU_photo(), user.getU_sex(), user.getU_gain(), user.getU_state());
+        dbUser.setU_id(user.getU_id());
+        dbUser.setU_email(user.getU_email());
+        dbUser.setU_nick(user.getU_nick());
+        dbUser.setU_photo(user.getU_photo());
+        dbUser.setU_sex(user.getU_sex());
+        dbUser.setU_gain(user.getU_gain());
+        dbUser.setU_state(user.getU_state());
+
         dbUser.save();
     }
 

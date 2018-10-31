@@ -42,7 +42,8 @@ public class EditPwdActivity extends BaseActivity {
     private Button mBtnCommit;
     private ProgressBar mPb;
 
-    private String email;
+    private User user;
+    private SharedPreferences pref;
     private SharedPreferences.Editor editor;
     private String newpwd;
 
@@ -64,10 +65,14 @@ public class EditPwdActivity extends BaseActivity {
         // 设置title的字体
         Typeface typeface = Typeface.createFromAsset(getAssets(),"hzgb.ttf");
         mTvTitle.setTypeface(typeface);
-        // 获取email
-        email = LitePal.findFirst(User.class).getU_email();
-        // 初始化editor
-        editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+
+        // 初始化pref和editor
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = pref.edit();
+
+        // 初始化user
+        String u_id = pref.getString("u_id", "");
+        user = LitePal.where("u_id=?", u_id).findFirst(User.class);
     }
 
     private void initView() {
@@ -109,8 +114,8 @@ public class EditPwdActivity extends BaseActivity {
 
     // 去服务器校验并修改密码
     private void editPwdOnServer() {
-        com.cose.easywu.gson.User user = new com.cose.easywu.gson.User();
-        user.setU_email(LitePal.findFirst(User.class).getU_email());
+        final com.cose.easywu.gson.User user = new com.cose.easywu.gson.User();
+        user.setU_email(user.getU_email());
         user.setU_pwd(mEtNewPwd.getText().toString());
         user.setU_oldpwd(mEtOldPwd.getText().toString());
 

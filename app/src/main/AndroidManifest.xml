@@ -3,6 +3,7 @@
     package="com.cose.easywu">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".base.MyApplication"
@@ -27,7 +28,19 @@
         <activity android:name=".app.ResetPwdActivity" />
         <activity android:name=".user.activity.EditUserInfoActivity" />
         <activity android:name=".user.activity.EditPwdActivity" />
-        <activity android:name=".user.activity.EditNickActivity"></activity>
+        <activity android:name=".user.activity.EditNickActivity" />
+        <activity android:name=".user.activity.EditPhotoActivity"
+            android:theme="@style/EditPhotoDialogStyle"></activity>
+
+        <provider
+            android:authorities="com.cose.easywu.fileprovider"
+            android:name="android.support.v4.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

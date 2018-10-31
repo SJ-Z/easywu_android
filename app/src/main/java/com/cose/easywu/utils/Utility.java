@@ -1,6 +1,7 @@
 package com.cose.easywu.utils;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.cose.easywu.gson.User;
 import com.cose.easywu.gson.msg.BaseMsg;

@@ -1,10 +1,9 @@
 package com.cose.easywu.user.activity;
 
-import android.content.Context;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,7 +11,6 @@ import android.widget.Toast;
 
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
-import com.cose.easywu.base.MyApplication;
 import com.cose.easywu.db.User;
 import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.utils.Constant;
@@ -147,7 +145,8 @@ public class EditNickActivity extends BaseActivity {
         // 设置输入框的清除监听
         EditTextClearTools.addClearListener(mEtNick, mIvClear);
 
-        user = LitePal.findFirst(User.class);
+        String u_id = PreferenceManager.getDefaultSharedPreferences(this).getString("u_id", "");
+        user = LitePal.where("u_id=?", u_id).findFirst(User.class);
 
         oldNick = user.getU_nick();
         mEtNick.setText(oldNick);

@@ -25,4 +25,9 @@ public class ActivityCollector {
         }
         activities.clear();
     }
+
+//    public static Activity getCurrentActivity() {
+//        int len = activities.size();
+//        return activities.get(len - 1);
+//    }
 }

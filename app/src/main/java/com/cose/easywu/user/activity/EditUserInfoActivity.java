@@ -3,6 +3,7 @@ package com.cose.easywu.user.activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
@@ -56,10 +57,12 @@ public class EditUserInfoActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void initData() {
-        user = LitePal.findFirst(User.class);
+        String u_id = PreferenceManager.getDefaultSharedPreferences(this).getString("u_id", "");
+        user = LitePal.where("u_id=?", u_id).findFirst(User.class);
 
         if (!TextUtils.isEmpty(user.getU_photo())) {
-            Glide.with(this).load(user.getU_photo()).into(mIvPhoto);
+            String address = Constant.BASE_PHOTO_URL + user.getU_photo();
+            Glide.with(this).load(address).into(mIvPhoto);
         }
         mTvNick.setText(user.getU_nick());
         mTvEmail.setText(user.getU_email());
@@ -96,10 +99,9 @@ public class EditUserInfoActivity extends BaseActivity implements View.OnClickLi
                 startActivity(new Intent(EditUserInfoActivity.this, EditPwdActivity.class));
                 break;
             case R.id.ll_userinfo_photo:
-
+                startActivity(new Intent(EditUserInfoActivity.this, EditPhotoActivity.class));
                 break;
             case R.id.ll_userinfo_nick:
-//                editNick();
                 startActivity(new Intent(EditUserInfoActivity.this, EditNickActivity.class));
                 break;
             case R.id.ll_userinfo_sex:
@@ -107,12 +109,6 @@ public class EditUserInfoActivity extends BaseActivity implements View.OnClickLi
                 break;
         }
     }
-
-//    // 修改昵称
-//    private void editNick() {
-//        String originNick = user.getU_nick();
-//
-//    }
 
     // 选择性别
     private void chooseSex() {
