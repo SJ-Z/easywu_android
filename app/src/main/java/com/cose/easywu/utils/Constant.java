@@ -17,4 +17,6 @@ public class Constant {
     public static String EDITNICK_URL = BASE_URL + "/user/editNick"; // 修改昵称
     public static String EDITPHOTO_URL = BASE_URL + "/user/editPhoto"; // 修改头像
 
+    public static String HOME_URL = BASE_URL + "/home/home"; // 主页
+
 }

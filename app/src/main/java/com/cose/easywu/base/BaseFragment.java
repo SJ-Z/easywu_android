@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 // 基类Fragment
 public abstract class BaseFragment extends Fragment {
-
     protected Context mContext;
 
     @Override
