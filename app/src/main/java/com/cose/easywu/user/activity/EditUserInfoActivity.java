@@ -2,6 +2,7 @@ package com.cose.easywu.user.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
@@ -19,6 +20,7 @@ import com.cose.easywu.db.User;
 import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
+import com.cose.easywu.utils.ImageUtils;
 import com.cose.easywu.utils.Utility;
 import com.google.gson.Gson;
 
@@ -61,8 +63,8 @@ public class EditUserInfoActivity extends BaseActivity implements View.OnClickLi
         user = LitePal.where("u_id=?", u_id).findFirst(User.class);
 
         if (!TextUtils.isEmpty(user.getU_photo())) {
-            String address = Constant.BASE_PHOTO_URL + user.getU_photo();
-            Glide.with(this).load(address).into(mIvPhoto);
+            Bitmap bitmap = ImageUtils.getPhotoFromStorage(user.getU_id());
+            Glide.with(this).load(bitmap).into(mIvPhoto);
         }
         mTvNick.setText(user.getU_nick());
         mTvEmail.setText(user.getU_email());

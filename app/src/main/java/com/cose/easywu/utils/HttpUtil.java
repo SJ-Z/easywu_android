@@ -29,6 +29,14 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
 
+    /**
+     * @param address 服务器的地址
+     * @param key 获取图片的key
+     * @param filename 图片的文件名称
+     * @param file 图片文件
+     * @param params 字符参数
+     * @param stringCallback 回调接口
+     */
     public static void upLoadImageToServer(String address, String key, String filename, File file,
                                      Map<String, String> params, StringCallback stringCallback) {
         OkHttpUtils.post()

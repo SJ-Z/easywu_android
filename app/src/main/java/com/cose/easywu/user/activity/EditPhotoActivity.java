@@ -34,6 +34,7 @@ import com.cose.easywu.db.User;
 import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
+import com.cose.easywu.utils.ImageUtils;
 import com.cose.easywu.utils.Utility;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -58,7 +59,6 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
     private CircleImageView mIvPhoto;
     private Button mBtnTakePhoto, mBtnChoosePhoto;
     private TextView mTvCancel, mTvSave;
-    private ProgressBar mPb;
 
     private User user;
 
@@ -80,8 +80,8 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
         String u_id = PreferenceManager.getDefaultSharedPreferences(this).getString("u_id", "");
         user = LitePal.where("u_id=?", u_id).findFirst(User.class);
         if (!TextUtils.isEmpty(user.getU_photo())) {
-            String address = Constant.BASE_PHOTO_URL + user.getU_photo();
-            Glide.with(this).load(address).into(mIvPhoto);
+            Bitmap bitmap = ImageUtils.getPhotoFromStorage(user.getU_id());
+            Glide.with(this).load(bitmap).into(mIvPhoto);
         }
     }
 
@@ -91,7 +91,6 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
         mBtnChoosePhoto = findViewById(R.id.btn_editphoto_choosephoto);
         mTvCancel = findViewById(R.id.tv_editphoto_cancel);
         mTvSave = findViewById(R.id.tv_editphoto_save);
-        mPb = findViewById(R.id.pb_editphoto);
 
         mBtnTakePhoto.setOnClickListener(this);
         mBtnChoosePhoto.setOnClickListener(this);
@@ -113,14 +112,16 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
                 break;
             case R.id.tv_editphoto_save:
                 savePhoto();
+                finish();
                 break;
         }
     }
 
-    // 保存图片到内存并上传到服务器
+    // 保存图片到本地并上传到服务器
     private void savePhoto() {
         if (photoFile != null) {
-            mPb.setVisibility(View.VISIBLE);
+            // 保存图片到sd卡
+            ImageUtils.savePhotoToStorage(photoBitmap, user.getU_id());
             //上传头像
             upLoadImageToServer();
         }
@@ -133,10 +134,10 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
                 photoFile, params, new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
+                        ImageUtils.deletePhotoFromStorage(user.getU_id());
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mPb.setVisibility(View.GONE);
                                 Toast.makeText(EditPhotoActivity.this, "头像上传失败", Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -160,13 +161,11 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
                             String photo = msg.getMsg();
                             user.setU_photo(photo);
                             user.save();
-                            mPb.setVisibility(View.GONE);
-                            finish();
                         } else if (msg.getCode().equals("0")) {
+                            ImageUtils.deletePhotoFromStorage(user.getU_id());
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mPb.setVisibility(View.GONE);
                                     Toast.makeText(EditPhotoActivity.this, msg.getMsg(), Toast.LENGTH_SHORT).show();
                                 }
                             });
@@ -221,9 +220,9 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
                 if (resultCode == RESULT_OK) {
                     try {
                         // 将拍摄的照片显示出来
-                        photoBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(photoUri));
+                        photoBitmap = ImageUtils.getBitmapFromUri(this, photoUri, 80, 80);
                         Glide.with(this).load(photoBitmap).into(mIvPhoto);
-                    } catch (FileNotFoundException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -273,7 +272,7 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
     private void displayImage(String photoPath) {
         if (photoPath != null) {
             photoFile = new File(photoPath);
-            photoBitmap = BitmapFactory.decodeFile(photoPath);
+            photoBitmap = ImageUtils.getBitmapFromPath(photoPath, 80, 80);
             Glide.with(this).load(photoBitmap).into(mIvPhoto);
         } else {
             Toast.makeText(this, "读取图片失败", Toast.LENGTH_SHORT).show();

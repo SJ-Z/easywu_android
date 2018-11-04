@@ -2,13 +2,16 @@ package com.cose.easywu.user.fragment;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.cose.easywu.R;
@@ -19,9 +22,12 @@ import com.cose.easywu.base.MyApplication;
 import com.cose.easywu.gson.User;
 import com.cose.easywu.gson.msg.PersonMsg;
 import com.cose.easywu.user.activity.EditUserInfoActivity;
+import com.cose.easywu.utils.CacheUtils;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
+import com.cose.easywu.utils.ImageUtils;
 import com.cose.easywu.utils.Utility;
+import com.cose.easywu.widget.MessageDialog;
 
 import org.litepal.LitePal;
 
@@ -31,11 +37,13 @@ import java.net.URLDecoder;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.Response;
 
 public class UserFragment extends BaseFragment {
 
-    private TextView mTvNick, mTvGain, mTvMyreleaseCount, mTvMysellCount, mTvMybuyCount, mTvMylikeCount;
+    private TextView mTvNick, mTvGain, mTvMyreleaseCount, mTvMysellCount, mTvMybuyCount, mTvMylikeCount, mTvCacheSize;
     private static CircleImageView mIvPhoto;
     private ImageView mIvSex;
     private LinearLayout mLlMyrelease, mLlMysell, mLlMybuy, mLlMylike, mLlSettinng, mLlClear;
@@ -53,14 +61,15 @@ public class UserFragment extends BaseFragment {
         com.cose.easywu.db.User dbUser = LitePal.where("u_id=?", u_id).findFirst(com.cose.easywu.db.User.class);
         if (dbUser != null) {
             mTvNick.setText(dbUser.getU_nick());
-            mIvSex.setImageResource(dbUser.getU_sex()==0 ? R.drawable.ic_female : R.drawable.ic_male);
+            mIvSex.setImageResource(dbUser.getU_sex() == 0 ? R.drawable.ic_female : R.drawable.ic_male);
             if (!TextUtils.isEmpty(dbUser.getU_photo())) {
-                if (getActivity() != null) {
-                    String address = Constant.BASE_PHOTO_URL + dbUser.getU_photo();
-                    Glide.with(this).load(address).into(mIvPhoto);
-                }
+                Glide.with(mContext).load(Constant.BASE_PHOTO_URL + dbUser.getU_photo()).into(mIvPhoto);
             }
+            Bitmap photo = ImageUtils.getPhotoFromStorage(dbUser.getU_id());
+            Glide.with(this).load(photo).into(mIvPhoto);
         }
+        // 设置缓存数据
+        mTvCacheSize.setText(CacheUtils.getTotalCacheSize(MyApplication.getContext()));
     }
 
     @Override
@@ -112,6 +121,20 @@ public class UserFragment extends BaseFragment {
             return;
         }
 
+        final Bitmap bitmap = ImageUtils.getPhotoFromStorage(user.getU_id());
+        if (bitmap != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i("加载用户头像", "本地加载头像");
+                    Glide.with(getActivity()).load(bitmap).into(mIvPhoto);
+                }
+            });
+        } else {
+            // 从服务器请求头像数据
+            asyncGet(Constant.BASE_PHOTO_URL + user.getU_photo());
+        }
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -123,13 +146,45 @@ public class UserFragment extends BaseFragment {
                 } else {
                     Glide.with(getActivity()).load(R.drawable.ic_female).into(mIvSex);
                 }
-                final String address = Constant.BASE_PHOTO_URL + user.getU_photo();
-                Glide.with(getActivity()).load(address).into(mIvPhoto);
             }
         });
 
         // 保存用户数据到本地数据库
         saveToDatabase(personMsg);
+    }
+
+    private void asyncGet(String imgUrl) {
+        OkHttpClient client = new OkHttpClient();
+        final Request request = new Request.Builder().get()
+                .url(imgUrl)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        byte[] bytes = response.body().bytes();
+                        final Bitmap bitmap = ImageUtils.getBitmapFromByte(bytes, 70, 70);
+                        ImageUtils.savePhotoToStorage(bitmap, pref.getString("u_id", ""));
+                        if (getActivity() != null) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Glide.with(getActivity()).load(bitmap).into(mIvPhoto);
+                                }
+                            });
+                            Log.i("加载用户头像", "从服务器加载头像");
+                        }
+                    }
+                }
+            }
+        });
     }
 
     // 保存用户数据到本地数据库
@@ -155,14 +210,38 @@ public class UserFragment extends BaseFragment {
                 editor.putBoolean("autoLogin", false);
                 editor.apply();
                 ActivityCollector.finishAll();
-                startActivity(new Intent(getActivity(), LoginActivity.class));
+                startActivity(new Intent(mContext, LoginActivity.class));
             }
         });
         // 个人资料设置
         mLlSettinng.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), EditUserInfoActivity.class));
+                startActivity(new Intent(mContext, EditUserInfoActivity.class));
+            }
+        });
+        // 清除缓存
+        mLlClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MessageDialog messageDialog = new MessageDialog(mContext, R.style.MessageDialog);
+                messageDialog.setTitle("提示").setContent("所有缓存数据将被清空，是否继续？")
+                        .setCancel("取消", new MessageDialog.IOnCancelListener() {
+                            @Override
+                            public void onCancel(MessageDialog dialog) {
+
+                            }
+                        }).setConfirm("确认", new MessageDialog.IOnConfirmListener() {
+                    @Override
+                    public void onConfirm(MessageDialog dialog) {
+                        if (CacheUtils.clearAllCache(MyApplication.getContext())) {
+                            mTvCacheSize.setText(CacheUtils.getTotalCacheSize(MyApplication.getContext()));
+                            Toast.makeText(mContext, "清除缓存成功", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(mContext, "清除缓存失败", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).show();
             }
         });
     }
@@ -176,6 +255,7 @@ public class UserFragment extends BaseFragment {
         mTvMysellCount = view.findViewById(R.id.tv_user_mysell_count);
         mTvMybuyCount = view.findViewById(R.id.tv_user_mybuy_count);
         mTvMylikeCount = view.findViewById(R.id.tv_user_mylike_count);
+        mTvCacheSize = view.findViewById(R.id.tv_user_cacheSize);
         mIvSex = view.findViewById(R.id.iv_user_sex);
         mIvPhoto = view.findViewById(R.id.iv_user_photo);
         mLlMyrelease = view.findViewById(R.id.ll_user_myrelease);

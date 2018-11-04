@@ -1,30 +1,26 @@
 package com.cose.easywu.utils;
 
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
-import android.util.Base64;
-import android.util.Log;
+import android.net.Uri;
 
-import com.cose.easywu.base.MyApplication;
-
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.SoftReference;
 
 public class ImageUtils {
 
-    // 从内存中获取用户头像
+    // 从sd卡中获取用户头像
     public static Bitmap getPhotoFromStorage(String u_id) {
-        String photoPath = android.os.Environment.getExternalStorageDirectory() + "/photo/";
-        Bitmap bitmap = BitmapFactory.decodeFile(photoPath + u_id + ".jpg", null);
-        return bitmap;
+        String photoPath = android.os.Environment.getExternalStorageDirectory() + "/photo/" + u_id + ".jpg";
+        return getBitmapFromPath(photoPath, 80, 80);
     }
 
-    // 从内存中删除用户头像
+    // 从sd卡中删除用户头像
     public static void deletePhotoFromStorage(String u_id) {
         String photoPath = android.os.Environment.getExternalStorageDirectory() + "/photo/";
         File file = new File(photoPath + u_id +".jpg");
@@ -52,7 +48,7 @@ public class ImageUtils {
             photoFile.createNewFile();
 
             fos = new FileOutputStream(photoFile);
-            photoBitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+            photoBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.flush();
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,32 +63,88 @@ public class ImageUtils {
         }
     }
 
-    //保存图片到SharedPreferences
-    public static void saveBitmapToSharedPreferences(String key, Bitmap bitmap) {
-        //第一步:将Bitmap压缩至字节数组输出流ByteArrayOutputStream
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
-        //第二步:利用Base64将字节数组输出流中的数据转换成字符串String
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        String photoString = Base64.encodeToString(byteArray, Base64.DEFAULT);
-        //第三步:将String保存至SharedPreferences
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(
-                MyApplication.getContext()).edit();
-        editor.putString(key, photoString);
-        editor.apply();
+    public static Bitmap getBitmapFromPath(String imgPath, int reqWidth, int reqHeight) {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imgPath, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        //避免出现内存溢出的情况，进行相应的属性设置。
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        options.inDither = true;
+
+        return BitmapFactory.decodeFile(imgPath, options);
     }
 
-    // 从SharedPreferences中取出图片
-    public static Bitmap getBitmapFromSharedPreferences(String key) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(
-                MyApplication.getContext());
-        String pic = pref.getString(key,"");
+    public static Bitmap getBitmapFromUri(Context context, Uri uri, int reqWidth, int reqHeight) throws Exception {
+        InputStream input = context.getContentResolver().openInputStream(uri);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(input, null, options);
+
+        input = context.getContentResolver().openInputStream(uri);
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        //避免出现内存溢出的情况，进行相应的属性设置。
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        options.inDither = true;
+
+        Bitmap bitmap = BitmapFactory.decodeStream(input, null, options);
+
+        if (input != null) {
+            input.close();
+        }
+
+        return bitmap;
+    }
+
+    public static Bitmap getBitmapFromByte(byte[] imgByte, int reqWidth, int reqHeight) {
+        InputStream input = null;
         Bitmap bitmap = null;
-        if (!TextUtils.isEmpty(pic)) {
-            byte[] bytes = Base64.decode(pic.getBytes(), Base64.DEFAULT);
-            bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);;
+        input = new ByteArrayInputStream(imgByte);
+        SoftReference softRef = new SoftReference(BitmapFactory.decodeStream(
+                input, null, options));
+        bitmap = (Bitmap) softRef.get();
+        if (imgByte != null) {
+            imgByte = null;
+        }
+
+        try {
+            if (input != null) {
+                input.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return bitmap;
+    }
+
+    public static int calculateInSampleSize( //参2和3为ImageView期待的图片大小
+                                             BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // 图片的实际大小
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        //默认值
+        int inSampleSize = 1;
+        //动态计算inSampleSize的值
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height/2;
+            final int halfWidth = width/2;
+            while( (halfHeight/inSampleSize) >= reqHeight && (halfWidth/inSampleSize) >= reqWidth){
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
     }
 
 }
