@@ -21,6 +21,7 @@ import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
 import com.cose.easywu.utils.ImageUtils;
+import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.google.gson.Gson;
 
@@ -154,8 +155,7 @@ public class EditUserInfoActivity extends BaseActivity implements View.OnClickLi
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(EditUserInfoActivity.this, "性别修改失败",
-                                Toast.LENGTH_SHORT).show();
+                        ToastUtil.showMsg(EditUserInfoActivity.this, "性别修改失败", Toast.LENGTH_SHORT);
                     }
                 });
             }

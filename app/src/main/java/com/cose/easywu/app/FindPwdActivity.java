@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,8 +19,8 @@ import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.EditTextClearTools;
 import com.cose.easywu.utils.HttpUtil;
+import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
-import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -90,18 +89,18 @@ public class FindPwdActivity extends BaseActivity implements View.OnClickListene
     private void goNext() {
         String email = mEtEmail.getText().toString().trim();
         if (TextUtils.isEmpty(email)) {
-            Toast.makeText(this, "邮箱不能为空", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "邮箱不能为空", Toast.LENGTH_SHORT);
             return;
         }
         // 验证邮箱格式
         if (email.length() > 30) {
-            Toast.makeText(this, "邮箱长度非法", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "邮箱不能为空", Toast.LENGTH_SHORT);
             return;
         }
         Pattern pattern = Pattern.compile("^[0-9a-zA-Z]+\\w*@([0-9a-zA-Z]+\\.)+[0-9a-zA-Z]+$");
         Matcher matcher = pattern.matcher(email);
         if (!matcher.matches()) {
-            Toast.makeText(this, "邮箱格式错误", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "邮箱格式错误", Toast.LENGTH_SHORT);
             return;
         }
 
@@ -122,8 +121,7 @@ public class FindPwdActivity extends BaseActivity implements View.OnClickListene
                     @Override
                     public void run() {
                         mPb.setVisibility(View.GONE);
-                        Toast.makeText(FindPwdActivity.this, "验证失败",
-                                Toast.LENGTH_SHORT).show();
+                        ToastUtil.showMsg(FindPwdActivity.this, "验证失败", Toast.LENGTH_SHORT);
                     }
                 });
             }
@@ -144,8 +142,7 @@ public class FindPwdActivity extends BaseActivity implements View.OnClickListene
                         @Override
                         public void run() {
                             mPb.setVisibility(View.GONE);
-                            Toast.makeText(FindPwdActivity.this, msg.getMsg(),
-                                    Toast.LENGTH_SHORT).show();
+                            ToastUtil.showMsg(FindPwdActivity.this, msg.getMsg(), Toast.LENGTH_SHORT);
                         }
                     });
                 } else if (msg.getCode().equals("1")) { // 邮箱存在

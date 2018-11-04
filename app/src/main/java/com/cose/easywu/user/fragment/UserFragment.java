@@ -26,6 +26,7 @@ import com.cose.easywu.utils.CacheUtils;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
 import com.cose.easywu.utils.ImageUtils;
+import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.cose.easywu.widget.MessageDialog;
 
@@ -236,9 +237,9 @@ public class UserFragment extends BaseFragment {
                     public void onConfirm(MessageDialog dialog) {
                         if (CacheUtils.clearAllCache(MyApplication.getContext())) {
                             mTvCacheSize.setText(CacheUtils.getTotalCacheSize(MyApplication.getContext()));
-                            Toast.makeText(mContext, "清除缓存成功", Toast.LENGTH_SHORT).show();
+                            ToastUtil.showMsg(mContext, "清除缓存成功", Toast.LENGTH_SHORT);
                         } else {
-                            Toast.makeText(mContext, "清除缓存失败", Toast.LENGTH_SHORT).show();
+                            ToastUtil.showMsg(mContext, "清除缓存失败", Toast.LENGTH_SHORT);
                         }
                     }
                 }).show();

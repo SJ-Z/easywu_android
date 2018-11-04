@@ -35,6 +35,7 @@ import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
 import com.cose.easywu.utils.ImageUtils;
+import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -275,7 +276,7 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
             photoBitmap = ImageUtils.getBitmapFromPath(photoPath, 80, 80);
             Glide.with(this).load(photoBitmap).into(mIvPhoto);
         } else {
-            Toast.makeText(this, "读取图片失败", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "读取图片失败", Toast.LENGTH_SHORT);
         }
     }
 
@@ -305,7 +306,7 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openAlbum();
                 } else {
-                    Toast.makeText(this, "权限被拒绝，无法访问相册", Toast.LENGTH_SHORT).show();
+                    ToastUtil.showMsg(this, "权限被拒绝，无法访问相册", Toast.LENGTH_SHORT);
                 }
                 break;
         }

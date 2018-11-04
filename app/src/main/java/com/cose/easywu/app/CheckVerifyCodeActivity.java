@@ -19,6 +19,7 @@ import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.EditTextClearTools;
 import com.cose.easywu.utils.HttpUtil;
+import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.google.gson.Gson;
 
@@ -81,7 +82,7 @@ public class CheckVerifyCodeActivity extends BaseActivity implements View.OnClic
     private void checkVerifyCode() {
         String code = mEtCode.getText().toString();
         if (TextUtils.isEmpty(code)) {
-            Toast.makeText(this, "请输入验证码", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "请输入验证码", Toast.LENGTH_SHORT);
             return;
         }
         mPb.setVisibility(View.VISIBLE);
@@ -99,8 +100,7 @@ public class CheckVerifyCodeActivity extends BaseActivity implements View.OnClic
                     @Override
                     public void run() {
                         mPb.setVisibility(View.GONE);
-                        Toast.makeText(CheckVerifyCodeActivity.this, "验证失败",
-                                Toast.LENGTH_SHORT).show();
+                        ToastUtil.showMsg(CheckVerifyCodeActivity.this, "验证失败", Toast.LENGTH_SHORT);
                     }
                 });
             }
@@ -121,8 +121,7 @@ public class CheckVerifyCodeActivity extends BaseActivity implements View.OnClic
                         @Override
                         public void run() {
                             mPb.setVisibility(View.GONE);
-                            Toast.makeText(CheckVerifyCodeActivity.this, msg.getMsg(),
-                                    Toast.LENGTH_SHORT).show();
+                            ToastUtil.showMsg(CheckVerifyCodeActivity.this, msg.getMsg(), Toast.LENGTH_SHORT);
                         }
                     });
                 } else if (msg.getCode().equals("1")) { // 通过验证

@@ -16,6 +16,7 @@ import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.EditTextClearTools;
 import com.cose.easywu.utils.HttpUtil;
+import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.google.gson.Gson;
 
@@ -86,8 +87,7 @@ public class EditNickActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(EditNickActivity.this, "昵称修改失败",
-                                Toast.LENGTH_SHORT).show();
+                        ToastUtil.showMsg(EditNickActivity.this, "昵称修改失败", Toast.LENGTH_SHORT);
                     }
                 });
             }
@@ -107,8 +107,7 @@ public class EditNickActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(EditNickActivity.this, msg.getMsg(),
-                                    Toast.LENGTH_SHORT).show();
+                            ToastUtil.showMsg(EditNickActivity.this, msg.getMsg(), Toast.LENGTH_SHORT);
                         }
                     });
                 } else if (msg.getCode().equals("1")) { // 昵称修改成功
@@ -130,12 +129,12 @@ public class EditNickActivity extends BaseActivity {
     // 校验昵称是否合法
     private boolean checkNick(String newNick) {
         if (TextUtils.isEmpty(newNick)) {
-            Toast.makeText(this, "昵称不能为空", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "昵称不能为空", Toast.LENGTH_SHORT);
             return false;
         }
         // 验证昵称长度
         if (newNick.length() > 7) {
-            Toast.makeText(this, "昵称长度必须小于7", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "昵称长度必须小于7", Toast.LENGTH_SHORT);
             return false;
         }
         return true;

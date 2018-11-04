@@ -20,6 +20,7 @@ import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.EditTextClearTools;
 import com.cose.easywu.utils.HttpUtil;
+import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.google.gson.Gson;
 
@@ -129,8 +130,7 @@ public class EditPwdActivity extends BaseActivity {
                     @Override
                     public void run() {
                         mPb.setVisibility(View.GONE);
-                        Toast.makeText(EditPwdActivity.this, "修改失败",
-                                Toast.LENGTH_SHORT).show();
+                        ToastUtil.showMsg(EditPwdActivity.this, "修改失败", Toast.LENGTH_SHORT);
                     }
                 });
             }
@@ -151,8 +151,7 @@ public class EditPwdActivity extends BaseActivity {
                         @Override
                         public void run() {
                             mPb.setVisibility(View.GONE);
-                            Toast.makeText(EditPwdActivity.this, msg.getMsg(),
-                                    Toast.LENGTH_SHORT).show();
+                            ToastUtil.showMsg(EditPwdActivity.this, msg.getMsg(), Toast.LENGTH_SHORT);
                         }
                     });
                 } else if (msg.getCode().equals("1")) { // 修改密码成功
@@ -163,7 +162,7 @@ public class EditPwdActivity extends BaseActivity {
                             mPb.setVisibility(View.GONE);
                             editor.putString("pwd", newpwd);
                             editor.apply();
-                            Toast.makeText(EditPwdActivity.this, "修改密码成功", Toast.LENGTH_SHORT).show();
+                            ToastUtil.showMsg(EditPwdActivity.this, "修改密码成功", Toast.LENGTH_SHORT);
                         }
                     });
                 }
@@ -174,11 +173,11 @@ public class EditPwdActivity extends BaseActivity {
     // 对密码做输入校验
     private boolean checkPwd(String oldpwd, String newpwd, String newpwd2) {
         if (TextUtils.isEmpty(oldpwd) || TextUtils.isEmpty(newpwd) || TextUtils.isEmpty(newpwd2)) {
-            Toast.makeText(this, "输入不能为空", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "输入不能为空", Toast.LENGTH_SHORT);
             return false;
         }
         if (!newpwd.equals(newpwd2)) {
-            Toast.makeText(this, "两次密码输入不一致", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "两次密码输入不一致", Toast.LENGTH_SHORT);
             return false;
         }
 
@@ -187,24 +186,24 @@ public class EditPwdActivity extends BaseActivity {
         Pattern pattern = Pattern.compile("^[a-zA-Z]+\\w*");
         Matcher matcher = pattern.matcher(oldpwd);
         if (!matcher.matches()) {
-            Toast.makeText(this, "原密码错误", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "原密码错误", Toast.LENGTH_SHORT);
             return false;
         }
         // 验证密码长度
         if (oldpwd.length() < 6 || oldpwd.length() > 15) {
-            Toast.makeText(this, "原密码错误", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "原密码错误", Toast.LENGTH_SHORT);
             return false;
         }
 
         // 验证新密码
         matcher = pattern.matcher(newpwd);
         if (!matcher.matches()) {
-            Toast.makeText(this, "密码必须以字母开头，且只能包含数字、字母、下划线", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "密码必须以字母开头，且只能包含数字、字母、下划线", Toast.LENGTH_SHORT);
             return false;
         }
         // 验证密码长度
         if (newpwd.length() < 6 || newpwd.length() > 15) {
-            Toast.makeText(this, "密码长度必须为6~15", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "密码长度必须为6~15", Toast.LENGTH_SHORT);
             return false;
         }
 

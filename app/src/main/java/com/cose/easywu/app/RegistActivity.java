@@ -22,6 +22,7 @@ import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.EditTextClearTools;
 import com.cose.easywu.utils.HttpUtil;
+import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.google.gson.Gson;
 
@@ -142,8 +143,7 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
                     @Override
                     public void run() {
                         progressDialog.dismiss();
-                        Toast.makeText(RegistActivity.this, "注册失败",
-                                Toast.LENGTH_SHORT).show();
+                        ToastUtil.showMsg(RegistActivity.this, "注册失败", Toast.LENGTH_SHORT);
                     }
                 });
             }
@@ -164,8 +164,7 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
                         @Override
                         public void run() {
                             progressDialog.dismiss();
-                            Toast.makeText(RegistActivity.this, msg.getMsg(),
-                                    Toast.LENGTH_SHORT).show();
+                            ToastUtil.showMsg(RegistActivity.this, msg.getMsg(), Toast.LENGTH_SHORT);
                         }
                     });
                 } else if (msg.getCode().equals("1")) { // 注册成功
@@ -182,8 +181,7 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
                             progressDialog.dismiss();
                             startActivity(new Intent(RegistActivity.this, LoginActivity.class));
                             finish();
-                            Toast.makeText(RegistActivity.this, msg.getMsg(),
-                                    Toast.LENGTH_SHORT).show();
+                            ToastUtil.showMsg(RegistActivity.this, msg.getMsg(), Toast.LENGTH_SHORT);
                         }
                     });
                 }
@@ -198,37 +196,37 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
         String pwd = mEtPwd.getText().toString().trim();
         String pwd2 = mEtPwd2.getText().toString().trim();
         if (TextUtils.isEmpty(email)) {
-            Toast.makeText(this, "邮箱不能为空", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "邮箱不能为空", Toast.LENGTH_SHORT);
             return false;
         } else if (TextUtils.isEmpty(nick)) {
-            Toast.makeText(this, "昵称不能为空", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "昵称不能为空", Toast.LENGTH_SHORT);
             return false;
         } else if (TextUtils.isEmpty(pwd)) {
-            Toast.makeText(this, "密码不能为空", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "密码不能为空", Toast.LENGTH_SHORT);
             return false;
         } else if (TextUtils.isEmpty(pwd2)) {
-            Toast.makeText(this, "重复密码不能为空", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "重复密码不能为空", Toast.LENGTH_SHORT);
             return false;
         }
         if (!pwd.equals(pwd2)) { // 两次密码输入不一致
-            Toast.makeText(this, "两次密码输入不一致", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "两次密码输入不一致", Toast.LENGTH_SHORT);
             return false;
         }
         // 验证邮箱格式
         if (email.length() > 30) {
-            Toast.makeText(this, "邮箱长度非法", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "邮箱长度非法", Toast.LENGTH_SHORT);
             return false;
         }
         Pattern pattern = Pattern.compile("^[0-9a-zA-Z]+\\w*@([0-9a-zA-Z]+\\.)+[0-9a-zA-Z]+$");
         Matcher matcher = pattern.matcher(email);
         if (!matcher.matches()) {
-            Toast.makeText(this, "邮箱格式非法", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "邮箱格式非法", Toast.LENGTH_SHORT);
             return false;
         }
 
         // 验证昵称长度
         if (nick.length() > 7) {
-            Toast.makeText(this, "昵称长度必须小于7", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "昵称长度必须小于7", Toast.LENGTH_SHORT);
             return false;
         }
 
@@ -236,13 +234,13 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
         pattern = Pattern.compile("^[a-zA-Z]+\\w*");
         matcher = pattern.matcher(pwd);
         if (!matcher.matches()) {
-            Toast.makeText(this, "密码必须以字母开头，且只能包含数字、字母、下划线", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "密码必须以字母开头，且只能包含数字、字母、下划线", Toast.LENGTH_SHORT);
             return false;
         }
 
         // 验证密码长度
         if (pwd.length() < 6 || pwd.length() > 15) {
-            Toast.makeText(this, "密码长度必须为6~15", Toast.LENGTH_SHORT).show();
+            ToastUtil.showMsg(this, "密码长度必须为6~15", Toast.LENGTH_SHORT);
             return false;
         }
         return true;

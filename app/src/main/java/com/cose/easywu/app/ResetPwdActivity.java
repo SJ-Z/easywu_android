@@ -22,6 +22,7 @@ import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.EditTextClearTools;
 import com.cose.easywu.utils.HttpUtil;
+import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.google.gson.Gson;
 
@@ -123,8 +124,7 @@ public class ResetPwdActivity extends BaseActivity implements View.OnClickListen
                     @Override
                     public void run() {
                         mPb.setVisibility(View.GONE);
-                        Toast.makeText(ResetPwdActivity.this, "修改失败",
-                                Toast.LENGTH_SHORT).show();
+                        ToastUtil.showMsg(ResetPwdActivity.this, "修改失败", Toast.LENGTH_SHORT);
                     }
                 });
             }
@@ -145,8 +145,7 @@ public class ResetPwdActivity extends BaseActivity implements View.OnClickListen
                         @Override
                         public void run() {
                             mPb.setVisibility(View.GONE);
-                            Toast.makeText(ResetPwdActivity.this, msg.getMsg(),
-                                    Toast.LENGTH_SHORT).show();
+                            ToastUtil.showMsg(ResetPwdActivity.this, msg.getMsg(), Toast.LENGTH_SHORT);
                         }
                     });
                 } else if (msg.getCode().equals("1")) { // 修改密码成功
@@ -160,7 +159,7 @@ public class ResetPwdActivity extends BaseActivity implements View.OnClickListen
                             editor.apply();
                             ActivityCollector.finishAll();
                             startActivity(new Intent(ResetPwdActivity.this, LoginActivity.class));
-                            Toast.makeText(ResetPwdActivity.this, "修改密码成功，赶紧登录吧", Toast.LENGTH_SHORT).show();
+                            ToastUtil.showMsg(ResetPwdActivity.this, "修改密码成功，赶紧登录吧", Toast.LENGTH_SHORT);
                         }
                     });
                 }
