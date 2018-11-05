@@ -13,4 +13,5 @@
     <color name="colorCursor">#cccccc</color>
     <color name="colorCut">#edeaea</color>
     <color name="colorHint">#afa8a6</color>
+    <color name="colorLightGray">#f6f6f6</color>
 </resources>

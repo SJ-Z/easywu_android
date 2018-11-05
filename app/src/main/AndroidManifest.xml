@@ -8,9 +8,9 @@
     <application
         android:name=".base.MyApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".app.WelcomeActivity">
@@ -29,18 +29,21 @@
         <activity android:name=".user.activity.EditUserInfoActivity" />
         <activity android:name=".user.activity.EditPwdActivity" />
         <activity android:name=".user.activity.EditNickActivity" />
-        <activity android:name=".user.activity.EditPhotoActivity"
-            android:theme="@style/EditPhotoDialogStyle"></activity>
+        <activity
+            android:name=".user.activity.EditPhotoActivity"
+            android:theme="@style/EditPhotoDialogStyle" />
 
         <provider
-            android:authorities="com.cose.easywu.fileprovider"
             android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.cose.easywu.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <activity android:name=".release.activity.ReleaseActivity"></activity>
     </application>
 
 </manifest>

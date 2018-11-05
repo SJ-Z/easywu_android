@@ -26,8 +26,7 @@ public class ActivityCollector {
         activities.clear();
     }
 
-//    public static Activity getCurrentActivity() {
-//        int len = activities.size();
-//        return activities.get(len - 1);
-//    }
+    public static Activity getLastActivity() {
+        return activities.get(activities.size() - 2);
+    }
 }

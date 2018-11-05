@@ -1,21 +1,16 @@
 package com.cose.easywu.app;
 
-import android.content.Context;
-import android.graphics.Typeface;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.LayoutInflaterCompat;
-import android.support.v4.view.LayoutInflaterFactory;
-import android.support.v7.app.AppCompatDelegate;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import com.cose.easywu.R;
 import com.cose.easywu.base.ActivityCollector;
@@ -31,9 +26,6 @@ import org.litepal.LitePal;
 import java.util.ArrayList;
 
 public class MainActivity extends FragmentActivity {
-
-    public static Typeface typeface;
-    public static Typeface typeface1;
 
     FrameLayout frameLayout;
     RadioGroup rgMain;
@@ -72,6 +64,7 @@ public class MainActivity extends FragmentActivity {
                         break;
                     case R.id.rb_release: // 发布
                         position = 2;
+                        hideFragmentChoose();
                         break;
                     case R.id.rb_message: // 发现
                         position = 3;
@@ -111,7 +104,7 @@ public class MainActivity extends FragmentActivity {
                 }
                 //添加to
                 if (to != null) {
-                    ft.add(R.id.frameLayout, to).commit();
+                    ft.add(R.id.frameLayout, to, String.valueOf(position)).commit();
                 }
             } else {  // to已经被添加过
                 //from隐藏
@@ -134,6 +127,23 @@ public class MainActivity extends FragmentActivity {
         return null;
     }
 
+    // 隐藏Frgament切换选择条
+    private void hideFragmentChoose() {
+        rgMain.setVisibility(View.GONE);
+    }
+
+    // 显示Frgament切换选择条，此方法供其他类调用
+    public void showFragmentChoose() {
+        rgMain.setVisibility(View.VISIBLE);
+    }
+
+    // 显示首页，此方法供其他类调用
+    public void showHomeFragment() {
+        switchFragment(tempFragment, fragments.get(0));
+        rgMain.check(R.id.rb_home);
+        ((HomeFragment) fragments.get(0)).scrollToTop();
+    }
+
     // 初始化Fragment
     private void initFragment() {
         fragments = new ArrayList<>();
@@ -142,6 +152,16 @@ public class MainActivity extends FragmentActivity {
         fragments.add(new ReleaseFragment());
         fragments.add(new MessageFragment());
         fragments.add(new UserFragment());
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Fragment f = getSupportFragmentManager().findFragmentByTag(String.valueOf(position));
+        /*然后在碎片中调用重写的onActivityResult方法*/
+        if (f != null) {
+            f.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
