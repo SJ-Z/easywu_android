@@ -43,7 +43,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".release.activity.ReleaseActivity"></activity>
+        <activity android:name=".release.activity.ChooseTypeActivity"></activity>
     </application>
 
 </manifest>

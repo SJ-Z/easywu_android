@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseFragment;
+import com.cose.easywu.db.Type;
 import com.cose.easywu.home.adapter.HomeFragmentAdapter;
 import com.cose.easywu.home.bean.HomeDataBean;
 import com.cose.easywu.utils.Constant;
@@ -19,9 +20,12 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import org.json.JSONObject;
+import org.litepal.LitePal;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 
@@ -106,6 +110,13 @@ public class HomeFragment extends BaseFragment {
                 }
             });
             mRv.setLayoutManager(manager);
+
+            // 将Type数据存储到本地数据库
+            LitePal.deleteAll(Type.class);
+            for (HomeDataBean.TypeInfoBean typeInfoBean : homeDataBean.getType_info()) {
+                Type type = new Type(typeInfoBean.getT_id(), typeInfoBean.getT_name(), typeInfoBean.getT_pic());
+                type.save();
+            }
         } else {
             // 无数据
         }

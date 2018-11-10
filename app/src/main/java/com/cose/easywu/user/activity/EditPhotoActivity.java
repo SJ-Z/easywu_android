@@ -140,7 +140,7 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(EditPhotoActivity.this, "头像上传失败", Toast.LENGTH_SHORT).show();
+                                ToastUtil.showMsgOnCenter(EditPhotoActivity.this, "头像上传失败", Toast.LENGTH_SHORT);
                             }
                         });
                     }
@@ -168,7 +168,7 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(EditPhotoActivity.this, msg.getMsg(), Toast.LENGTH_SHORT).show();
+                                    ToastUtil.showMsgOnCenter(EditPhotoActivity.this, msg.getMsg(), Toast.LENGTH_SHORT);
                                 }
                             });
                         }

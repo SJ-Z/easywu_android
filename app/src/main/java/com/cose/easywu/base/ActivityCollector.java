@@ -29,4 +29,8 @@ public class ActivityCollector {
     public static Activity getLastActivity() {
         return activities.get(activities.size() - 2);
     }
+
+    public static int getActivitiesLength() {
+        return activities.size();
+    }
 }

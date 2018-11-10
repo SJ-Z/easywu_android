@@ -8,9 +8,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.cose.easywu.R;
 import com.cose.easywu.base.ActivityCollector;
@@ -20,10 +22,14 @@ import com.cose.easywu.home.fragment.HomeFragment;
 import com.cose.easywu.message.fragment.MessageFragment;
 import com.cose.easywu.release.fragment.ReleaseFragment;
 import com.cose.easywu.user.fragment.UserFragment;
+import com.cose.easywu.utils.HandleBackUtil;
+import com.cose.easywu.utils.ToastUtil;
 
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends FragmentActivity {
 
@@ -34,6 +40,9 @@ public class MainActivity extends FragmentActivity {
     private int position = 0;
     // 上次显示的Fragment
     private Fragment tempFragment;
+
+    // 是否退出程序的标志位
+    private boolean isExit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,6 +170,46 @@ public class MainActivity extends FragmentActivity {
         /*然后在碎片中调用重写的onActivityResult方法*/
         if (f != null) {
             f.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!HandleBackUtil.handleBackPress(this)) {
+            super.onBackPressed();
+        }
+    }
+
+    // 重写返回键的监听
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            if (tempFragment instanceof ReleaseFragment) {
+                return super.onKeyDown(keyCode, event);
+            } else {
+                exitByDoubleClick();
+                return true; // 表示返回键已处理完毕
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    // 双击返回键退出的处理
+    private void exitByDoubleClick() {
+        Timer tExit = null;
+        if (!isExit) {
+            isExit = true;
+            ToastUtil.showMsg(MainActivity.this,"再次点击回到桌面",Toast.LENGTH_SHORT);
+            tExit = new Timer();
+            tExit.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    isExit = false;//取消退出
+                }
+            },2000);// 如果2秒钟内没有按下返回键，则启动定时器取消掉刚才执行的任务
+        } else {
+            // 仿返回键退出界面,但不销毁，程序仍在后台运行
+            moveTaskToBack(false);
         }
     }
 

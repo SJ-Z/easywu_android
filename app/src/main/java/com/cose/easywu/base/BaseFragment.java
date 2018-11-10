@@ -9,8 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.cose.easywu.utils.HandleBackInterface;
+import com.cose.easywu.utils.HandleBackUtil;
+
 // 基类Fragment
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment implements HandleBackInterface {
     protected Context mContext;
 
     @Override
@@ -38,5 +41,10 @@ public abstract class BaseFragment extends Fragment {
     // 当孩子需要初始化数据，或者联网请求绑定数据，展示数据等，可以重写该方法
     public void initData() {
 
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return HandleBackUtil.handleBackPress(this);
     }
 }
