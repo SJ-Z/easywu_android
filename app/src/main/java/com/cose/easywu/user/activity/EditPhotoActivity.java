@@ -307,7 +307,7 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openAlbum();
                 } else {
-                    ToastUtil.showMsg(this, "权限被拒绝，无法访问相册", Toast.LENGTH_SHORT);
+                    ToastUtil.showMsgOnCenter(this, "权限被拒绝，无法访问相册", Toast.LENGTH_SHORT);
                 }
                 break;
         }

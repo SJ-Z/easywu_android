@@ -34,12 +34,12 @@
             android:text="查看更多" />
     </LinearLayout>
 
-    <GridView
+    <com.cose.easywu.utils.NoScrollGridView
         android:id="@+id/gv_newest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:horizontalSpacing="10dp"
-        android:numColumns="2"
+        android:numColumns="1"
         android:verticalSpacing="10dp" />
 </LinearLayout>

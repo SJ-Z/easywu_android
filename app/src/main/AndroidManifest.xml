@@ -43,7 +43,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".release.activity.ChooseTypeActivity"></activity>
+        <activity android:name=".release.activity.ChooseTypeActivity" />
+        <activity android:name=".app.Main2Activity" />
+        <activity android:name=".home.activity.GoodsInfoActivity"></activity>
     </application>
 
 </manifest>

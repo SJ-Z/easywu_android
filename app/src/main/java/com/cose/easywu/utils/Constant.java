@@ -5,6 +5,7 @@ public class Constant {
 //    public static String BASE_URL = "http://10.0.2.2:8080/easywu";
     public static String BASE_URL = "http://172.20.10.8:8080/easywu";
     public static String BASE_PHOTO_URL = BASE_URL + "/user_photo/";
+    public static String BASE_PIC_URL = BASE_URL + "/goods_pic/";
 
     public static String REGIST_URL = BASE_URL + "/user/regist"; // 注册
     public static String LOGIN_URL = BASE_URL + "/user/login"; // 登录

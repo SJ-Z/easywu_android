@@ -1,5 +1,6 @@
 package com.cose.easywu.home.fragment;
 
+import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,6 +11,8 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.cose.easywu.R;
+import com.cose.easywu.app.Main2Activity;
+import com.cose.easywu.base.ActivityCollector;
 import com.cose.easywu.base.BaseFragment;
 import com.cose.easywu.db.Type;
 import com.cose.easywu.home.adapter.HomeFragmentAdapter;
@@ -33,7 +36,7 @@ public class HomeFragment extends BaseFragment {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
 
-    private TextView mTvSearch;
+    private TextView mTvSearch, mTvSwitchDeal, mTvSwitchFind;
     private RecyclerView mRv;
     private ImageButton mIbSearch, mIbTop;
 
@@ -45,9 +48,14 @@ public class HomeFragment extends BaseFragment {
     public View initView() {
         View view = View.inflate(mContext, R.layout.fragment_home, null);
         mTvSearch = view.findViewById(R.id.tv_home_search);
+        mTvSwitchDeal = view.findViewById(R.id.tv_home_switch_deal);
+        mTvSwitchFind = view.findViewById(R.id.tv_home_switch_find);
         mRv = view.findViewById(R.id.rv_home);
         mIbSearch = view.findViewById(R.id.ib_home_search);
         mIbTop = view.findViewById(R.id.ib_home_top);
+
+        mTvSwitchDeal.setSelected(true);
+        mTvSwitchFind.setSelected(false);
         // 设置点击事件
         initListener();
         return view;
@@ -123,6 +131,15 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void initListener() {
+        //失物招领的监听
+        mTvSwitchFind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ActivityCollector.finishAll();
+                startActivity(new Intent(mContext, Main2Activity.class));
+            }
+        });
+
         //置顶的监听
         mIbTop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,7 +156,6 @@ public class HomeFragment extends BaseFragment {
 
             }
         });
-
     }
 
     // 页面定位到顶部

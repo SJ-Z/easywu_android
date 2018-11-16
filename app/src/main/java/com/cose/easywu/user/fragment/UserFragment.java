@@ -237,9 +237,9 @@ public class UserFragment extends BaseFragment {
                     public void onConfirm(MessageDialog dialog) {
                         if (CacheUtils.clearAllCache(MyApplication.getContext())) {
                             mTvCacheSize.setText(CacheUtils.getTotalCacheSize(MyApplication.getContext()));
-                            ToastUtil.showMsg(mContext, "清除缓存成功", Toast.LENGTH_SHORT);
+                            ToastUtil.showMsgOnCenter(mContext, "清除缓存成功", Toast.LENGTH_SHORT);
                         } else {
-                            ToastUtil.showMsg(mContext, "清除缓存失败", Toast.LENGTH_SHORT);
+                            ToastUtil.showMsgOnCenter(mContext, "清除缓存失败", Toast.LENGTH_SHORT);
                         }
                     }
                 }).show();

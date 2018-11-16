@@ -9,12 +9,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.cose.easywu.R;
 import com.cose.easywu.home.bean.HomeDataBean;
 import com.cose.easywu.utils.Constant;
+import com.cose.easywu.utils.NoScrollGridView;
 import com.cose.easywu.utils.ToastUtil;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
@@ -54,8 +56,8 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             return new TypeViewHolder(mContext, mLayoutInflater.
                     inflate(R.layout.type_item, null));
         } else if (viewType == NEWEST) {
-//            return new NewestViewHolder(mContext, mLayoutInflater.
-//                    inflate(R.layout.newest_item, null));
+            return new NewestViewHolder(mContext, mLayoutInflater.
+                    inflate(R.layout.newest_item, null));
         }
         return null;
     }
@@ -69,35 +71,35 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             TypeViewHolder typeViewHolder = (TypeViewHolder) holder;
             typeViewHolder.setData(homeDataBean.getType_info());
         } else if (getItemViewType(position) == NEWEST) {
-//            NewestViewHolder newestViewHolder = (NewestViewHolder) holder;
-//            newestViewHolder.setData(homeDataBean.getNewest_info());
+            NewestViewHolder newestViewHolder = (NewestViewHolder) holder;
+            newestViewHolder.setData(homeDataBean.getNewest_info());
         }
     }
     
-//    class NewestViewHolder extends RecyclerView.ViewHolder {
-//
-//        private Context mContext;
-//        private TextView tv_more_hot;
-//        private GridView gv_hot;
-//        private HotGridViewAdapter adapter;
-//
-//        public NewestViewHolder(final Context mContext, View itemView) {
-//            super(itemView);
-//            this.mContext = mContext;
-//            tv_more_hot = itemView.findViewById(R.id.tv_more_hot);
-//            gv_hot = itemView.findViewById(R.id.gv_hot);
-//        }
-//
-//        public void setData(final List<ResultBeanData.ResultBean.HotInfoBean> hot_info) {
-//            adapter = new HotGridViewAdapter(mContext, hot_info);
-//            gv_hot.setAdapter(adapter);
-//
-//            // 设置item的监听
-//            gv_hot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                @Override
-//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                    Toast.makeText(mContext, "position==" + position, Toast.LENGTH_SHORT).show();
-//                    ResultBeanData.ResultBean.HotInfoBean hotInfoBean = hot_info.get(position);
+    class NewestViewHolder extends RecyclerView.ViewHolder {
+
+        private Context mContext;
+        private TextView tv_newest_more;
+        private NoScrollGridView gv_newest;
+        private NewestGridViewAdapter adapter;
+
+        public NewestViewHolder(final Context mContext, View itemView) {
+            super(itemView);
+            this.mContext = mContext;
+            tv_newest_more = itemView.findViewById(R.id.tv_newest_more);
+            gv_newest = itemView.findViewById(R.id.gv_newest);
+        }
+
+        public void setData(final List<HomeDataBean.NewestInfoBean> newest_info) {
+            adapter = new NewestGridViewAdapter(mContext, newest_info);
+            gv_newest.setAdapter(adapter);
+
+            // 设置item的监听
+            gv_newest.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    ToastUtil.showMsgOnCenter(mContext, "goods_name=" + newest_info.get(position).getG_name(), Toast.LENGTH_SHORT);
+//                    HomeDataBean.NewestInfoBean newestInfoBean = newest_info.get(position);
 //                    // 商品信息类
 //                    GoodsBean goodsBean = new GoodsBean();
 //                    goodsBean.setCover_price(hotInfoBean.getCover_price());
@@ -105,10 +107,10 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
 //                    goodsBean.setName(hotInfoBean.getName());
 //                    goodsBean.setProduct_id(hotInfoBean.getProduct_id());
 //                    startGoodsInfoActivity(goodsBean);
-//                }
-//            });
-//        }
-//    }
+                }
+            });
+        }
+    }
 
     class TypeViewHolder extends RecyclerView.ViewHolder {
         private Context mContext;
@@ -194,6 +196,6 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         // 开发过程中从1-->3
-        return 2;
+        return 3;
     }
 }
