@@ -75,16 +75,23 @@ public class NewestGridViewAdapter extends BaseAdapter {
             viewHolder.iv_newest_item_pic1.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(Constant.BASE_PIC_URL + newest_info.getG_pic1())
                     .into(viewHolder.iv_newest_item_pic1);
+        } else {
+            viewHolder.iv_newest_item_pic1.setVisibility(View.GONE);
         }
         if (!TextUtils.isEmpty(newest_info.getG_pic2())) {
             viewHolder.iv_newest_item_pic2.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(Constant.BASE_PIC_URL + newest_info.getG_pic2())
                     .into(viewHolder.iv_newest_item_pic2);
+            viewHolder.iv_newest_item_pic3.setVisibility(View.GONE);
+        } else {
+            viewHolder.iv_newest_item_pic2.setVisibility(View.GONE);
         }
         if (!TextUtils.isEmpty(newest_info.getG_pic3())) {
             viewHolder.iv_newest_item_pic3.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(Constant.BASE_PIC_URL + newest_info.getG_pic3())
                     .into(viewHolder.iv_newest_item_pic3);
+        } else {
+            viewHolder.iv_newest_item_pic3.setVisibility(View.GONE);
         }
         return convertView;
     }

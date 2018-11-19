@@ -19,7 +19,8 @@ public class Constant {
     public static String EDITPHOTO_URL = BASE_URL + "/user/editPhoto"; // 修改头像
 
     public static String HOME_URL = BASE_URL + "/home/home"; // 主页
-    public static String RELEASE_GOODS_URL = BASE_URL + "/home/release_goods"; // 发布闲置
+    public static String RELEASE_GOODS_URL = BASE_URL + "/home/release_goods"; // 发布闲置（有图片）
+    public static String RELEASE_GOODS_WITHOUT_PIC_URL = BASE_URL + "/home/release_goods_without_pic"; // 发布闲置（无图片）
     public static String NEWEST_GOODS_URL = BASE_URL + "/home/newestGoods"; // 最新发布的闲置商品
 
 }
