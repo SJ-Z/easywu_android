@@ -2,9 +2,6 @@ package com.cose.easywu.release.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,7 +10,6 @@ import android.widget.ImageView;
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
 import com.cose.easywu.db.Type;
-import com.cose.easywu.release.fragment.ReleaseFragment;
 import com.cose.easywu.release.util.ListViewForScrollView;
 
 import org.litepal.LitePal;

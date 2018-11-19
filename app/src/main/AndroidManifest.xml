@@ -44,8 +44,8 @@
         </provider>
 
         <activity android:name=".release.activity.ChooseTypeActivity" />
-        <activity android:name=".app.Main2Activity" />
-        <activity android:name=".home.activity.GoodsInfoActivity"></activity>
+        <activity android:name=".home.activity.GoodsInfoActivity" />
+        <activity android:name=".release.activity.ReleaseActivity"></activity>
     </application>
 
 </manifest>

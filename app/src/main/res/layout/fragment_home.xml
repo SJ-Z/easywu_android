@@ -8,37 +8,9 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/ll_home_switch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:background="@color/colorLoginButton">
-            <TextView
-                android:id="@+id/tv_home_switch_deal"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textSize="17sp"
-                android:text="跳蚤市场"
-                android:textColor="@android:color/white"
-                android:background="@drawable/bg_textview_switch"
-                android:padding="5dp"/>
-            <TextView
-                android:id="@+id/tv_home_switch_find"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textSize="17sp"
-                android:text="失物招领"
-                android:textColor="@android:color/white"
-                android:background="@drawable/bg_textview_switch"
-                android:padding="5dp"
-                android:layout_marginLeft="15dp"/>
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/ll_home_searchbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/ll_home_switch"
             android:background="@color/colorLoginButton"
             android:orientation="horizontal"
             android:paddingLeft="10dp"

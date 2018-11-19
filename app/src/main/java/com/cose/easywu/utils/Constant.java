@@ -20,5 +20,6 @@ public class Constant {
 
     public static String HOME_URL = BASE_URL + "/home/home"; // 主页
     public static String RELEASE_GOODS_URL = BASE_URL + "/home/release_goods"; // 发布闲置
+    public static String NEWEST_GOODS_URL = BASE_URL + "/home/newestGoods"; // 最新发布的闲置商品
 
 }

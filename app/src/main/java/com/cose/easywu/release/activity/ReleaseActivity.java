@@ -1,4 +1,4 @@
-package com.cose.easywu.release.fragment;
+package com.cose.easywu.release.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -13,8 +13,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
@@ -35,13 +34,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.cose.easywu.R;
 import com.cose.easywu.app.MainActivity;
-import com.cose.easywu.base.BaseFragment;
+import com.cose.easywu.base.BaseActivity;
 import com.cose.easywu.db.Type;
 import com.cose.easywu.gson.msg.BaseMsg;
-import com.cose.easywu.release.activity.ChooseTypeActivity;
 import com.cose.easywu.release.util.KeyboardUtil;
 import com.cose.easywu.release.util.MyKeyBoardView;
-import com.cose.easywu.user.activity.EditPhotoActivity;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
 import com.cose.easywu.utils.ImageUtils;
@@ -49,6 +46,8 @@ import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.cose.easywu.widget.MessageDialog;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.litepal.LitePal;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -61,9 +60,7 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 
-import static android.app.Activity.RESULT_OK;
-
-public class ReleaseFragment extends BaseFragment {
+public class ReleaseActivity extends BaseActivity {
 
     private ImageView mIvBack;
     private List<ImageView> mIvPicList = new ArrayList<>();
@@ -84,49 +81,25 @@ public class ReleaseFragment extends BaseFragment {
 
     private List<Bitmap> photoBitmapList = new ArrayList<>();
     private List<File> photoFileList = new ArrayList<>();
+    private List<String> photoPathList = new ArrayList<>();
 
     private BroadcastReceiver receiver;
     private Type type;
     private double price = -1;
     private double originalPrice = -1;
     private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
+
+    private String u_id;
 
     @Override
-    public View initView() {
-        View view = View.inflate(mContext, R.layout.fragment_release, null);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_release);
 
-        mIvBack = view.findViewById(R.id.iv_release_back);
-        mIvPicList.add(0, (ImageView) view.findViewById(R.id.iv_release_pic1));
-        mIvPicList.add(1, (ImageView) view.findViewById(R.id.iv_release_pic2));
-        mIvPicList.add(2, (ImageView) view.findViewById(R.id.iv_release_pic3));
-
-        mIvDeletePicList.add(0, (CircleImageView) view.findViewById(R.id.iv_release_pic1_delete));
-        mIvDeletePicList.add(1, (CircleImageView) view.findViewById(R.id.iv_release_pic2_delete));
-        mIvDeletePicList.add(2, (CircleImageView) view.findViewById(R.id.iv_release_pic3_delete));
-
-        mEtName = view.findViewById(R.id.et_release_name);
-        mEtDesc = view.findViewById(R.id.et_release_desc);
-
-        mRlPicList.add(0, (RelativeLayout) view.findViewById(R.id.rl_release_pic1));
-        mRlPicList.add(1, (RelativeLayout) view.findViewById(R.id.rl_release_pic2));
-        mRlPicList.add(2, (RelativeLayout) view.findViewById(R.id.rl_release_pic3));
-        mLlChoosePic = view.findViewById(R.id.ll_release_choosePic);
-
-        mTvPrice = view.findViewById(R.id.tv_release_price);
-        mTvType = view.findViewById(R.id.tv_release_type);
-        mTvRelease = view.findViewById(R.id.tv_release_release);
-
-        mEtPrice = view.findViewById(R.id.et_release_price);
-        mEtOriginalPrice = view.findViewById(R.id.et_release_orginal_price);
-        myKeyBoardView = view.findViewById(R.id.keyboard_view);
-        mLlPriceSelect = view.findViewById(R.id.ll_release_price_select);
-
-        mPb = view.findViewById(R.id.pb_release);
-
-        // 设置点击事件
+        initView();
         initListener();
-
-        return view;
+        initData();
     }
 
     private void initListener() {
@@ -147,9 +120,11 @@ public class ReleaseFragment extends BaseFragment {
                     if (photoBitmapList.size() > 1) {
                         photoBitmapList.remove(index<=picIndex?index:index-photoBitmapList.size());
                         photoFileList.remove(index<=picIndex?index:index-photoFileList.size());
+                        photoPathList.remove(index<=picIndex?index:index-photoPathList.size());
                     } else {
                         photoBitmapList.remove(0);
                         photoFileList.remove(0);
+                        photoPathList.remove(0);
                     }
                     picIndex--;
                 }
@@ -163,7 +138,7 @@ public class ReleaseFragment extends BaseFragment {
         });
 
         // 设置数字键盘的监听
-        final KeyboardUtil keyboardUtil = new KeyboardUtil(getActivity());
+        final KeyboardUtil keyboardUtil = new KeyboardUtil(this);
         keyboardUtil.setOnOkClick(new KeyboardUtil.OnOkClick() {
             @Override
             public void onOkClick() {
@@ -226,7 +201,7 @@ public class ReleaseFragment extends BaseFragment {
         mTvType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(mContext, ChooseTypeActivity.class));
+                startActivity(new Intent(ReleaseActivity.this, ChooseTypeActivity.class));
             }
         });
 
@@ -269,15 +244,13 @@ public class ReleaseFragment extends BaseFragment {
                 new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        if (getActivity() != null) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mPb.setVisibility(View.GONE);
-                                    ToastUtil.showMsgOnCenter(mContext, "发布失败", Toast.LENGTH_SHORT);
-                                }
-                            });
-                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mPb.setVisibility(View.GONE);
+                                ToastUtil.showMsgOnCenter(ReleaseActivity.this, "发布失败", Toast.LENGTH_SHORT);
+                            }
+                        });
                     }
 
                     @Override
@@ -297,20 +270,18 @@ public class ReleaseFragment extends BaseFragment {
                         if (msg.getCode().equals("1")) {
                             mPb.setVisibility(View.GONE);
                             clearUIData();
-                            // 跳转界面
-                            ((MainActivity) mContext).showHomeFragment();
-                            ((MainActivity) mContext).showFragmentChoose();
-                            ToastUtil.showMsgOnCenter(mContext, "发布成功", Toast.LENGTH_SHORT);
+                            clearReleaseContent();
+                            finish();
+                            ToastUtil.showMsgOnCenter(ReleaseActivity.this, "发布成功", Toast.LENGTH_SHORT);
                         } else if (msg.getCode().equals("0")) {
-                            if (getActivity() != null) {
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mPb.setVisibility(View.GONE);
-                                        ToastUtil.showMsgOnCenter(mContext, msg.getMsg(), Toast.LENGTH_SHORT);
-                                    }
-                                });
-                            }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mPb.setVisibility(View.GONE);
+                                    ToastUtil.showMsgOnCenter(ReleaseActivity.this,
+                                            msg.getMsg(), Toast.LENGTH_SHORT);
+                                }
+                            });
                         }
                     }
                 });
@@ -318,19 +289,19 @@ public class ReleaseFragment extends BaseFragment {
 
     private boolean checkContent() {
         if (TextUtils.isEmpty(mEtName.getText().toString().trim())) {
-            ToastUtil.showMsgOnCenter(mContext, "物品名称不能为空", Toast.LENGTH_SHORT);
+            ToastUtil.showMsgOnCenter(this, "物品名称不能为空", Toast.LENGTH_SHORT);
             return false;
         }
         if (TextUtils.isEmpty(mEtDesc.getText().toString().trim())) {
-            ToastUtil.showMsgOnCenter(mContext, "物品描述不能为空", Toast.LENGTH_SHORT);
+            ToastUtil.showMsgOnCenter(this, "物品描述不能为空", Toast.LENGTH_SHORT);
             return false;
         }
         if (price == -1) {
-            ToastUtil.showMsgOnCenter(mContext, "物品价格不能为空", Toast.LENGTH_SHORT);
+            ToastUtil.showMsgOnCenter(this, "物品价格不能为空", Toast.LENGTH_SHORT);
             return false;
         }
         if (type == null) {
-            ToastUtil.showMsgOnCenter(mContext, "必须选择物品分类", Toast.LENGTH_SHORT);
+            ToastUtil.showMsgOnCenter(this, "必须选择物品分类", Toast.LENGTH_SHORT);
             return false;
         }
 
@@ -339,25 +310,69 @@ public class ReleaseFragment extends BaseFragment {
 
     // 处理退出键
     public void handleExitKey() {
-        MessageDialog messageDialog = new MessageDialog(mContext, R.style.MessageDialog);
+        MessageDialog messageDialog = new MessageDialog(this, R.style.MessageDialog);
         messageDialog.setTitle("提示").setContent("是否保存草稿？")
                 .setCancel("不保存", new MessageDialog.IOnCancelListener() {
                     @Override
                     public void onCancel(MessageDialog dialog) {
                         // 清空界面数据
                         clearUIData();
-                        // 跳转界面
-                        ((MainActivity) mContext).showHomeFragment();
-                        ((MainActivity) mContext).showFragmentChoose();
+                        // 清空SharedPreferences存储的内容（如果有）
+                        clearReleaseContent();
+                        finish();
                     }
                 }).setConfirm("保存", new MessageDialog.IOnConfirmListener() {
             @Override
             public void onConfirm(MessageDialog dialog) {
-                // 直接跳转界面
-                ((MainActivity) mContext).showHomeFragment();
-                ((MainActivity) mContext).showFragmentChoose();
+                saveReleaseContent();
+                finish();
             }
         }).show();
+    }
+
+    private void saveReleaseContent() {
+        // 记录有保存内容的标志位
+        editor.putBoolean(u_id + "_hasSaveContent", true);
+        // 写入数据
+        editor.putString(u_id + "_name", mEtName.getText().toString());
+        editor.putString(u_id + "_desc", mEtDesc.getText().toString());
+        editor.putString(u_id + "_price", String.valueOf(price));
+        editor.putString(u_id + "_originalPrice", String.valueOf(originalPrice));
+        if (type != null) {
+            editor.putString(u_id + "_typeId", type.getT_id());
+        }
+        // 写入图片的路径
+        int picLen = photoPathList.size();
+        editor.putInt(u_id + "_picLen", picLen);
+        int i;
+        for (i = 0; i < picLen; i++) {
+            editor.putString(u_id + "_pic" + i, photoPathList.get(i));
+        }
+        for (; i < 3; i++) {
+            editor.remove(u_id + "_pic" + i);
+        }
+        // 提交修改
+        editor.apply();
+    }
+
+    private void clearReleaseContent() {
+        if (pref.getBoolean(u_id + "_hasSaveContent", false)) { // 说明含有保存的内容
+            // 修改标志位
+            editor.putBoolean(u_id + "_hasSaveContent", false);
+            // 清空已保存的内容
+            editor.remove(u_id + "_name");
+            editor.remove(u_id + "_desc");
+            editor.remove(u_id + "_price");
+            editor.remove(u_id + "_originalPrice");
+            editor.remove(u_id + "_typeId");
+            int picLen = pref.getInt(u_id + "_picLen", 0);
+            for (int i = 0; i < picLen; i++) {
+                editor.remove(u_id + "_pic" + i);
+            }
+
+            // 提交修改
+            editor.apply();
+        }
     }
 
     // 清空界面数据
@@ -377,20 +392,20 @@ public class ReleaseFragment extends BaseFragment {
     // 验证价格
     private boolean validate() {
         if (TextUtils.isEmpty(mEtPrice.getText().toString())) {
-            ToastUtil.showMsgOnCenter(mContext, "价格不能为空",  Toast.LENGTH_SHORT);
+            ToastUtil.showMsgOnCenter(this, "价格不能为空",  Toast.LENGTH_SHORT);
             return false;
         }
         try {
             price = Double.valueOf(mEtPrice.getText().toString());
         } catch (NumberFormatException e) {
-            ToastUtil.showMsgOnCenter(mContext, "价格错误", Toast.LENGTH_SHORT);
+            ToastUtil.showMsgOnCenter(this, "价格错误", Toast.LENGTH_SHORT);
             return false;
         }
         if (!TextUtils.isEmpty(mEtOriginalPrice.getText().toString())) {
             try {
                 originalPrice = Double.valueOf(mEtOriginalPrice.getText().toString());
             } catch (NumberFormatException e) {
-                ToastUtil.showMsgOnCenter(mContext, "原价错误", Toast.LENGTH_SHORT);
+                ToastUtil.showMsgOnCenter(this, "原价错误", Toast.LENGTH_SHORT);
                 return false;
             }
         }
@@ -399,14 +414,13 @@ public class ReleaseFragment extends BaseFragment {
 
     // 对返回键的处理
     @Override
-    public boolean onBackPressed() {
+    public void onBackPressed() {
         // 如果小键盘已显示，则隐藏
         if (ifKeyboardVisible()) {
             mLlPriceSelect.setVisibility(View.GONE);
         } else {
             handleExitKey();
         }
-        return true;
     }
 
     public boolean ifKeyboardVisible() {
@@ -417,12 +431,10 @@ public class ReleaseFragment extends BaseFragment {
     }
 
     private void choosePic() {
-        if (ContextCompat.checkSelfPermission(mContext,
+        if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (getActivity() != null) {
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CHOOSE_PHOTO);
-            }
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CHOOSE_PHOTO);
         } else {
             openAlbum();
         }
@@ -452,10 +464,10 @@ public class ReleaseFragment extends BaseFragment {
         }
     }
 
-    @Override
     public void initData() {
-        super.initData();
-        pref = PreferenceManager.getDefaultSharedPreferences(mContext);
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = pref.edit();
+        u_id = pref.getString("u_id", "");
         // 注册广播
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("com.cose.easywu.release.chooseType");
@@ -468,7 +480,55 @@ public class ReleaseFragment extends BaseFragment {
                 mTvType.setText(type.getT_name());
             }
         };
-        mContext.registerReceiver(receiver, intentFilter);
+        registerReceiver(receiver, intentFilter);
+
+        // 如果上次有保存的内容，则加载到界面上
+        if (pref.getBoolean(u_id + "_hasSaveContent", false)) {
+            loadSavedContent();
+        }
+    }
+
+    // 加载上一次保存的内容
+    private void loadSavedContent() {
+        mEtName.setText(pref.getString(u_id + "_name", ""));
+        mEtDesc.setText(pref.getString(u_id + "_desc", ""));
+        double price = Double.valueOf(pref.getString(u_id + "_price", "-1"));
+        if (price != -1) {
+            this.price = price;
+        }
+        double originalPrice = Double.valueOf(pref.getString(u_id + "_originalPrice", "-1"));
+        if (originalPrice != -1) {
+            this.originalPrice = originalPrice;
+        }
+        setPriceTextView();
+        String typeId = pref.getString(u_id + "_typeId", "");
+        if (!TextUtils.isEmpty(typeId)) {
+            type = LitePal.where("t_id=?", typeId).findFirst(Type.class);
+            mTvType.setText(type.getT_name());
+        }
+        // 加载图片
+        int picLen = pref.getInt(u_id + "_picLen", 0);
+        for (int i = 0; i < picLen; i++) {
+            photoPathList.add(pref.getString(u_id + "_pic" + i, ""));
+            picIndex++;
+            photoFileList.add(picIndex, new File(photoPathList.get(i)));
+            photoBitmapList.add(picIndex, ImageUtils.getBitmapFromPath(photoPathList.get(i), 100, 100));
+            RelativeLayout relativeLayout = mRlPicList.get(picIndex);
+            Glide.with(this).load(photoBitmapList.get(picIndex)).into(mIvPicList.get(picIndex));
+            relativeLayout.setVisibility(View.VISIBLE);
+        }
+        if (picLen == 3) {
+            mLlChoosePic.setVisibility(View.GONE);
+        }
+    }
+
+    private void setPriceTextView() {
+        mLlPriceSelect.setVisibility(View.GONE);
+        if (originalPrice == -1 && price != -1) {
+            mTvPrice.setText("￥" + String.valueOf(price));
+        } else if (originalPrice != -1 && price != -1){
+            mTvPrice.setText("￥" + String.valueOf(price) + "， 原价：￥" + String.valueOf(originalPrice));
+        }
     }
 
     // 解析封装过的Uri
@@ -476,7 +536,7 @@ public class ReleaseFragment extends BaseFragment {
     private void handleImageOnKitKat(Intent data) {
         String photoPath = null;
         Uri uri = data.getData();
-        if (DocumentsContract.isDocumentUri(mContext, uri)) {
+        if (DocumentsContract.isDocumentUri(this, uri)) {
             // 如果是document类型的Uri，则通过document id处理
             String docId = DocumentsContract.getDocumentId(uri);
             if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
@@ -495,13 +555,14 @@ public class ReleaseFragment extends BaseFragment {
             // 如果是file类型的Uri，直接获取图片路径即可
             photoPath = uri.getPath();
         }
+        photoPathList.add(photoPath);
         displayImage(photoPath); // 根据图片路径显示图片
     }
 
     private String getImagePath(Uri uri, String selection) {
         String path = null;
         // 通过Uri和selection来获取真实的图片路径
-        Cursor cursor = mContext.getContentResolver().query(uri, null, selection, null, null);
+        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
@@ -523,7 +584,7 @@ public class ReleaseFragment extends BaseFragment {
                 mLlChoosePic.setVisibility(View.GONE);
             }
         } else {
-            ToastUtil.showMsg(mContext, "读取图片失败", Toast.LENGTH_SHORT);
+            ToastUtil.showMsg(this, "读取图片失败", Toast.LENGTH_SHORT);
         }
     }
 
@@ -537,8 +598,38 @@ public class ReleaseFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         if (receiver != null) {
-            mContext.unregisterReceiver(receiver);
+            this.unregisterReceiver(receiver);
             receiver = null;
         }
+    }
+
+    private void initView() {
+        mIvBack = findViewById(R.id.iv_release_back);
+        mIvPicList.add(0, (ImageView) findViewById(R.id.iv_release_pic1));
+        mIvPicList.add(1, (ImageView) findViewById(R.id.iv_release_pic2));
+        mIvPicList.add(2, (ImageView) findViewById(R.id.iv_release_pic3));
+
+        mIvDeletePicList.add(0, (CircleImageView) findViewById(R.id.iv_release_pic1_delete));
+        mIvDeletePicList.add(1, (CircleImageView) findViewById(R.id.iv_release_pic2_delete));
+        mIvDeletePicList.add(2, (CircleImageView) findViewById(R.id.iv_release_pic3_delete));
+
+        mEtName = findViewById(R.id.et_release_name);
+        mEtDesc = findViewById(R.id.et_release_desc);
+
+        mRlPicList.add(0, (RelativeLayout) findViewById(R.id.rl_release_pic1));
+        mRlPicList.add(1, (RelativeLayout) findViewById(R.id.rl_release_pic2));
+        mRlPicList.add(2, (RelativeLayout) findViewById(R.id.rl_release_pic3));
+        mLlChoosePic = findViewById(R.id.ll_release_choosePic);
+
+        mTvPrice = findViewById(R.id.tv_release_price);
+        mTvType = findViewById(R.id.tv_release_type);
+        mTvRelease = findViewById(R.id.tv_release_release);
+
+        mEtPrice = findViewById(R.id.et_release_price);
+        mEtOriginalPrice = findViewById(R.id.et_release_orginal_price);
+        myKeyBoardView = findViewById(R.id.keyboard_view);
+        mLlPriceSelect = findViewById(R.id.ll_release_price_select);
+
+        mPb = findViewById(R.id.pb_release);
     }
 }

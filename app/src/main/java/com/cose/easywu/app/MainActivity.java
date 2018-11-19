@@ -1,29 +1,27 @@
 package com.cose.easywu.app;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.cose.easywu.R;
 import com.cose.easywu.base.ActivityCollector;
 import com.cose.easywu.base.BaseFragment;
-import com.cose.easywu.cart.fragment.CartFragment;
+import com.cose.easywu.find.fragment.FindFragment;
 import com.cose.easywu.home.fragment.HomeFragment;
 import com.cose.easywu.message.fragment.MessageFragment;
-import com.cose.easywu.release.fragment.ReleaseFragment;
+import com.cose.easywu.release.activity.ReleaseActivity;
 import com.cose.easywu.user.fragment.UserFragment;
 import com.cose.easywu.utils.HandleBackUtil;
 import com.cose.easywu.utils.ToastUtil;
+import com.cose.easywu.widget.PublishDialog;
 
 import org.litepal.LitePal;
 
@@ -33,8 +31,8 @@ import java.util.TimerTask;
 
 public class MainActivity extends FragmentActivity {
 
-    FrameLayout frameLayout;
-    RadioGroup rgMain;
+    private RadioGroup rgMain;
+    private PublishDialog publishDialog;
 
     private ArrayList<BaseFragment> fragments;
     private int position = 0;
@@ -65,21 +63,21 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
-                    case R.id.rb_home: // 主页
+                    case R.id.rb_home: // 跳蚤市场
                         position = 0;
                         break;
-                    case R.id.rb_cart: // 分类
+                    case R.id.rb_find: // 失物招领
                         position = 1;
                         break;
                     case R.id.rb_release: // 发布
-                        position = 2;
-                        hideFragmentChoose();
+                        rgMain.check(getCurrentFragmentId());
+                        showPublishDialog();
                         break;
                     case R.id.rb_message: // 发现
-                        position = 3;
+                        position = 2;
                         break;
                     case R.id.rb_user: // 用户中心
-                        position = 4;
+                        position = 3;
                         break;
                     default:
                         position = 0;
@@ -95,8 +93,47 @@ public class MainActivity extends FragmentActivity {
         rgMain.check(R.id.rb_home);
     }
 
+    private int getCurrentFragmentId() {
+        if (position == 0) {
+            return R.id.rb_home;
+        } else if (position == 1) {
+            return R.id.rb_find;
+        } else if (position == 2) {
+            return R.id.rb_message;
+        } else if (position == 3) {
+            return R.id.rb_user;
+        }
+
+        return R.id.rb_home;
+    }
+
+    private void showPublishDialog() {
+        if (publishDialog == null) {
+            publishDialog = new PublishDialog(MainActivity.this);
+            publishDialog.setFabuClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(MainActivity.this, ReleaseActivity.class));
+                    publishDialog.outDia();
+                }
+            });
+            publishDialog.setHuishouClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(MainActivity.this, "寻找失主", Toast.LENGTH_SHORT).show();
+                }
+            });
+            publishDialog.setPingguClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(MainActivity.this, "寻找失物", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        publishDialog.show();
+    }
+
     private void initView() {
-        frameLayout = findViewById(R.id.frameLayout);
         rgMain = findViewById(R.id.rg_main);
     }
 
@@ -136,11 +173,6 @@ public class MainActivity extends FragmentActivity {
         return null;
     }
 
-    // 隐藏Frgament切换选择条
-    private void hideFragmentChoose() {
-        rgMain.setVisibility(View.GONE);
-    }
-
     // 显示Frgament切换选择条，此方法供其他类调用
     public void showFragmentChoose() {
         rgMain.setVisibility(View.VISIBLE);
@@ -157,8 +189,7 @@ public class MainActivity extends FragmentActivity {
     private void initFragment() {
         fragments = new ArrayList<>();
         fragments.add(new HomeFragment());
-        fragments.add(new CartFragment());
-        fragments.add(new ReleaseFragment());
+        fragments.add(new FindFragment());
         fragments.add(new MessageFragment());
         fragments.add(new UserFragment());
     }
@@ -183,13 +214,9 @@ public class MainActivity extends FragmentActivity {
     // 重写返回键的监听
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
-            if (tempFragment instanceof ReleaseFragment) {
-                return super.onKeyDown(keyCode, event);
-            } else {
-                exitByDoubleClick();
-                return true; // 表示返回键已处理完毕
-            }
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            exitByDoubleClick();
+            return true; // 表示返回键已处理完毕
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -199,14 +226,14 @@ public class MainActivity extends FragmentActivity {
         Timer tExit = null;
         if (!isExit) {
             isExit = true;
-            ToastUtil.showMsg(MainActivity.this,"再次点击回到桌面",Toast.LENGTH_SHORT);
+            ToastUtil.showMsg(MainActivity.this, "再次点击回到桌面", Toast.LENGTH_SHORT);
             tExit = new Timer();
             tExit.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     isExit = false;//取消退出
                 }
-            },2000);// 如果2秒钟内没有按下返回键，则启动定时器取消掉刚才执行的任务
+            }, 2000);// 如果2秒钟内没有按下返回键，则启动定时器取消掉刚才执行的任务
         } else {
             // 仿返回键退出界面,但不销毁，程序仍在后台运行
             moveTaskToBack(false);

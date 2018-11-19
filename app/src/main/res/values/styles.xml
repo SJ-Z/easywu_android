@@ -17,6 +17,15 @@
         <item name="android:textSize">10sp</item>
         <item name="android:gravity">center</item>
     </style>
+    <style name="ReleaseButtonStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:button">@null</item><!--隐藏RationButton默认的样式-->
+        <item name="android:textColor">#535353</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:gravity">center</item>
+    </style>
 
     <style name="EditPhotoDialogStyle">
         <!--设置dialog的背景-->
@@ -41,6 +50,13 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="PublishDialog" parent="android:Theme.Holo.Light.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowAnimationStyle">@null</item>
     </style>
 
 </resources>

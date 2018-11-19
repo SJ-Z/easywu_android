@@ -26,6 +26,10 @@ public class NewestGridViewAdapter extends BaseAdapter {
         this.datas = newest_info;
     }
 
+    public void setDatas(List<HomeDataBean.NewestInfoBean> datas) {
+        this.datas = datas;
+    }
+
     @Override
     public int getCount() {
         return datas.size();
@@ -51,6 +55,7 @@ public class NewestGridViewAdapter extends BaseAdapter {
             viewHolder.tv_newest_item_userNick = convertView.findViewById(R.id.tv_newest_item_userNick);
             viewHolder.tv_newest_item_price = convertView.findViewById(R.id.tv_newest_item_price);
             viewHolder.tv_newest_item_name = convertView.findViewById(R.id.tv_newest_item_name);
+            viewHolder.iv_newest_item_sex = convertView.findViewById(R.id.iv_newest_item_sex);
             viewHolder.iv_newest_item_pic1 = convertView.findViewById(R.id.iv_newest_item_pic1);
             viewHolder.iv_newest_item_pic2 = convertView.findViewById(R.id.iv_newest_item_pic2);
             viewHolder.iv_newest_item_pic3 = convertView.findViewById(R.id.iv_newest_item_pic3);
@@ -65,6 +70,7 @@ public class NewestGridViewAdapter extends BaseAdapter {
         viewHolder.tv_newest_item_userNick.setText(newest_info.getG_u_nick());
         viewHolder.tv_newest_item_price.setText("￥" + newest_info.getG_price());
         viewHolder.tv_newest_item_name.setText(newest_info.getG_name());
+        viewHolder.iv_newest_item_sex.setImageResource(newest_info.getG_u_sex()==0?R.drawable.ic_female:R.drawable.ic_male);
         if (!TextUtils.isEmpty(newest_info.getG_pic1())) {
             viewHolder.iv_newest_item_pic1.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(Constant.BASE_PIC_URL + newest_info.getG_pic1())
@@ -88,6 +94,7 @@ public class NewestGridViewAdapter extends BaseAdapter {
         TextView tv_newest_item_userNick;
         TextView tv_newest_item_price;
         TextView tv_newest_item_name;
+        ImageView iv_newest_item_sex;
         ImageView iv_newest_item_pic1;
         ImageView iv_newest_item_pic2;
         ImageView iv_newest_item_pic3;

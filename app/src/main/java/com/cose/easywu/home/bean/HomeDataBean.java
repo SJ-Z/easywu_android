@@ -139,6 +139,7 @@ public class HomeDataBean {
         private String g_u_id;
         private String g_u_nick;
         private String g_u_photo;
+        private int g_u_sex;
 
         public String getG_id() {
             return g_id;
@@ -236,6 +237,14 @@ public class HomeDataBean {
             this.g_u_photo = g_u_photo;
         }
 
+        public int getG_u_sex() {
+            return g_u_sex;
+        }
+
+        public void setG_u_sex(int g_u_sex) {
+            this.g_u_sex = g_u_sex;
+        }
+
         @Override
         public String toString() {
             return "NewestInfoBean{" +
@@ -251,6 +260,7 @@ public class HomeDataBean {
                     ", g_u_id='" + g_u_id + '\'' +
                     ", g_u_nick='" + g_u_nick + '\'' +
                     ", g_u_photo='" + g_u_photo + '\'' +
+                    ", g_u_sex=" + g_u_sex +
                     '}';
         }
     }

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="@android:color/transparent"
     android:orientation="vertical">
 
     <FrameLayout
@@ -25,18 +25,18 @@
             android:id="@+id/rb_home"
             style="@style/MainButtonStyle"
             android:drawableTop="@drawable/home_bottom_selector"
-            android:text="首页" />
+            android:text="跳蚤市场" />
 
         <RadioButton
-            android:id="@+id/rb_cart"
+            android:id="@+id/rb_find"
             style="@style/MainButtonStyle"
-            android:drawableTop="@drawable/cart_bottom_selector"
-            android:text="购物车" />
+            android:drawableTop="@drawable/find_bottom_selector"
+            android:text="失物招领" />
 
         <RadioButton
             android:id="@+id/rb_release"
-            style="@style/MainButtonStyle"
-            android:drawableTop="@drawable/community_bottom_selector"
+            style="@style/ReleaseButtonStyle"
+            android:drawableTop="@drawable/main_release"
             android:text="发布" />
 
         <RadioButton

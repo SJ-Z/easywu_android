@@ -2,7 +2,9 @@ package com.cose.easywu.home.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +14,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.cose.easywu.R;
+import com.cose.easywu.db.Type;
 import com.cose.easywu.home.bean.HomeDataBean;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.NoScrollGridView;
@@ -23,9 +27,17 @@ import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
 import com.youth.banner.listener.OnBannerClickListener;
 import com.youth.banner.listener.OnLoadImageListener;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
+import org.litepal.LitePal;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
 
 public class HomeFragmentAdapter extends RecyclerView.Adapter {
 
@@ -79,6 +91,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     class NewestViewHolder extends RecyclerView.ViewHolder {
 
         private Context mContext;
+        private ImageView iv_newest_refresh;
         private TextView tv_newest_more;
         private NoScrollGridView gv_newest;
         private NewestGridViewAdapter adapter;
@@ -86,6 +99,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
         public NewestViewHolder(final Context mContext, View itemView) {
             super(itemView);
             this.mContext = mContext;
+            iv_newest_refresh = itemView.findViewById(R.id.iv_newest_refresh);
             tv_newest_more = itemView.findViewById(R.id.tv_newest_more);
             gv_newest = itemView.findViewById(R.id.gv_newest);
         }
@@ -109,6 +123,43 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
 //                    startGoodsInfoActivity(goodsBean);
                 }
             });
+
+            // 设置刷新按钮的监听
+            iv_newest_refresh.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    OkHttpUtils
+                            .get()
+                            .url(Constant.NEWEST_GOODS_URL)
+                            .build()
+                            .execute(new StringCallback()
+                            {
+                                @Override
+                                public void onError(Call call, Exception e, int id) {
+                                    Log.e("最新发布商品的数据", "请求失败，原因：" + e.getMessage());
+                                    ToastUtil.showMsgOnCenter(mContext, "刷新失败", Toast.LENGTH_SHORT);
+                                }
+
+                                @Override
+                                public void onResponse(String response, int id) {
+                                    // 解析数据
+                                    try {
+                                        Log.e("最新发布商品的数据", "请求成功");
+                                        String responseText = URLDecoder.decode(response, "utf-8");
+                                        processData(responseText);
+                                    } catch (UnsupportedEncodingException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                }
+            });
+        }
+
+        private void processData(String json) {
+            homeDataBean.setNewest_info(JSON.parseArray(json, HomeDataBean.NewestInfoBean.class));
+            adapter.setDatas(homeDataBean.getNewest_info());
+            adapter.notifyDataSetChanged();
         }
     }
 

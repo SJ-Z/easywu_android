@@ -23,6 +23,13 @@
             android:text="最新发布"
             android:textColor="#000" />
 
+        <ImageView
+            android:id="@+id/iv_newest_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_refresh"
+            android:layout_marginLeft="5dp"/>
+
         <TextView
             android:id="@+id/tv_newest_more"
             android:layout_width="wrap_content"

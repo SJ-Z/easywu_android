@@ -27,18 +27,25 @@
             android:layout_height="match_parent">
             <TextView
                 android:id="@+id/tv_newest_item_userNick"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="昵称"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
                 android:padding="2dp"/>
+            <ImageView
+                android:id="@+id/iv_newest_item_sex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_male"
+                android:layout_marginLeft="5dp"/>
             <TextView
                 android:id="@+id/tv_newest_item_price"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="right"
                 android:text="￥66"
                 android:textSize="20sp"
                 android:textStyle="bold"
