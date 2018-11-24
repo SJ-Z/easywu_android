@@ -59,6 +59,7 @@ public class NewestGridViewAdapter extends BaseAdapter {
             viewHolder.iv_newest_item_pic1 = convertView.findViewById(R.id.iv_newest_item_pic1);
             viewHolder.iv_newest_item_pic2 = convertView.findViewById(R.id.iv_newest_item_pic2);
             viewHolder.iv_newest_item_pic3 = convertView.findViewById(R.id.iv_newest_item_pic3);
+            viewHolder.tv_newest_item_like = convertView.findViewById(R.id.tv_newest_item_like);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -71,6 +72,7 @@ public class NewestGridViewAdapter extends BaseAdapter {
         viewHolder.tv_newest_item_price.setText("￥" + newest_info.getG_price());
         viewHolder.tv_newest_item_name.setText(newest_info.getG_name());
         viewHolder.iv_newest_item_sex.setImageResource(newest_info.getG_u_sex()==0?R.drawable.ic_female:R.drawable.ic_male);
+        viewHolder.tv_newest_item_like.setText(String.valueOf(newest_info.getG_like()));
         if (!TextUtils.isEmpty(newest_info.getG_pic1())) {
             viewHolder.iv_newest_item_pic1.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(Constant.BASE_PIC_URL + newest_info.getG_pic1())
@@ -105,5 +107,6 @@ public class NewestGridViewAdapter extends BaseAdapter {
         ImageView iv_newest_item_pic1;
         ImageView iv_newest_item_pic2;
         ImageView iv_newest_item_pic3;
+        TextView tv_newest_item_like;
     }
 }

@@ -20,6 +20,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -92,6 +93,8 @@ public class ReleaseActivity extends BaseActivity {
     private List<String> photoPathList = new ArrayList<>();
 
     private BroadcastReceiver receiver;
+    private LocalBroadcastManager localBroadcastManager;
+
     private Type type;
     private double price = -1;
     private double originalPrice = -1;
@@ -126,9 +129,9 @@ public class ReleaseActivity extends BaseActivity {
                     mRlPicList.get(index).setVisibility(View.GONE);
                     mLlChoosePic.setVisibility(View.VISIBLE);
                     if (photoBitmapList.size() > 1) {
-                        photoBitmapList.remove(index<=picIndex?index:index-photoBitmapList.size());
-                        photoFileList.remove(index<=picIndex?index:index-photoFileList.size());
-                        photoPathList.remove(index<=picIndex?index:index-photoPathList.size());
+                        photoBitmapList.remove(index <= picIndex ? index : index - photoBitmapList.size());
+                        photoFileList.remove(index <= picIndex ? index : index - photoFileList.size());
+                        photoPathList.remove(index <= picIndex ? index : index - photoPathList.size());
                     } else {
                         photoBitmapList.remove(0);
                         photoFileList.remove(0);
@@ -239,124 +242,64 @@ public class ReleaseActivity extends BaseActivity {
         params.put("g_u_id", pref.getString("u_id", ""));
 
         int len = photoBitmapList.size();
-        if (len > 0) { // 带图片上传
-            List<String> keys = new ArrayList<>();
-            List<String> filenames = new ArrayList<>();
-            List<File> files = new ArrayList<>();
-            for (int i = 0; i < len; i++) {
-                keys.add("pic" + i);
-                filenames.add(photoFileList.get(i).getName());
-                files.add(photoFileList.get(i));
-            }
 
-            HttpUtil.upLoadImageListToServer(Constant.RELEASE_GOODS_URL, keys, filenames, files, params,
-                    new StringCallback() {
-                        @Override
-                        public void onError(Call call, Exception e, int id) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mPb.setVisibility(View.GONE);
-                                    ToastUtil.showMsgOnCenter(ReleaseActivity.this, "发布失败", Toast.LENGTH_SHORT);
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onResponse(String response, int id) {
-                            final BaseMsg msg;
-                            try {
-                                String responseText = URLDecoder.decode(response, "utf-8");
-                                msg = Utility.handleBaseMsgResponse(responseText);
-                            } catch (UnsupportedEncodingException e) {
-                                e.printStackTrace();
-                                return;
-                            }
-
-                            if (msg == null) {
-                                return;
-                            }
-                            if (msg.getCode().equals("1")) {
-                                mPb.setVisibility(View.GONE);
-                                clearUIData();
-                                clearReleaseContent();
-                                finish();
-                                ToastUtil.showMsgOnCenter(ReleaseActivity.this, "发布成功", Toast.LENGTH_SHORT);
-                            } else if (msg.getCode().equals("0")) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mPb.setVisibility(View.GONE);
-                                        ToastUtil.showMsgOnCenter(ReleaseActivity.this,
-                                                msg.getMsg(), Toast.LENGTH_SHORT);
-                                    }
-                                });
-                            }
-                        }
-                    });
-        } else { // 不带图片上传
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("g_name", params.get("g_name"));
-                jsonObject.put("g_desc", params.get("g_desc"));
-                jsonObject.put("g_price", params.get("g_price"));
-                jsonObject.put("g_originalPrice", params.get("g_originalPrice"));
-                jsonObject.put("g_t_id", params.get("g_t_id"));
-                jsonObject.put("g_u_id", params.get("g_u_id"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-                System.out.println("上传闲置物品，参数转换失败");
-            }
-            HttpUtil.sendPostRequest(Constant.RELEASE_GOODS_WITHOUT_PIC_URL, jsonObject.toString(),
-                    new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mPb.setVisibility(View.GONE);
-                                    ToastUtil.showMsgOnCenter(ReleaseActivity.this, "发布失败", Toast.LENGTH_SHORT);
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            if (null == response.body()) {
-                                return;
-                            }
-
-                            String responseText = URLDecoder.decode(response.body().string(), "utf-8");
-                            final BaseMsg msg = Utility.handleBaseMsgResponse(responseText);
-                            if (null == msg) {
-                                return;
-                            }
-                            if (msg.getCode().equals("0")) { // 发布失败
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mPb.setVisibility(View.GONE);
-                                        ToastUtil.showMsgOnCenter(ReleaseActivity.this,
-                                                msg.getMsg(), Toast.LENGTH_SHORT);
-                                    }
-                                });
-                            } else if (msg.getCode().equals("1")) { // 发布成功
-                                // 界面跳转页面
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mPb.setVisibility(View.GONE);
-                                        clearUIData();
-                                        clearReleaseContent();
-                                        finish();
-                                        ToastUtil.showMsgOnCenter(ReleaseActivity.this, "发布成功", Toast.LENGTH_SHORT);
-                                    }
-                                });
-                            }
-                        }
-                    });
+        List<String> keys = new ArrayList<>();
+        List<String> filenames = new ArrayList<>();
+        List<File> files = new ArrayList<>();
+        for (int i = 0; i < len; i++) {
+            keys.add("pic" + i);
+            filenames.add(photoFileList.get(i).getName());
+            files.add(photoFileList.get(i));
         }
 
+        HttpUtil.upLoadImageListToServer(Constant.RELEASE_GOODS_URL, keys, filenames, files, params,
+                new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mPb.setVisibility(View.GONE);
+                                ToastUtil.showMsgOnCenter(ReleaseActivity.this, "发布失败", Toast.LENGTH_SHORT);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        final BaseMsg msg;
+                        try {
+                            String responseText = URLDecoder.decode(response, "utf-8");
+                            msg = Utility.handleBaseMsgResponse(responseText);
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                            return;
+                        }
+
+                        if (msg == null) {
+                            return;
+                        }
+                        if (msg.getCode().equals("1")) {
+                            mPb.setVisibility(View.GONE);
+                            clearUIData();
+                            clearReleaseContent();
+                            // 发送广播
+                            localBroadcastManager.sendBroadcast(new Intent(Constant.RELEASE_NEW_RELEASE));
+
+                            finish();
+                            ToastUtil.showMsgOnCenter(ReleaseActivity.this, "发布成功", Toast.LENGTH_SHORT);
+                        } else if (msg.getCode().equals("0")) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mPb.setVisibility(View.GONE);
+                                    ToastUtil.showMsgOnCenter(ReleaseActivity.this,
+                                            msg.getMsg(), Toast.LENGTH_SHORT);
+                                }
+                            });
+                        }
+                    }
+                });
     }
 
     private boolean checkContent() {
@@ -374,6 +317,10 @@ public class ReleaseActivity extends BaseActivity {
         }
         if (type == null) {
             ToastUtil.showMsgOnCenter(this, "必须选择物品分类", Toast.LENGTH_SHORT);
+            return false;
+        }
+        if (photoBitmapList.size() < 1) {
+            ToastUtil.showMsgOnCenter(this, "请至少上传一张图片", Toast.LENGTH_SHORT);
             return false;
         }
 
@@ -464,7 +411,7 @@ public class ReleaseActivity extends BaseActivity {
     // 验证价格
     private boolean validate() {
         if (TextUtils.isEmpty(mEtPrice.getText().toString())) {
-            ToastUtil.showMsgOnCenter(this, "价格不能为空",  Toast.LENGTH_SHORT);
+            ToastUtil.showMsgOnCenter(this, "价格不能为空", Toast.LENGTH_SHORT);
             return false;
         }
         try {
@@ -540,9 +487,11 @@ public class ReleaseActivity extends BaseActivity {
         pref = PreferenceManager.getDefaultSharedPreferences(this);
         editor = pref.edit();
         u_id = pref.getString("u_id", "");
+
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
         // 注册广播
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("com.cose.easywu.release.chooseType");
+        intentFilter.addAction(Constant.RELEASE_CHOOSE_TYPE);
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -552,7 +501,7 @@ public class ReleaseActivity extends BaseActivity {
                 mTvType.setText(type.getT_name());
             }
         };
-        registerReceiver(receiver, intentFilter);
+        localBroadcastManager.registerReceiver(receiver, intentFilter);
 
         // 如果上次有保存的内容，则加载到界面上
         if (pref.getBoolean(u_id + "_hasSaveContent", false)) {
@@ -598,7 +547,7 @@ public class ReleaseActivity extends BaseActivity {
         mLlPriceSelect.setVisibility(View.GONE);
         if (originalPrice == -1 && price != -1) {
             mTvPrice.setText("￥" + String.valueOf(price));
-        } else if (originalPrice != -1 && price != -1){
+        } else if (originalPrice != -1 && price != -1) {
             mTvPrice.setText("￥" + String.valueOf(price) + "， 原价：￥" + String.valueOf(originalPrice));
         }
     }
@@ -670,7 +619,7 @@ public class ReleaseActivity extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
         if (receiver != null) {
-            this.unregisterReceiver(receiver);
+            localBroadcastManager.unregisterReceiver(receiver);
             receiver = null;
         }
     }

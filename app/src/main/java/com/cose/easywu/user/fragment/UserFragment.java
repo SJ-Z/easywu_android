@@ -19,6 +19,7 @@ import com.cose.easywu.app.LoginActivity;
 import com.cose.easywu.base.ActivityCollector;
 import com.cose.easywu.base.BaseFragment;
 import com.cose.easywu.base.MyApplication;
+import com.cose.easywu.db.Goods;
 import com.cose.easywu.gson.User;
 import com.cose.easywu.gson.msg.PersonMsg;
 import com.cose.easywu.user.activity.EditUserInfoActivity;
@@ -69,6 +70,9 @@ public class UserFragment extends BaseFragment {
             Bitmap photo = ImageUtils.getPhotoFromStorage(dbUser.getU_id());
             Glide.with(this).load(photo).into(mIvPhoto);
         }
+        // 更新收藏的商品数量
+        int likeGoodsCount = LitePal.findAll(Goods.class).size();
+        mTvMylikeCount.setText(String.valueOf(likeGoodsCount));
         // 设置缓存数据
         mTvCacheSize.setText(CacheUtils.getTotalCacheSize(MyApplication.getContext()));
     }

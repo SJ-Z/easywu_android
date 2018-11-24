@@ -2,6 +2,11 @@ package com.cose.easywu.utils;
 
 public class Constant {
 
+    // 广播
+    public static String RELEASE_CHOOSE_TYPE = "com.cose.easywu.release.chooseType";
+    public static String RELEASE_NEW_RELEASE = "com.cose.easywu.release.newRelease";
+
+    // 服务器地址
 //    public static String BASE_URL = "http://10.0.2.2:8080/easywu";
     public static String BASE_URL = "http://172.20.10.8:8080/easywu";
     public static String BASE_PHOTO_URL = BASE_URL + "/user_photo/";
@@ -19,8 +24,8 @@ public class Constant {
     public static String EDITPHOTO_URL = BASE_URL + "/user/editPhoto"; // 修改头像
 
     public static String HOME_URL = BASE_URL + "/home/home"; // 主页
-    public static String RELEASE_GOODS_URL = BASE_URL + "/home/release_goods"; // 发布闲置（有图片）
-    public static String RELEASE_GOODS_WITHOUT_PIC_URL = BASE_URL + "/home/release_goods_without_pic"; // 发布闲置（无图片）
-    public static String NEWEST_GOODS_URL = BASE_URL + "/home/newestGoods"; // 最新发布的闲置商品
+    public static String RELEASE_GOODS_URL = BASE_URL + "/goods/release_goods"; // 发布闲置
+    public static String NEWEST_GOODS_URL = BASE_URL + "/goods/newestGoods"; // 最新发布的闲置商品
+    public static String SET_LIKE_GOODS_URL = BASE_URL + "/goods/setLikeGoods"; // 修改收藏的商品
 
 }

@@ -2,6 +2,7 @@ package com.cose.easywu.release.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -11,6 +12,7 @@ import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
 import com.cose.easywu.db.Type;
 import com.cose.easywu.release.util.ListViewForScrollView;
+import com.cose.easywu.utils.Constant;
 
 import org.litepal.LitePal;
 
@@ -24,6 +26,8 @@ public class ChooseTypeActivity extends BaseActivity {
     private ArrayAdapter<String> adapter;
     private List<String> dataList = new ArrayList<>();
     private List<Type> typeList;
+
+    private LocalBroadcastManager localBroadcastManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +49,11 @@ public class ChooseTypeActivity extends BaseActivity {
         mLvType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent("com.cose.easywu.release.chooseType");
+                Intent intent = new Intent(Constant.RELEASE_CHOOSE_TYPE);
                 intent.putExtra("type_id", typeList.get(position).getT_id());
                 intent.putExtra("type_name", typeList.get(position).getT_name());
                 intent.putExtra("type_pic", typeList.get(position).getT_pic());
-                sendBroadcast(intent);
+                localBroadcastManager.sendBroadcast(intent);
                 finish();
             }
         });
@@ -62,6 +66,8 @@ public class ChooseTypeActivity extends BaseActivity {
             dataList.add(type.getT_name());
         }
         adapter.notifyDataSetChanged();
+
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
     }
 
     private void initView() {

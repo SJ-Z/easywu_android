@@ -143,7 +143,7 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
                     @Override
                     public void run() {
                         progressDialog.dismiss();
-                        ToastUtil.showMsg(RegistActivity.this, "注册失败", Toast.LENGTH_SHORT);
+                        ToastUtil.showMsgOnCenter(RegistActivity.this, "注册失败", Toast.LENGTH_SHORT);
                     }
                 });
             }
@@ -164,7 +164,7 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
                         @Override
                         public void run() {
                             progressDialog.dismiss();
-                            ToastUtil.showMsg(RegistActivity.this, msg.getMsg(), Toast.LENGTH_SHORT);
+                            ToastUtil.showMsgOnCenter(RegistActivity.this, msg.getMsg(), Toast.LENGTH_SHORT);
                         }
                     });
                 } else if (msg.getCode().equals("1")) { // 注册成功
@@ -181,7 +181,7 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
                             progressDialog.dismiss();
                             startActivity(new Intent(RegistActivity.this, LoginActivity.class));
                             finish();
-                            ToastUtil.showMsg(RegistActivity.this, msg.getMsg(), Toast.LENGTH_SHORT);
+                            ToastUtil.showMsgOnCenter(RegistActivity.this, msg.getMsg(), Toast.LENGTH_SHORT);
                         }
                     });
                 }

@@ -1,8 +1,8 @@
 package com.cose.easywu.home.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.cose.easywu.R;
-import com.cose.easywu.db.Type;
+import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.home.bean.HomeDataBean;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.NoScrollGridView;
@@ -29,8 +29,6 @@ import com.youth.banner.listener.OnBannerClickListener;
 import com.youth.banner.listener.OnLoadImageListener;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
-
-import org.litepal.LitePal;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -51,6 +49,8 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     private Context mContext;
     private HomeDataBean homeDataBean;
     private LayoutInflater mLayoutInflater; // 用于初始化布局
+
+    private NewestViewHolder newestViewHolder;
 
     public HomeFragmentAdapter(Context mContext, HomeDataBean homeDataBean) {
         this.mContext = mContext;
@@ -83,7 +83,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             TypeViewHolder typeViewHolder = (TypeViewHolder) holder;
             typeViewHolder.setData(homeDataBean.getType_info());
         } else if (getItemViewType(position) == NEWEST) {
-            NewestViewHolder newestViewHolder = (NewestViewHolder) holder;
+            newestViewHolder = (NewestViewHolder) holder;
             newestViewHolder.setData(homeDataBean.getNewest_info());
         }
     }
@@ -112,15 +112,9 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             gv_newest.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    ToastUtil.showMsgOnCenter(mContext, "goods_name=" + newest_info.get(position).getG_name(), Toast.LENGTH_SHORT);
-//                    HomeDataBean.NewestInfoBean newestInfoBean = newest_info.get(position);
-//                    // 商品信息类
-//                    GoodsBean goodsBean = new GoodsBean();
-//                    goodsBean.setCover_price(hotInfoBean.getCover_price());
-//                    goodsBean.setFigure(hotInfoBean.getFigure());
-//                    goodsBean.setName(hotInfoBean.getName());
-//                    goodsBean.setProduct_id(hotInfoBean.getProduct_id());
-//                    startGoodsInfoActivity(goodsBean);
+                    HomeDataBean.NewestInfoBean newestInfoBean = homeDataBean.getNewest_info().get(position);
+                    // 商品信息类
+                    startGoodsInfoActivity(newestInfoBean);
                 }
             });
 
@@ -128,32 +122,36 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             iv_newest_refresh.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    OkHttpUtils
-                            .get()
-                            .url(Constant.NEWEST_GOODS_URL)
-                            .build()
-                            .execute(new StringCallback()
-                            {
-                                @Override
-                                public void onError(Call call, Exception e, int id) {
-                                    Log.e("最新发布商品的数据", "请求失败，原因：" + e.getMessage());
-                                    ToastUtil.showMsgOnCenter(mContext, "刷新失败", Toast.LENGTH_SHORT);
-                                }
-
-                                @Override
-                                public void onResponse(String response, int id) {
-                                    // 解析数据
-                                    try {
-                                        Log.e("最新发布商品的数据", "请求成功");
-                                        String responseText = URLDecoder.decode(response, "utf-8");
-                                        processData(responseText);
-                                    } catch (UnsupportedEncodingException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
+                    requestNewestGoods();
                 }
             });
+        }
+
+        public void requestNewestGoods() {
+            OkHttpUtils
+                    .get()
+                    .url(Constant.NEWEST_GOODS_URL)
+                    .build()
+                    .execute(new StringCallback()
+                    {
+                        @Override
+                        public void onError(Call call, Exception e, int id) {
+                            Log.e("最新发布商品的数据", "请求失败，原因：" + e.getMessage());
+                            ToastUtil.showMsgOnCenter(mContext, "刷新失败", Toast.LENGTH_SHORT);
+                        }
+
+                        @Override
+                        public void onResponse(String response, int id) {
+                            // 解析数据
+                            try {
+                                Log.e("最新发布商品的数据", "请求成功");
+                                String responseText = URLDecoder.decode(response, "utf-8");
+                                processData(responseText);
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
         }
 
         private void processData(String json) {
@@ -226,6 +224,17 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
                 }
             });
         }
+    }
+
+    public void requestNewestGoods() {
+        newestViewHolder.requestNewestGoods();
+    }
+
+    // 启动商品详情页面
+    private void startGoodsInfoActivity(HomeDataBean.NewestInfoBean goods) {
+        Intent intent = new Intent(mContext, GoodsInfoActivity.class);
+        intent.putExtra(GOODS_BEAN, goods);
+        mContext.startActivity(intent);
     }
 
     @Override

@@ -1,7 +1,10 @@
 package com.cose.easywu.home.bean;
 
+import com.cose.easywu.db.Goods;
 import com.cose.easywu.gson.User;
 
+import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 public class HomeDataBean {
@@ -15,6 +18,7 @@ public class HomeDataBean {
     private List<BannerInfoBean> banner_info;
     private List<TypeInfoBean> type_info;
     private List<NewestInfoBean> newest_info;
+    private List<Goods> goodsLikeList;
 
     public List<BannerInfoBean> getBanner_info() {
         return banner_info;
@@ -38,6 +42,14 @@ public class HomeDataBean {
 
     public void setNewest_info(List<NewestInfoBean> newest_info) {
         this.newest_info = newest_info;
+    }
+
+    public List<Goods> getGoodsLikeList() {
+        return goodsLikeList;
+    }
+
+    public void setGoodsLikeList(List<Goods> goodsLikeList) {
+        this.goodsLikeList = goodsLikeList;
     }
 
     public static class BannerInfoBean {
@@ -126,7 +138,7 @@ public class HomeDataBean {
         }
     }
 
-    public static class NewestInfoBean {
+    public static class NewestInfoBean implements Serializable {
         private String g_id;
         private String g_name;
         private String g_desc;
@@ -135,7 +147,9 @@ public class HomeDataBean {
         private String g_pic1;
         private String g_pic2;
         private String g_pic3;
+        private int g_state;
         private int g_like;
+        private Date g_updateTime;
         private String g_u_id;
         private String g_u_nick;
         private String g_u_photo;
@@ -205,6 +219,14 @@ public class HomeDataBean {
             this.g_pic3 = g_pic3;
         }
 
+        public int getG_state() {
+            return g_state;
+        }
+
+        public void setG_state(int g_state) {
+            this.g_state = g_state;
+        }
+
         public int getG_like() {
             return g_like;
         }
@@ -245,6 +267,14 @@ public class HomeDataBean {
             this.g_u_sex = g_u_sex;
         }
 
+        public Date getG_updateTime() {
+            return g_updateTime;
+        }
+
+        public void setG_updateTime(Date g_updateTime) {
+            this.g_updateTime = g_updateTime;
+        }
+
         @Override
         public String toString() {
             return "NewestInfoBean{" +
@@ -256,7 +286,9 @@ public class HomeDataBean {
                     ", g_pic1='" + g_pic1 + '\'' +
                     ", g_pic2='" + g_pic2 + '\'' +
                     ", g_pic3='" + g_pic3 + '\'' +
+                    ", g_state=" + g_state +
                     ", g_like=" + g_like +
+                    ", g_updateTime=" + g_updateTime +
                     ", g_u_id='" + g_u_id + '\'' +
                     ", g_u_nick='" + g_u_nick + '\'' +
                     ", g_u_photo='" + g_u_photo + '\'' +
