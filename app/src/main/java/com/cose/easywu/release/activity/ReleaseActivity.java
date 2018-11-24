@@ -43,6 +43,7 @@ import com.cose.easywu.db.Type;
 import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.release.util.KeyboardUtil;
 import com.cose.easywu.release.util.MyKeyBoardView;
+import com.cose.easywu.utils.CacheUtils;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
 import com.cose.easywu.utils.ImageUtils;
@@ -618,6 +619,7 @@ public class ReleaseActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        CacheUtils.clearImageAllCache(this);
         if (receiver != null) {
             localBroadcastManager.unregisterReceiver(receiver);
             receiver = null;

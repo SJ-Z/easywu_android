@@ -69,6 +69,7 @@
                 android:id="@+id/iv_newest_item_pic1"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_loading_pic"
                 android:layout_marginRight="10dp"
                 android:visibility="visible"/>
@@ -76,6 +77,7 @@
                 android:id="@+id/iv_newest_item_pic2"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_loading_pic"
                 android:layout_marginRight="10dp"
                 android:visibility="gone"/>
@@ -83,6 +85,7 @@
                 android:id="@+id/iv_newest_item_pic3"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_loading_pic"
                 android:visibility="gone"/>
         </LinearLayout>

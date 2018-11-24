@@ -14,12 +14,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.app.LoginActivity;
 import com.cose.easywu.base.ActivityCollector;
 import com.cose.easywu.base.BaseFragment;
 import com.cose.easywu.base.MyApplication;
-import com.cose.easywu.db.Goods;
+import com.cose.easywu.db.LikeGoods;
 import com.cose.easywu.gson.User;
 import com.cose.easywu.gson.msg.PersonMsg;
 import com.cose.easywu.user.activity.EditUserInfoActivity;
@@ -65,13 +66,17 @@ public class UserFragment extends BaseFragment {
             mTvNick.setText(dbUser.getU_nick());
             mIvSex.setImageResource(dbUser.getU_sex() == 0 ? R.drawable.ic_female : R.drawable.ic_male);
             if (!TextUtils.isEmpty(dbUser.getU_photo())) {
-                Glide.with(mContext).load(Constant.BASE_PHOTO_URL + dbUser.getU_photo()).into(mIvPhoto);
+                Glide.with(mContext).load(Constant.BASE_PHOTO_URL + dbUser.getU_photo())
+                        .apply(new RequestOptions().placeholder(R.drawable.nav_icon))
+                        .into(mIvPhoto);
             }
             Bitmap photo = ImageUtils.getPhotoFromStorage(dbUser.getU_id());
-            Glide.with(this).load(photo).into(mIvPhoto);
+            Glide.with(this).load(photo)
+                    .apply(new RequestOptions().placeholder(R.drawable.nav_icon))
+                    .into(mIvPhoto);
         }
         // 更新收藏的商品数量
-        int likeGoodsCount = LitePal.findAll(Goods.class).size();
+        int likeGoodsCount = LitePal.findAll(LikeGoods.class).size();
         mTvMylikeCount.setText(String.valueOf(likeGoodsCount));
         // 设置缓存数据
         mTvCacheSize.setText(CacheUtils.getTotalCacheSize(MyApplication.getContext()));
@@ -132,7 +137,9 @@ public class UserFragment extends BaseFragment {
                 @Override
                 public void run() {
                     Log.i("加载用户头像", "本地加载头像");
-                    Glide.with(getActivity()).load(bitmap).into(mIvPhoto);
+                    Glide.with(getActivity()).load(bitmap)
+                            .apply(new RequestOptions().placeholder(R.drawable.nav_icon))
+                            .into(mIvPhoto);
                 }
             });
         } else {
@@ -181,7 +188,9 @@ public class UserFragment extends BaseFragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Glide.with(getActivity()).load(bitmap).into(mIvPhoto);
+                                    Glide.with(getActivity()).load(bitmap)
+                                            .apply(new RequestOptions().placeholder(R.drawable.nav_icon))
+                                            .into(mIvPhoto);
                                 }
                             });
                             Log.i("加载用户头像", "从服务器加载头像");

@@ -2,6 +2,10 @@ package com.cose.easywu.utils;
 
 import android.content.Context;
 import android.os.Environment;
+import android.os.Looper;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.cache.ExternalPreferredCacheDiskCacheFactory;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -11,6 +15,51 @@ import java.math.BigDecimal;
  *
  */
 public class CacheUtils {
+
+    /**
+     * 清除图片磁盘缓存
+     */
+    public static void clearImageDiskCache(final Context context) {
+        try {
+            if (Looper.myLooper() == Looper.getMainLooper()) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Glide.get(context).clearDiskCache();
+                    }
+                }).start();
+            } else {
+                Glide.get(context).clearDiskCache();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 清除图片内存缓存
+     */
+    public static void clearImageMemoryCache(Context context) {
+        try {
+            if (Looper.myLooper() == Looper.getMainLooper()) { //只能在主线程执行
+                Glide.get(context).clearMemory();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 清除图片所有缓存
+     */
+    public static void clearImageAllCache(Context context) {
+        clearImageDiskCache(context);
+        clearImageMemoryCache(context);
+        String ImageExternalCatchDir = context.getExternalCacheDir() +
+                ExternalPreferredCacheDiskCacheFactory.DEFAULT_DISK_CACHE_DIR;
+        deleteDir(new File(ImageExternalCatchDir));
+    }
+
 
     /**
      * @param context
@@ -41,6 +90,7 @@ public class CacheUtils {
                 success = false;
             }
         }
+        clearImageMemoryCache(context);
 
         return success;
     }
@@ -63,7 +113,6 @@ public class CacheUtils {
         if (dir == null) {
             return true;
         } else {
-
             return dir.delete();
         }
     }

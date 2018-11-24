@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
 import com.cose.easywu.db.User;
@@ -65,7 +66,9 @@ public class EditUserInfoActivity extends BaseActivity implements View.OnClickLi
 
         if (!TextUtils.isEmpty(user.getU_photo())) {
             Bitmap bitmap = ImageUtils.getPhotoFromStorage(user.getU_id());
-            Glide.with(this).load(bitmap).into(mIvPhoto);
+            Glide.with(this).load(bitmap)
+                    .apply(new RequestOptions().placeholder(R.drawable.nav_icon))
+                    .into(mIvPhoto);
         }
         mTvNick.setText(user.getU_nick());
         mTvEmail.setText(user.getU_email());

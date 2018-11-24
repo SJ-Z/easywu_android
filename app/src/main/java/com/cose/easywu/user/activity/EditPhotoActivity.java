@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.base.ActivityCollector;
 import com.cose.easywu.db.User;
@@ -83,7 +84,9 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
         user = LitePal.where("u_id=?", u_id).findFirst(User.class);
         if (!TextUtils.isEmpty(user.getU_photo())) {
             Bitmap bitmap = ImageUtils.getPhotoFromStorage(user.getU_id());
-            Glide.with(this).load(bitmap).into(mIvPhoto);
+            Glide.with(this).load(bitmap)
+                    .apply(new RequestOptions().placeholder(R.drawable.nav_icon))
+                    .into(mIvPhoto);
         }
     }
 
@@ -223,7 +226,9 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
                     try {
                         // 将拍摄的照片显示出来
                         photoBitmap = ImageUtils.getBitmapFromUri(this, photoUri, 80, 80);
-                        Glide.with(this).load(photoBitmap).into(mIvPhoto);
+                        Glide.with(this).load(photoBitmap)
+                                .apply(new RequestOptions().placeholder(R.drawable.nav_icon))
+                                .into(mIvPhoto);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -275,7 +280,9 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
         if (photoPath != null) {
             photoFile = new File(photoPath);
             photoBitmap = ImageUtils.getBitmapFromPath(photoPath, 80, 80);
-            Glide.with(this).load(photoBitmap).into(mIvPhoto);
+            Glide.with(this).load(photoBitmap)
+                    .apply(new RequestOptions().placeholder(R.drawable.nav_icon))
+                    .into(mIvPhoto);
         } else {
             ToastUtil.showMsg(this, "读取图片失败", Toast.LENGTH_SHORT);
         }

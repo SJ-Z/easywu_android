@@ -2,23 +2,19 @@ package com.cose.easywu.home.activity;
 
 import android.content.SharedPreferences;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
-import com.cose.easywu.app.RegistActivity;
 import com.cose.easywu.base.BaseActivity;
-import com.cose.easywu.db.Goods;
+import com.cose.easywu.db.LikeGoods;
 import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.home.adapter.HomeFragmentAdapter;
 import com.cose.easywu.home.bean.HomeDataBean;
@@ -27,7 +23,6 @@ import com.cose.easywu.utils.DateUtil;
 import com.cose.easywu.utils.HttpUtil;
 import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
-import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +30,6 @@ import org.litepal.LitePal;
 
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import okhttp3.Call;
@@ -51,7 +45,7 @@ public class GoodsInfoActivity extends BaseActivity {
 
     private SharedPreferences pref;
     private HomeDataBean.NewestInfoBean goods;
-    private Goods likeGoods;
+    private LikeGoods likeGoods;
     private boolean like = false;
 
     @Override
@@ -83,7 +77,7 @@ public class GoodsInfoActivity extends BaseActivity {
                 } else {
                     like = true;
                     mIvLike.setImageResource(R.drawable.ic_goods_like_press);
-                    likeGoods = new Goods(goods.getG_id(), goods.getG_name(), goods.getG_desc(), goods.getG_price(),
+                    likeGoods = new LikeGoods(goods.getG_id(), goods.getG_name(), goods.getG_desc(), goods.getG_price(),
                             goods.getG_originalPrice(), goods.getG_pic1(), goods.getG_pic2(), goods.getG_pic3(),
                             goods.getG_state(), goods.getG_like(), goods.getG_updateTime(), goods.getG_u_id(),
                             goods.getG_u_nick(), goods.getG_u_photo(), goods.getG_u_sex());
@@ -121,7 +115,7 @@ public class GoodsInfoActivity extends BaseActivity {
                 public void onFailure(Call call, IOException e) {
                     if (like) {
                         mIvLike.setImageResource(R.drawable.ic_goods_like);
-                        ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "添加收藏失败", Toast.LENGTH_SHORT);
+                        ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "收藏失败", Toast.LENGTH_SHORT);
                     } else {
                         mIvLike.setImageResource(R.drawable.ic_goods_like_press);
                         ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "取消收藏失败", Toast.LENGTH_SHORT);
@@ -142,7 +136,13 @@ public class GoodsInfoActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, msg.getMsg(), Toast.LENGTH_SHORT);
+                            if (like) {
+                                ToastUtil.showImageToast(GoodsInfoActivity.this, msg.getMsg(),
+                                        R.drawable.ic_goods_like_press, Toast.LENGTH_SHORT);
+                            } else {
+                                ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, msg.getMsg(),
+                                        Toast.LENGTH_SHORT);
+                            }
                         }
                     });
                 }
@@ -157,16 +157,24 @@ public class GoodsInfoActivity extends BaseActivity {
         goods = (HomeDataBean.NewestInfoBean) getIntent().getSerializableExtra(HomeFragmentAdapter.GOODS_BEAN);
         if (goods != null) {
             // 加载图片
-            Glide.with(this).load(Constant.BASE_PHOTO_URL + goods.getG_u_photo()).into(mIvUserPhoto);
+            Glide.with(this).load(Constant.BASE_PHOTO_URL + goods.getG_u_photo())
+                    .apply(new RequestOptions().placeholder(R.drawable.nav_icon))
+                    .into(mIvUserPhoto);
             Glide.with(this).load(goods.getG_u_sex()==0?R.drawable.ic_female:R.drawable.ic_male).into(mIvUserSex);
-            Glide.with(this).load(Constant.BASE_PIC_URL + goods.getG_pic1()).into(mIvGoodsPic1);
+            Glide.with(this).load(Constant.BASE_PIC_URL + goods.getG_pic1())
+                    .apply(new RequestOptions().placeholder(R.drawable.pic_loading_goods))
+                    .into(mIvGoodsPic1);
             if (goods.getG_pic2() != null) {
-                Glide.with(this).load(Constant.BASE_PIC_URL + goods.getG_pic2()).into(mIvGoodsPic2);
+                Glide.with(this).load(Constant.BASE_PIC_URL + goods.getG_pic2())
+                        .apply(new RequestOptions().placeholder(R.drawable.pic_loading_goods))
+                        .into(mIvGoodsPic2);
             } else {
                 mIvGoodsPic2.setVisibility(View.GONE);
             }
             if (goods.getG_pic3() != null) {
-                Glide.with(this).load(Constant.BASE_PIC_URL + goods.getG_pic3()).into(mIvGoodsPic3);
+                Glide.with(this).load(Constant.BASE_PIC_URL + goods.getG_pic3())
+                        .apply(new RequestOptions().placeholder(R.drawable.pic_loading_goods))
+                        .into(mIvGoodsPic3);
             } else {
                 mIvGoodsPic3.setVisibility(View.GONE);
             }
@@ -184,7 +192,7 @@ public class GoodsInfoActivity extends BaseActivity {
             mTvMsgNum.setText("0"); // 设置留言数量
 
             // 检测是否已收藏该商品
-            likeGoods = LitePal.where("g_id=?", goods.getG_id()).findFirst(Goods.class);
+            likeGoods = LitePal.where("g_id=?", goods.getG_id()).findFirst(LikeGoods.class);
             if (likeGoods != null) {
                 like = true;
                 mIvLike.setImageResource(R.drawable.ic_goods_like_press);

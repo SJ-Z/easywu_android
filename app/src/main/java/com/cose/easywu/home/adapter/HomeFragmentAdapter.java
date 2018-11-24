@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,9 +40,10 @@ import okhttp3.Call;
 
 public class HomeFragmentAdapter extends RecyclerView.Adapter {
 
-    public static final int BANNER = 0; // 广告条幅类型
-    public static final int TYPE = 1; // 分类类型
-    public static final int NEWEST = 2; // 最近发布类型
+    public static final int SEARCHBAR = 0;
+    public static final int BANNER = 1; // 广告条幅类型
+    public static final int TYPE = 2; // 分类类型
+    public static final int NEWEST = 3; // 最近发布类型
 
     public static final String GOODS_BEAN = "goodsBean";
 
@@ -61,7 +63,10 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == BANNER) {
+        if (viewType == SEARCHBAR) {
+            return new SearchBarViewHolder(mContext, mLayoutInflater.
+                    inflate(R.layout.layout_searchbar, null));
+        } else if (viewType == BANNER) {
             return new BannerViewHolder(mContext, mLayoutInflater.
                     inflate(R.layout.banner_viewpager, null));
         } else if (viewType == TYPE) {
@@ -76,7 +81,10 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (getItemViewType(position) == BANNER) {
+        if (getItemViewType(position) == SEARCHBAR) {
+            SearchBarViewHolder searchBarViewHolder = (SearchBarViewHolder) holder;
+            searchBarViewHolder.init();
+        } else if (getItemViewType(position) == BANNER) {
             BannerViewHolder bannerViewHolder = (BannerViewHolder) holder;
             bannerViewHolder.setData(homeDataBean.getBanner_info());
         } else if (getItemViewType(position) == TYPE) {
@@ -87,7 +95,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             newestViewHolder.setData(homeDataBean.getNewest_info());
         }
     }
-    
+
     class NewestViewHolder extends RecyclerView.ViewHolder {
 
         private Context mContext;
@@ -226,6 +234,29 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
         }
     }
 
+    class SearchBarViewHolder extends RecyclerView.ViewHolder {
+        private Context mContext;
+        private TextView mTvSearch;
+        private ImageButton mIbSearch;
+
+        public SearchBarViewHolder(Context mContext, View itemView) {
+            super(itemView);
+            this.mContext = mContext;
+            mTvSearch = itemView.findViewById(R.id.tv_searchbar_search);
+            mIbSearch = itemView.findViewById(R.id.ib_searchbar_search);
+        }
+
+        public void init() {
+            // 设置点击事件
+            mIbSearch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+        }
+    }
+
     public void requestNewestGoods() {
         newestViewHolder.requestNewestGoods();
     }
@@ -240,6 +271,9 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         switch (position) {
+            case SEARCHBAR:
+                currentType = SEARCHBAR;
+                break;
             case BANNER:
                 currentType = BANNER;
                 break;
@@ -255,7 +289,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        // 开发过程中从1-->3
-        return 3;
+        // 开发过程中从1-->4
+        return 4;
     }
 }

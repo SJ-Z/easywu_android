@@ -1,7 +1,6 @@
 package com.cose.easywu.home.bean;
 
-import com.cose.easywu.db.Goods;
-import com.cose.easywu.gson.User;
+import com.cose.easywu.db.LikeGoods;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -18,7 +17,7 @@ public class HomeDataBean {
     private List<BannerInfoBean> banner_info;
     private List<TypeInfoBean> type_info;
     private List<NewestInfoBean> newest_info;
-    private List<Goods> goodsLikeList;
+    private List<LikeGoods> goodsLikeList;
 
     public List<BannerInfoBean> getBanner_info() {
         return banner_info;
@@ -44,11 +43,11 @@ public class HomeDataBean {
         this.newest_info = newest_info;
     }
 
-    public List<Goods> getGoodsLikeList() {
+    public List<LikeGoods> getGoodsLikeList() {
         return goodsLikeList;
     }
 
-    public void setGoodsLikeList(List<Goods> goodsLikeList) {
+    public void setGoodsLikeList(List<LikeGoods> goodsLikeList) {
         this.goodsLikeList = goodsLikeList;
     }
 

@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.home.bean.HomeDataBean;
 import com.cose.easywu.utils.Constant;
@@ -67,6 +68,7 @@ public class NewestGridViewAdapter extends BaseAdapter {
         // 根据位置得到对应的数据
         HomeDataBean.NewestInfoBean newest_info = datas.get(position);
         Glide.with(mContext).load(Constant.BASE_PHOTO_URL + newest_info.getG_u_photo())
+                .apply(new RequestOptions().placeholder(R.drawable.nav_icon))
                 .into(viewHolder.iv_newest_item_userPhoto);
         viewHolder.tv_newest_item_userNick.setText(newest_info.getG_u_nick());
         viewHolder.tv_newest_item_price.setText("￥" + newest_info.getG_price());
@@ -76,6 +78,7 @@ public class NewestGridViewAdapter extends BaseAdapter {
         if (!TextUtils.isEmpty(newest_info.getG_pic1())) {
             viewHolder.iv_newest_item_pic1.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(Constant.BASE_PIC_URL + newest_info.getG_pic1())
+                    .apply(new RequestOptions().placeholder(R.drawable.ic_loading_pic))
                     .into(viewHolder.iv_newest_item_pic1);
         } else {
             viewHolder.iv_newest_item_pic1.setVisibility(View.GONE);
@@ -83,6 +86,7 @@ public class NewestGridViewAdapter extends BaseAdapter {
         if (!TextUtils.isEmpty(newest_info.getG_pic2())) {
             viewHolder.iv_newest_item_pic2.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(Constant.BASE_PIC_URL + newest_info.getG_pic2())
+                    .apply(new RequestOptions().placeholder(R.drawable.ic_loading_pic))
                     .into(viewHolder.iv_newest_item_pic2);
             viewHolder.iv_newest_item_pic3.setVisibility(View.GONE);
         } else {
@@ -91,6 +95,7 @@ public class NewestGridViewAdapter extends BaseAdapter {
         if (!TextUtils.isEmpty(newest_info.getG_pic3())) {
             viewHolder.iv_newest_item_pic3.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(Constant.BASE_PIC_URL + newest_info.getG_pic3())
+                    .apply(new RequestOptions().placeholder(R.drawable.ic_loading_pic))
                     .into(viewHolder.iv_newest_item_pic3);
         } else {
             viewHolder.iv_newest_item_pic3.setVisibility(View.GONE);

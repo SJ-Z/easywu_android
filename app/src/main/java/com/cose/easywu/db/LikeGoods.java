@@ -4,7 +4,7 @@ import org.litepal.crud.LitePalSupport;
 
 import java.util.Date;
 
-public class Goods extends LitePalSupport {
+public class LikeGoods extends LitePalSupport {
 
     private String g_id;
     private String g_name;
@@ -22,10 +22,10 @@ public class Goods extends LitePalSupport {
     private String g_u_photo;
     private int g_u_sex;
 
-    public Goods() {
+    public LikeGoods() {
     }
 
-    public Goods(String g_id, String g_name, String g_desc, double g_price, double g_originalPrice, String g_pic1, String g_pic2, String g_pic3, int g_state, int g_like, Date g_updateTime, String g_u_id, String g_u_nick, String g_u_photo, int g_u_sex) {
+    public LikeGoods(String g_id, String g_name, String g_desc, double g_price, double g_originalPrice, String g_pic1, String g_pic2, String g_pic3, int g_state, int g_like, Date g_updateTime, String g_u_id, String g_u_nick, String g_u_photo, int g_u_sex) {
         this.g_id = g_id;
         this.g_name = g_name;
         this.g_desc = g_desc;
@@ -165,7 +165,7 @@ public class Goods extends LitePalSupport {
 
     @Override
     public String toString() {
-        return "Goods{" +
+        return "LikeGoods{" +
                 "g_id='" + g_id + '\'' +
                 ", g_name='" + g_name + '\'' +
                 ", g_desc='" + g_desc + '\'' +
