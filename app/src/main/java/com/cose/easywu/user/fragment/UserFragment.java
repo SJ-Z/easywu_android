@@ -21,6 +21,8 @@ import com.cose.easywu.base.ActivityCollector;
 import com.cose.easywu.base.BaseFragment;
 import com.cose.easywu.base.MyApplication;
 import com.cose.easywu.db.LikeGoods;
+import com.cose.easywu.db.ReleaseGoods;
+import com.cose.easywu.db.SellGoods;
 import com.cose.easywu.gson.User;
 import com.cose.easywu.gson.msg.PersonMsg;
 import com.cose.easywu.user.activity.EditUserInfoActivity;
@@ -36,6 +38,7 @@ import org.litepal.LitePal;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -78,6 +81,17 @@ public class UserFragment extends BaseFragment {
         // 更新收藏的商品数量
         int likeGoodsCount = LitePal.findAll(LikeGoods.class).size();
         mTvMylikeCount.setText(String.valueOf(likeGoodsCount));
+        // 更新“我发布的”和“我卖出的”商品数量
+        int myReleaseCount = LitePal.findAll(ReleaseGoods.class).size();
+        List<SellGoods> sellGoodsList = LitePal.findAll(SellGoods.class);
+        mTvMyreleaseCount.setText(String.valueOf(myReleaseCount));
+        mTvMysellCount.setText(String.valueOf(sellGoodsList.size()));
+        // 更新“在简物赚了xx元”的价格
+        double myGainMoney = 0.0;
+        for (SellGoods sellGoods : sellGoodsList) {
+            myGainMoney += sellGoods.getG_price();
+        }
+        mTvGain.setText(String.valueOf(myGainMoney));
         // 设置缓存数据
         mTvCacheSize.setText(CacheUtils.getTotalCacheSize(MyApplication.getContext()));
     }

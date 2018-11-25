@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -22,9 +23,14 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseFragment;
 import com.cose.easywu.db.LikeGoods;
+import com.cose.easywu.db.ReleaseGoods;
+import com.cose.easywu.db.SellGoods;
 import com.cose.easywu.db.Type;
 import com.cose.easywu.home.adapter.HomeFragmentAdapter;
 import com.cose.easywu.home.bean.HomeDataBean;
@@ -48,7 +54,8 @@ public class HomeFragment extends BaseFragment {
     private ImageButton mIbTop;
     private LinearLayout mLlConnect;
     private Button mBtnConnect;
-    private ProgressBar mPb;
+    private ImageView mIvLoading;
+//    private ProgressBar mPb;
 
     private SharedPreferences pref;
     private HomeFragmentAdapter adapter;
@@ -66,7 +73,10 @@ public class HomeFragment extends BaseFragment {
         mIbTop = view.findViewById(R.id.ib_home_top);
         mLlConnect = view.findViewById(R.id.ll_home_disconnect);
         mBtnConnect = view.findViewById(R.id.btn_home_connect);
-        mPb = view.findViewById(R.id.pb_home);
+//        mPb = view.findViewById(R.id.pb_home);
+        mIvLoading = view.findViewById(R.id.iv_home_loading);
+        Glide.with(mContext).load(R.drawable.gif_loading).apply(new RequestOptions()
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)).into(mIvLoading);
 
         // 设置布局管理器
         final GridLayoutManager manager = new GridLayoutManager(mContext, 1);
@@ -96,7 +106,8 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void getDataFromNet() {
-        mPb.setVisibility(View.VISIBLE);
+//        mPb.setVisibility(View.VISIBLE);
+        mIvLoading.setVisibility(View.VISIBLE);
         String u_id = pref.getString("u_id", "");
         String json = "{'u_id':'" + u_id + "'}";
         String address = Constant.HOME_URL;
@@ -108,7 +119,8 @@ public class HomeFragment extends BaseFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mPb.setVisibility(View.GONE);
+//                            mPb.setVisibility(View.GONE);
+                            mIvLoading.setVisibility(View.GONE);
                             mRv.setVisibility(View.GONE);
                             mLlConnect.setVisibility(View.VISIBLE);
                         }
@@ -137,7 +149,8 @@ public class HomeFragment extends BaseFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mPb.setVisibility(View.GONE);
+//                        mPb.setVisibility(View.GONE);
+                        mIvLoading.setVisibility(View.GONE);
                         mRv.setVisibility(View.VISIBLE);
                         mLlConnect.setVisibility(View.GONE);
                         // 设置适配器
@@ -154,6 +167,19 @@ public class HomeFragment extends BaseFragment {
                         LitePal.deleteAll(LikeGoods.class);
                         for (LikeGoods goods : homeDataBean.getGoodsLikeList()) {
                             goods.save();
+                        }
+                        // 将“我发布的”和“我卖出的”商品数据存储到本地数据库
+                        LitePal.deleteAll(ReleaseGoods.class);
+                        LitePal.deleteAll(SellGoods.class);
+                        for (ReleaseGoods goods : homeDataBean.getReleaseGoodsList()) {
+                            if (goods.getG_state() == 1) {
+                                SellGoods sellGoods = new SellGoods(goods.getG_id(), goods.getG_name(), goods.getG_desc(),
+                                        goods.getG_price(), goods.getG_originalPrice(), goods.getG_pic1(), goods.getG_pic2(),
+                                        goods.getG_pic3(), goods.getG_state(), goods.getG_like(), goods.getG_updateTime());
+                                sellGoods.save();
+                            } else {
+                                goods.save();
+                            }
                         }
                     }
                 });

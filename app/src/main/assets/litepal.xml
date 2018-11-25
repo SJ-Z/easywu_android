@@ -9,6 +9,7 @@
         <mapping class="com.cose.easywu.db.Type" />
         <mapping class="com.cose.easywu.db.LikeGoods" />
         <mapping class="com.cose.easywu.db.ReleaseGoods" />
+        <mapping class="com.cose.easywu.db.SellGoods" />
     </list>
 
 </litepal>

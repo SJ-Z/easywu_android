@@ -46,6 +46,7 @@
         <activity android:name=".release.activity.ChooseTypeActivity" />
         <activity android:name=".home.activity.GoodsInfoActivity" />
         <activity android:name=".release.activity.ReleaseActivity" />
+        <activity android:name=".user.activity.MyLikeActivity"></activity>
     </application>
 
 </manifest>
