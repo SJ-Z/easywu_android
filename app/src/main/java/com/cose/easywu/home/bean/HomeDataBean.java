@@ -150,6 +150,27 @@ public class HomeDataBean {
         private String g_u_photo;
         private int g_u_sex;
 
+        public NewestInfoBean() {
+        }
+
+        public NewestInfoBean(String g_id, String g_name, String g_desc, double g_price, double g_originalPrice, String g_pic1, String g_pic2, String g_pic3, int g_state, int g_like, Date g_updateTime, String g_u_id, String g_u_nick, String g_u_photo, int g_u_sex) {
+            this.g_id = g_id;
+            this.g_name = g_name;
+            this.g_desc = g_desc;
+            this.g_price = g_price;
+            this.g_originalPrice = g_originalPrice;
+            this.g_pic1 = g_pic1;
+            this.g_pic2 = g_pic2;
+            this.g_pic3 = g_pic3;
+            this.g_state = g_state;
+            this.g_like = g_like;
+            this.g_updateTime = g_updateTime;
+            this.g_u_id = g_u_id;
+            this.g_u_nick = g_u_nick;
+            this.g_u_photo = g_u_photo;
+            this.g_u_sex = g_u_sex;
+        }
+
         public String getG_id() {
             return g_id;
         }

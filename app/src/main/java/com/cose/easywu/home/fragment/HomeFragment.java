@@ -55,7 +55,6 @@ public class HomeFragment extends BaseFragment {
     private LinearLayout mLlConnect;
     private Button mBtnConnect;
     private ImageView mIvLoading;
-//    private ProgressBar mPb;
 
     private SharedPreferences pref;
     private HomeFragmentAdapter adapter;
@@ -73,7 +72,6 @@ public class HomeFragment extends BaseFragment {
         mIbTop = view.findViewById(R.id.ib_home_top);
         mLlConnect = view.findViewById(R.id.ll_home_disconnect);
         mBtnConnect = view.findViewById(R.id.btn_home_connect);
-//        mPb = view.findViewById(R.id.pb_home);
         mIvLoading = view.findViewById(R.id.iv_home_loading);
         Glide.with(mContext).load(R.drawable.gif_loading).apply(new RequestOptions()
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)).into(mIvLoading);
@@ -106,7 +104,6 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void getDataFromNet() {
-//        mPb.setVisibility(View.VISIBLE);
         mIvLoading.setVisibility(View.VISIBLE);
         String u_id = pref.getString("u_id", "");
         String json = "{'u_id':'" + u_id + "'}";
@@ -119,7 +116,6 @@ public class HomeFragment extends BaseFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-//                            mPb.setVisibility(View.GONE);
                             mIvLoading.setVisibility(View.GONE);
                             mRv.setVisibility(View.GONE);
                             mLlConnect.setVisibility(View.VISIBLE);
@@ -149,7 +145,6 @@ public class HomeFragment extends BaseFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-//                        mPb.setVisibility(View.GONE);
                         mIvLoading.setVisibility(View.GONE);
                         mRv.setVisibility(View.VISIBLE);
                         mLlConnect.setVisibility(View.GONE);

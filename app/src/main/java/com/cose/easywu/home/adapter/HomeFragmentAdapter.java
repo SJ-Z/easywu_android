@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.home.bean.HomeDataBean;
@@ -220,7 +221,9 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
                 @Override
                 public void OnLoadImage(ImageView view, Object url) {
                     // 联网请求图片 Glide
-                    Glide.with(mContext).load(Constant.BASE_URL + url).into(view);
+                    Glide.with(mContext).load(Constant.BASE_URL + url)
+                            .apply(new RequestOptions().placeholder(R.drawable.pic_banner_loading))
+                            .into(view);
                 }
             });
 

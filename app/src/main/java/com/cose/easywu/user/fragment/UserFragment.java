@@ -26,6 +26,7 @@ import com.cose.easywu.db.SellGoods;
 import com.cose.easywu.gson.User;
 import com.cose.easywu.gson.msg.PersonMsg;
 import com.cose.easywu.user.activity.EditUserInfoActivity;
+import com.cose.easywu.user.activity.MyLikeActivity;
 import com.cose.easywu.utils.CacheUtils;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
@@ -270,6 +271,13 @@ public class UserFragment extends BaseFragment {
                         }
                     }
                 }).show();
+            }
+        });
+        // 我收藏的
+        mLlMylike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mContext, MyLikeActivity.class));
             }
         });
     }

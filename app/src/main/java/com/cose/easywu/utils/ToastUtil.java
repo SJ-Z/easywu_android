@@ -28,6 +28,9 @@ public class ToastUtil {
     }
 
     public static void showMsgOnCenter(Context context, String msg, int duration) {
+        if (mImageToast != null) {
+            mImageToast.cancel();
+        }
         if (mToastOnCenter == null) {
             mToastOnCenter = Toast.makeText(context, msg, duration);
             mToastOnCenter.setGravity(Gravity.CENTER, 0, 0);
@@ -39,6 +42,9 @@ public class ToastUtil {
     }
 
     public static void showImageToast(Context context, String msg, int resourseId, int duration) {
+        if (mToastOnCenter != null) {
+            mToastOnCenter.cancel();
+        }
         if (mImageToast == null) {
             mImageToast = new Toast(context);
             LayoutInflater inflater = LayoutInflater.from(context);
@@ -48,7 +54,6 @@ public class ToastUtil {
             imageView.setImageResource(resourseId);
             textView.setText(msg);
             mImageToast.setView(view);
-
         } else {
             LayoutInflater inflater = LayoutInflater.from(context);
             View view = inflater.inflate(R.layout.layout_toast, null);

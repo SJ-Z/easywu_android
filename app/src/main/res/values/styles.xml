@@ -59,4 +59,8 @@
         <item name="android:windowAnimationStyle">@null</item>
     </style>
 
+    <style name="TabLayoutTextStyle">
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>
