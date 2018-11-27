@@ -15,7 +15,7 @@
         android:paddingTop="5dp"
         android:paddingBottom="5dp">
         <ImageView
-            android:id="@+id/iv_mylike_back"
+            android:id="@+id/iv_myrelease_back"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_arrow_left_black"
@@ -29,14 +29,29 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center_vertical"
-            android:text="我收藏的"
+            android:text="我发布的"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/tv_myrelease_unsold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_mylikegoods_like"
+            android:text="已下架"
+            android:textSize="16sp"
+            android:textColor="@color/colorLogin"
+            android:textStyle="bold"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true" />
     </RelativeLayout>
 
     <android.support.design.widget.TabLayout
-        android:id="@+id/tabLayout_mylike"
+        android:id="@+id/tabLayout_myrelease"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
@@ -48,7 +63,7 @@
         app:tabMinWidth="100dp"/>
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/viewPager_mylike"
+        android:id="@+id/viewPager_myrelease"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

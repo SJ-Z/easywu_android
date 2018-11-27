@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,6 +16,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
 import com.cose.easywu.db.LikeGoods;
+import com.cose.easywu.db.ReleaseGoods;
 import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.home.adapter.HomeFragmentAdapter;
 import com.cose.easywu.home.bean.HomeDataBean;
@@ -23,6 +25,7 @@ import com.cose.easywu.utils.DateUtil;
 import com.cose.easywu.utils.HttpUtil;
 import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
+import com.cose.easywu.widget.MessageDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,8 +43,8 @@ public class GoodsInfoActivity extends BaseActivity {
 
     private ImageView mIvBack, mIvUserPhoto, mIvUserSex, mIvGoodsPic1, mIvGoodsPic2, mIvGoodsPic3, mIvLike;
     private TextView mTvTitlePrice, mTvUserNick, mTvUserUpdateTime, mTvPrice, mTvOriginalPrice,
-                        mTvGoodsName, mTvGoodsDesc, mTvMsgNum, mTvLeaveMsg, mTvContact;
-    private LinearLayout mLlOriginalPrice, mLlLeaveMsg, mLlLike;
+                        mTvGoodsName, mTvGoodsDesc, mTvMsgNum, mTvLeaveMsg, mTvContact, mTvEdit, mTvDelete;
+    private LinearLayout mLlOriginalPrice, mLlLeaveMsg, mLlLike, mLlManage;
 
     private SharedPreferences pref;
     private HomeDataBean.NewestInfoBean goods;
@@ -68,6 +71,10 @@ public class GoodsInfoActivity extends BaseActivity {
         mLlLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (goods.getG_u_id().equals(pref.getString("u_id", ""))) {
+                    ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "不能收藏自己的宝贝哦~", Toast.LENGTH_SHORT);
+                    return;
+                }
                 if (like) {
                     like = false;
                     mIvLike.setImageResource(R.drawable.ic_goods_like);
@@ -96,9 +103,87 @@ public class GoodsInfoActivity extends BaseActivity {
         mTvContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (goods.getG_u_id().equals(pref.getString("u_id", ""))) {
+                    ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "你就是卖家啦~", Toast.LENGTH_SHORT);
+                    return;
+                }
 
             }
         });
+        mTvEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        mTvDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleDelete();
+            }
+        });
+    }
+
+    private void handleDelete() {
+        MessageDialog messageDialog = new MessageDialog(GoodsInfoActivity.this, R.style.MessageDialog);
+        messageDialog.setTitle("提示").setContent("确认删除该宝贝？")
+                .setCancel("删除", new MessageDialog.IOnCancelListener() {
+                    @Override
+                    public void onCancel(MessageDialog dialog) {
+                        // 去服务器删除商品
+                        deleteGoodsToServer();
+                    }
+                }).setConfirm("取消", new MessageDialog.IOnConfirmListener() {
+            @Override
+            public void onConfirm(MessageDialog dialog) {
+                // do nothing
+            }
+        }).show();
+    }
+
+    private void deleteGoodsToServer() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("g_id", goods.getG_id());
+            jsonObject.put("u_id", pref.getString("u_id", ""));
+            String json = jsonObject.toString();
+            HttpUtil.sendPostRequest(Constant.DELETE_GOODS_URL, json, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "删除失败", Toast.LENGTH_SHORT);
+                    Log.e("GoodsInfoActivity", "删除商品失败:" + e.getMessage());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (null == response.body()) {
+                        return;
+                    }
+
+                    String responseText = URLDecoder.decode(response.body().string(), "utf-8");
+                    final BaseMsg msg = Utility.handleBaseMsgResponse(responseText);
+                    if (null == msg) {
+                        return;
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (msg.getCode().equals("1")) {
+                                LitePal.where("g_id=?", goods.getG_id()).findFirst(ReleaseGoods.class).delete();
+                                ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "删除成功", Toast.LENGTH_SHORT);
+                                Log.e("GoodsInfoActivity", "删除商品成功");
+                                finish();
+                            } else {
+                                ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "删除失败", Toast.LENGTH_SHORT);
+                                Log.e("GoodsInfoActivity", "删除商品失败");
+                            }
+                        }
+                    });
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setLikeFromServer() {
@@ -197,6 +282,12 @@ public class GoodsInfoActivity extends BaseActivity {
                 like = true;
                 mIvLike.setImageResource(R.drawable.ic_goods_like_press);
             }
+
+            // 检测是否是商品的发布者
+            if (goods.getG_u_id().equals(pref.getString("u_id", ""))) {
+                mLlManage.setVisibility(View.VISIBLE);
+                mTvContact.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -217,17 +308,15 @@ public class GoodsInfoActivity extends BaseActivity {
         mTvMsgNum = findViewById(R.id.tv_goodsInfo_msgNum);
         mLlOriginalPrice = findViewById(R.id.ll_goodsInfo_originalPrice);
         mIvLike = findViewById(R.id.iv_goodsInfo_like);
+        mTvEdit = findViewById(R.id.tv_goodsInfo_edit);
+        mTvDelete = findViewById(R.id.tv_goodsInfo_delete);
         mLlLeaveMsg = findViewById(R.id.ll_goodsInfo_leaveMsg);
         mLlLike = findViewById(R.id.ll_goodsInfo_like);
         mTvContact = findViewById(R.id.tv_goodsInfo_contact);
+        mLlManage = findViewById(R.id.ll_goodsInfo_manage);
 
         // 给商品原价添加删除线
         mTvOriginalPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Glide.get(this).clearMemory();
-    }
 }

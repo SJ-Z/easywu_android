@@ -281,6 +281,39 @@
                 android:textColor="@android:color/black"
                 android:layout_marginLeft="3dp"/>
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_goodsInfo_manage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/tv_goodsInfo_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_mylikegoods_like"
+                android:text="编辑"
+                android:textSize="18sp"
+                android:textColor="@android:color/black"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"/>
+            <TextView
+                android:id="@+id/tv_goodsInfo_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_mylikegoods_like"
+                android:text="删除"
+                android:textSize="18sp"
+                android:textColor="@android:color/black"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginLeft="20dp"/>
+        </LinearLayout>
         <TextView
             android:id="@+id/tv_goodsInfo_contact"
             android:layout_width="wrap_content"

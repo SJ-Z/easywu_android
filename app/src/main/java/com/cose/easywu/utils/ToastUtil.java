@@ -13,9 +13,9 @@ import com.cose.easywu.base.ActivityCollector;
 
 public class ToastUtil {
 
-    public static Toast mToast;
-    public static Toast mToastOnCenter;
-    public static Toast mImageToast;
+    private static Toast mToast;
+    private static Toast mToastOnCenter;
+    private static Toast mImageToast;
 
     public static void showMsg(Context context, String msg, int duration) {
         if (mToast == null) {

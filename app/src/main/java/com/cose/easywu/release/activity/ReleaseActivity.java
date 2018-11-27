@@ -34,10 +34,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.cose.easywu.R;
-import com.cose.easywu.app.LoginActivity;
-import com.cose.easywu.app.MainActivity;
-import com.cose.easywu.app.ResetPwdActivity;
-import com.cose.easywu.base.ActivityCollector;
 import com.cose.easywu.base.BaseActivity;
 import com.cose.easywu.db.Type;
 import com.cose.easywu.gson.msg.BaseMsg;
@@ -52,12 +48,9 @@ import com.cose.easywu.utils.Utility;
 import com.cose.easywu.widget.MessageDialog;
 import com.zhy.http.okhttp.callback.StringCallback;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.litepal.LitePal;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -67,8 +60,6 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class ReleaseActivity extends BaseActivity {
 

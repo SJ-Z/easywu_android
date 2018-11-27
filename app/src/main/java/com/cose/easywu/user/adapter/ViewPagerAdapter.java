@@ -9,11 +9,17 @@ import java.util.ArrayList;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
+    public static int TYPE_MYLIKE = 0;
+    public static int TYPE_MYRELEASE = 1;
+
+    private int currnetType;
+
     private ArrayList<Fragment> fragments;
 
-    public ViewPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments) {
+    public ViewPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments, int type) {
         super(fm);
         this.fragments = fragments;
+        currnetType = type;
     }
 
     @Override
@@ -30,14 +36,17 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        if (position == 0) {
-            return "宝贝";
-        } else if (position == 1) {
-            return "寻找失物";
-        } else if (position == 2) {
-            return "寻找失主";
-        } else {
-            return "";
+        if (currnetType == TYPE_MYLIKE || currnetType == TYPE_MYRELEASE) {
+            if (position == 0) {
+                return "宝贝";
+            } else if (position == 1) {
+                return "寻找失物";
+            } else if (position == 2) {
+                return "寻找失主";
+            } else {
+                return "";
+            }
         }
+        return "";
     }
 }

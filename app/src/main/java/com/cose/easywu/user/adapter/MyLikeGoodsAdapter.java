@@ -30,7 +30,7 @@ public class MyLikeGoodsAdapter extends RecyclerView.Adapter<MyLikeGoodsAdapter.
 
     private Context mContext;
     private List<LikeGoods> likeGoodsList;
-    private List<LikeGoods> removeGoodsList;
+    private ArrayList<LikeGoods> removeGoodsList;
     private OnLikeClick onLikeClick;
 
     public static final String GOODS_BEAN = "goodsBean";

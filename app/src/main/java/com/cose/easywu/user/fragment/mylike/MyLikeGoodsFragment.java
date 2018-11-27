@@ -1,21 +1,17 @@
-package com.cose.easywu.user.fragment;
+package com.cose.easywu.user.fragment.mylike;
 
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseFragment;
 import com.cose.easywu.db.LikeGoods;
 import com.cose.easywu.gson.msg.BaseMsg;
-import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.user.adapter.MyLikeGoodsAdapter;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
@@ -38,21 +34,27 @@ public class MyLikeGoodsFragment extends BaseFragment {
 
     private SwipeRefreshLayout mSwipeRefresh;
     private RecyclerView mRv;
+    private LinearLayout mLlNoGoods;
     private MyLikeGoodsAdapter adapter;
     private String u_id;
 
     @Override
     public View initView() {
-        View view = View.inflate(mContext, R.layout.fragment_mylikegoods, null);
+        View view = View.inflate(mContext, R.layout.fragment_mylike_goods, null);
         mSwipeRefresh = view.findViewById(R.id.swipe_refresh_mylikegoods);
         mSwipeRefresh.setColorSchemeResources(R.color.colorLoginButton);
         mRv = view.findViewById(R.id.rv_mylikegoods);
-        // 设置布局管理器
-        LinearLayoutManager manager = new LinearLayoutManager(mContext);
-        manager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRv.setLayoutManager(manager);
-        initData();
-        initListener();
+        mLlNoGoods = view.findViewById(R.id.ll_mylikegoods_nogoods);
+        if (LitePal.findAll(LikeGoods.class).size() == 0) {
+            mLlNoGoods.setVisibility(View.VISIBLE);
+            mSwipeRefresh.setVisibility(View.GONE);
+        } else {
+            // 设置布局管理器
+            LinearLayoutManager manager = new LinearLayoutManager(mContext);
+            manager.setOrientation(LinearLayoutManager.VERTICAL);
+            mRv.setLayoutManager(manager);
+            initListener();
+        }
         return view;
     }
 
@@ -79,6 +81,13 @@ public class MyLikeGoodsFragment extends BaseFragment {
                 adapter.setLikeGoodsList(LitePal.findAll(LikeGoods.class));
                 adapter.notifyDataSetChanged();
                 mSwipeRefresh.setRefreshing(false);
+                if (LitePal.findAll(LikeGoods.class).size() == 0) {
+                    mLlNoGoods.setVisibility(View.VISIBLE);
+                    mSwipeRefresh.setVisibility(View.GONE);
+                } else {
+                    mLlNoGoods.setVisibility(View.GONE);
+                    mSwipeRefresh.setVisibility(View.VISIBLE);
+                }
             }
         });
     }

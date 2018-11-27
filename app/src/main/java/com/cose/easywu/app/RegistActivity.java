@@ -181,7 +181,8 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
                             progressDialog.dismiss();
                             startActivity(new Intent(RegistActivity.this, LoginActivity.class));
                             finish();
-                            ToastUtil.showMsgOnCenter(RegistActivity.this, msg.getMsg(), Toast.LENGTH_SHORT);
+                            ToastUtil.showMsgOnCenter(RegistActivity.this, "注册成功！赶紧去邮箱激活吧！",
+                                    Toast.LENGTH_SHORT);
                         }
                     });
                 }

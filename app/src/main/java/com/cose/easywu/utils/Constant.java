@@ -27,5 +27,7 @@ public class Constant {
     public static String RELEASE_GOODS_URL = BASE_URL + "/goods/release_goods"; // 发布闲置
     public static String NEWEST_GOODS_URL = BASE_URL + "/goods/newestGoods"; // 最新发布的闲置商品
     public static String SET_LIKE_GOODS_URL = BASE_URL + "/goods/setLikeGoods"; // 修改收藏的商品
+    public static String POLISH_GOODS_URL = BASE_URL + "/goods/polishGoods"; // 擦亮商品
+    public static String DELETE_GOODS_URL = BASE_URL + "/goods/deleteGoods"; // 删除商品
 
 }

@@ -1,6 +1,7 @@
 package com.cose.easywu.utils;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtil {
@@ -18,6 +19,8 @@ public class DateUtil {
         long hour = diff % nd / nh;
         // 计算差多少分钟
         long min = diff % nd % nh / nm;
+        // 计算差多少秒
+        long second = diff / 1000;
         // 计算差多少秒//输出结果
         // long sec = diff % nd % nh % nm / ns;
         if (day > 31) { // 直接显示日期yyyy-MM-dd HH:mm:ss
@@ -31,8 +34,29 @@ public class DateUtil {
             return hour + "小时前";
         } else if (min > 0) {
             return min + "分钟前";
+        } else if (second > 0){
+            return  second + "秒前";
         } else {
-            return diff / 1000 + "秒前";
+            return "刚刚";
         }
     }
+
+    // 判断是否是当天的日期
+    public static boolean isToday(Date date) {
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(date);
+        int year1 = c1.get(Calendar.YEAR);
+        int month1 = c1.get(Calendar.MONTH) + 1;
+        int day1 = c1.get(Calendar.DAY_OF_MONTH);
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(new Date());
+        int year2 = c2.get(Calendar.YEAR);
+        int month2 = c2.get(Calendar.MONTH) + 1;
+        int day2 = c2.get(Calendar.DAY_OF_MONTH);
+        if(year1 == year2 && month1 == month2 && day1 == day2){
+            return true;
+        }
+        return false;
+    }
+
 }

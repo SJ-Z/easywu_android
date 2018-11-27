@@ -96,6 +96,7 @@
                             android:id="@+id/iv_release_pic1"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
                             android:layout_margin="7dp"/>
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/iv_release_pic1_delete"
@@ -115,6 +116,7 @@
                             android:id="@+id/iv_release_pic2"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
                             android:layout_margin="7dp"/>
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/iv_release_pic2_delete"
@@ -128,6 +130,7 @@
                         android:layout_height="100dp"
                         android:orientation="vertical"
                         android:background="@android:color/white"
+                        android:scaleType="centerCrop"
                         android:layout_marginRight="5dp"
                         android:visibility="gone">
                         <ImageView
