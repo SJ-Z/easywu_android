@@ -4,13 +4,16 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.SoftReference;
+import java.text.DecimalFormat;
 
 public class ImageUtils {
 
@@ -145,6 +148,71 @@ public class ImageUtils {
             }
         }
         return inSampleSize;
+    }
+
+    /**
+     * 图片压缩-质量压缩
+     * @param filePath 源图片路径
+     * @return 压缩后的路径
+     */
+    public static String compressImage(String filePath, int reqWidth, int reqHeight) {
+        // 原文件
+        File oldFile = new File(filePath);
+        // 压缩文件路径 照片路径
+        String photoName = oldFile.getName();
+        String photoPath = android.os.Environment.getExternalStorageDirectory() + "/picCache";
+        File outputFile = new File(photoPath, photoName);
+        FileOutputStream out = null;
+        try {
+            if (!outputFile.exists()) {
+                outputFile.getParentFile().mkdirs();
+            } else {
+                outputFile.delete();
+            }
+            int quality = 100 / (getFileSize(oldFile) + 1); // 压缩比例0-100
+            Bitmap bm = getBitmapFromPath(filePath, reqWidth, reqHeight); // 获取一定尺寸的图片
+            out = new FileOutputStream(outputFile);
+            bm.compress(Bitmap.CompressFormat.JPEG, quality, out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return outputFile.getPath();
+    }
+
+    /**
+     * 获取指定文件大小 —— MB，只精确到个位
+     * @param file
+     */
+    private static int getFileSize(File file) {
+        long size = 0;
+        if (file.exists()) {
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+                size = fis.available();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } else {
+            Log.e("ImageUtils", "getFileSize: 文件不存在");
+        }
+        return (int) size / 1048576;
     }
 
 }

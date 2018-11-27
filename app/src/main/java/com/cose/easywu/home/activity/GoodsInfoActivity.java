@@ -158,22 +158,22 @@ public class GoodsInfoActivity extends BaseActivity {
         if (goods != null) {
             // 加载图片
             Glide.with(this).load(Constant.BASE_PHOTO_URL + goods.getG_u_photo())
-                    .apply(new RequestOptions().placeholder(R.drawable.nav_icon))
+                    .apply(new RequestOptions().placeholder(R.drawable.nav_icon).skipMemoryCache(true))
                     .into(mIvUserPhoto);
             Glide.with(this).load(goods.getG_u_sex()==0?R.drawable.ic_female:R.drawable.ic_male).into(mIvUserSex);
             Glide.with(this).load(Constant.BASE_PIC_URL + goods.getG_pic1())
-                    .apply(new RequestOptions().placeholder(R.drawable.pic_loading_goods))
+                    .apply(new RequestOptions().placeholder(R.drawable.pic_loading_goods).skipMemoryCache(true))
                     .into(mIvGoodsPic1);
             if (goods.getG_pic2() != null) {
                 Glide.with(this).load(Constant.BASE_PIC_URL + goods.getG_pic2())
-                        .apply(new RequestOptions().placeholder(R.drawable.pic_loading_goods))
+                        .apply(new RequestOptions().placeholder(R.drawable.pic_loading_goods).skipMemoryCache(true))
                         .into(mIvGoodsPic2);
             } else {
                 mIvGoodsPic2.setVisibility(View.GONE);
             }
             if (goods.getG_pic3() != null) {
                 Glide.with(this).load(Constant.BASE_PIC_URL + goods.getG_pic3())
-                        .apply(new RequestOptions().placeholder(R.drawable.pic_loading_goods))
+                        .apply(new RequestOptions().placeholder(R.drawable.pic_loading_goods).skipMemoryCache(true))
                         .into(mIvGoodsPic3);
             } else {
                 mIvGoodsPic3.setVisibility(View.GONE);
@@ -223,5 +223,11 @@ public class GoodsInfoActivity extends BaseActivity {
 
         // 给商品原价添加删除线
         mTvOriginalPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Glide.get(this).clearMemory();
     }
 }

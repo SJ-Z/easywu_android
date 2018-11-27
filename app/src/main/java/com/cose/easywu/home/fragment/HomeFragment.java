@@ -34,6 +34,7 @@ import com.cose.easywu.db.SellGoods;
 import com.cose.easywu.db.Type;
 import com.cose.easywu.home.adapter.HomeFragmentAdapter;
 import com.cose.easywu.home.bean.HomeDataBean;
+import com.cose.easywu.utils.CacheUtils;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
 
@@ -233,6 +234,8 @@ public class HomeFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        CacheUtils.clearImageAllCache(mContext);
+        Glide.get(mContext).clearMemory();
         if (receiver != null) {
             localBroadcastManager.unregisterReceiver(receiver);
             receiver = null;

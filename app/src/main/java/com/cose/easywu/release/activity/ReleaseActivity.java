@@ -130,10 +130,22 @@ public class ReleaseActivity extends BaseActivity {
                     mRlPicList.get(index).setVisibility(View.GONE);
                     mLlChoosePic.setVisibility(View.VISIBLE);
                     if (photoBitmapList.size() > 1) {
+                        // 删除缓存目录下的图片
+                        File file = photoFileList.get(index <= picIndex ? index : index - photoFileList.size());
+                        if (file.exists()) {
+                            file.delete();
+                        }
+                        // 从List中移除
                         photoBitmapList.remove(index <= picIndex ? index : index - photoBitmapList.size());
                         photoFileList.remove(index <= picIndex ? index : index - photoFileList.size());
                         photoPathList.remove(index <= picIndex ? index : index - photoPathList.size());
                     } else {
+                        // 删除缓存目录下的图片
+                        File file = photoFileList.get(0);
+                        if (file.exists()) {
+                            file.delete();
+                        }
+                        // 从List中移除
                         photoBitmapList.remove(0);
                         photoFileList.remove(0);
                         photoPathList.remove(0);
@@ -246,7 +258,7 @@ public class ReleaseActivity extends BaseActivity {
 
         List<String> keys = new ArrayList<>();
         List<String> filenames = new ArrayList<>();
-        List<File> files = new ArrayList<>();
+        final List<File> files = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             keys.add("pic" + i);
             filenames.add(photoFileList.get(i).getName());
@@ -256,12 +268,13 @@ public class ReleaseActivity extends BaseActivity {
         HttpUtil.upLoadImageListToServer(Constant.RELEASE_GOODS_URL, keys, filenames, files, params,
                 new StringCallback() {
                     @Override
-                    public void onError(Call call, Exception e, int id) {
+                    public void onError(Call call, final Exception e, int id) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 mPb.setVisibility(View.GONE);
                                 ToastUtil.showMsgOnCenter(ReleaseActivity.this, "发布失败", Toast.LENGTH_SHORT);
+                                Log.e("ReleaseActivity", "发布失败: " + e.getMessage());
                             }
                         });
                     }
@@ -286,7 +299,12 @@ public class ReleaseActivity extends BaseActivity {
                             clearReleaseContent();
                             // 发送广播
                             localBroadcastManager.sendBroadcast(new Intent(Constant.RELEASE_NEW_RELEASE));
-
+                            // 删除图片
+                            for (File file : photoFileList) {
+                                if (file.exists()) {
+                                    file.delete();
+                                }
+                            }
                             finish();
                             ToastUtil.showMsgOnCenter(ReleaseActivity.this, "发布成功", Toast.LENGTH_SHORT);
                         } else if (msg.getCode().equals("0")) {
@@ -339,6 +357,12 @@ public class ReleaseActivity extends BaseActivity {
                         clearUIData();
                         // 清空SharedPreferences存储的内容（如果有）
                         clearReleaseContent();
+                        // 删除图片
+                        for (File file : photoFileList) {
+                            if (file.exists()) {
+                                file.delete();
+                            }
+                        }
                         finish();
                     }
                 }).setConfirm("保存", new MessageDialog.IOnConfirmListener() {
@@ -597,7 +621,7 @@ public class ReleaseActivity extends BaseActivity {
     private void displayImage(String photoPath) {
         if (photoPath != null) {
             picIndex++;
-            photoFileList.add(picIndex, new File(photoPath));
+            photoFileList.add(picIndex, new File(ImageUtils.compressImage(photoPath, 800, 800)));
             photoBitmapList.add(picIndex, ImageUtils.getBitmapFromPath(photoPath, 100, 100));
             RelativeLayout relativeLayout = mRlPicList.get(picIndex);
             Glide.with(this).load(photoBitmapList.get(picIndex)).into(mIvPicList.get(picIndex));
@@ -619,7 +643,13 @@ public class ReleaseActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        for (Bitmap bitmap : photoBitmapList) {
+            if (!bitmap.isRecycled()) {
+                bitmap.recycle();
+            }
+        }
         CacheUtils.clearImageAllCache(this);
+        Glide.get(this).clearMemory();
         if (receiver != null) {
             localBroadcastManager.unregisterReceiver(receiver);
             receiver = null;
