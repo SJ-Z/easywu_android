@@ -35,8 +35,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
+import com.cose.easywu.db.ReleaseGoods;
 import com.cose.easywu.db.Type;
 import com.cose.easywu.gson.msg.BaseMsg;
+import com.cose.easywu.gson.msg.ReleaseMsg;
 import com.cose.easywu.release.util.KeyboardUtil;
 import com.cose.easywu.release.util.MyKeyBoardView;
 import com.cose.easywu.utils.CacheUtils;
@@ -54,6 +56,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -238,17 +241,25 @@ public class ReleaseActivity extends BaseActivity {
         mPb.setVisibility(View.VISIBLE);
         // 上传到服务器
         Map<String, String> params = new HashMap<>();
-        params.put("g_name", mEtName.getText().toString().trim());
-        params.put("g_desc", mEtDesc.getText().toString().trim());
+        final String g_name = mEtName.getText().toString().trim();
+        final String g_desc = mEtDesc.getText().toString().trim();
+        final String g_t_id = type.getT_id();
+        String g_u_id = pref.getString("u_id", "");
+        params.put("g_name", g_name);
+        params.put("g_desc", g_desc);
         params.put("g_price", String.valueOf(price));
         params.put("g_originalPrice", String.valueOf(originalPrice));
-        params.put("g_t_id", type.getT_id());
-        params.put("g_u_id", pref.getString("u_id", ""));
+        params.put("g_t_id", g_t_id);
+        params.put("g_u_id", g_u_id);
+        final String g_id = pref.getString("g_id", "");
+        if (!TextUtils.isEmpty(g_id)) {
+            params.put("g_id", g_id);
+        }
 
-        int len = photoBitmapList.size();
+        final int len = photoBitmapList.size();
 
         List<String> keys = new ArrayList<>();
-        List<String> filenames = new ArrayList<>();
+        final List<String> filenames = new ArrayList<>();
         final List<File> files = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             keys.add("pic" + i);
@@ -272,10 +283,10 @@ public class ReleaseActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        final BaseMsg msg;
+                        final ReleaseMsg msg;
                         try {
                             String responseText = URLDecoder.decode(response, "utf-8");
-                            msg = Utility.handleBaseMsgResponse(responseText);
+                            msg = Utility.handleReleaseResponse(responseText);
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
                             return;
@@ -295,6 +306,41 @@ public class ReleaseActivity extends BaseActivity {
                                 if (file.exists()) {
                                     file.delete();
                                 }
+                            }
+                            // 保存发布的商品到本地
+                            if (!TextUtils.isEmpty(g_id)) { // 商品不是新发布的
+                                ReleaseGoods releaseGoods = LitePal.where("g_id=?", g_id).findFirst(ReleaseGoods.class);
+                                releaseGoods.setG_name(g_name);
+                                releaseGoods.setG_desc(g_desc);
+                                releaseGoods.setG_price(price);
+                                releaseGoods.setG_originalPrice(originalPrice);
+                                releaseGoods.setG_pic1(filenames.get(0));
+                                if (len == 2) {
+                                    releaseGoods.setG_pic2(filenames.get(1));
+                                } else if (len == 3) {
+                                    releaseGoods.setG_pic2(filenames.get(1));
+                                    releaseGoods.setG_pic3(filenames.get(2));
+                                }
+                                releaseGoods.setG_updateTime(new Date(msg.getG_updateTime()));
+                                releaseGoods.setG_t_id(g_t_id);
+                                releaseGoods.save();
+                            } else { // 商品是新发布的
+                                ReleaseGoods releaseGoods = new ReleaseGoods();
+                                releaseGoods.setG_id(msg.getG_id());
+                                releaseGoods.setG_name(g_name);
+                                releaseGoods.setG_desc(g_desc);
+                                releaseGoods.setG_price(price);
+                                releaseGoods.setG_originalPrice(originalPrice);
+                                releaseGoods.setG_pic1(filenames.get(0));
+                                if (len == 2) {
+                                    releaseGoods.setG_pic2(filenames.get(1));
+                                } else if (len == 3) {
+                                    releaseGoods.setG_pic2(filenames.get(1));
+                                    releaseGoods.setG_pic3(filenames.get(2));
+                                }
+                                releaseGoods.setG_updateTime(new Date(msg.getG_updateTime()));
+                                releaseGoods.setG_t_id(g_t_id);
+                                releaseGoods.save();
                             }
                             finish();
                             ToastUtil.showMsgOnCenter(ReleaseActivity.this, "发布成功", Toast.LENGTH_SHORT);
@@ -400,6 +446,7 @@ public class ReleaseActivity extends BaseActivity {
             editor.remove(u_id + "_price");
             editor.remove(u_id + "_originalPrice");
             editor.remove(u_id + "_typeId");
+            editor.remove("g_id");
             int picLen = pref.getInt(u_id + "_picLen", 0);
             for (int i = 0; i < picLen; i++) {
                 editor.remove(u_id + "_pic" + i);

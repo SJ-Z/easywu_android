@@ -41,12 +41,13 @@ public class MyReleaseGoodsAdapter extends RecyclerView.Adapter<MyReleaseGoodsAd
     private int u_sex;
     private OnPolishClick onPolishClick;
     private OnDeleteClick onDeleteClick;
+    private OnEditClick onEditClick;
 
     public static final String GOODS_BEAN = "goodsBean";
 
     public MyReleaseGoodsAdapter(Context context) {
         mContext = context;
-        releaseGoodsList = LitePal.findAll(ReleaseGoods.class);
+        releaseGoodsList = LitePal.order("g_updateTime desc").find(ReleaseGoods.class);
         u_id = PreferenceManager.getDefaultSharedPreferences(mContext).getString("u_id", "");
         com.cose.easywu.db.User user = LitePal.where("u_id=?", u_id).findFirst(com.cose.easywu.db.User.class);
         u_nick = user.getU_nick();
@@ -69,7 +70,7 @@ public class MyReleaseGoodsAdapter extends RecyclerView.Adapter<MyReleaseGoodsAd
         holder.tvMsg.setText("0");
         holder.tvUpdateTime.setText(DateUtil.getDatePoor(goods.getG_updateTime(), new Date()) + "擦亮");
         Glide.with(mContext).load(Constant.BASE_PIC_URL + goods.getG_pic1()).apply(new RequestOptions()
-                .placeholder(R.drawable.ic_loading_pic)).into(holder.ivGoodsPic);
+                .placeholder(R.drawable.ic_loading_pic).error(R.drawable.ic_error_goods)).into(holder.ivGoodsPic);
 
         if (DateUtil.isToday(goods.getG_updateTime())) { // 上一次更新日期为今天
             holder.tvPolish.setText("已擦亮");
@@ -90,7 +91,9 @@ public class MyReleaseGoodsAdapter extends RecyclerView.Adapter<MyReleaseGoodsAd
         holder.tvEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (onEditClick != null) {
+                    onEditClick.click(goods);
+                }
             }
         });
         holder.tvDelete.setOnClickListener(new View.OnClickListener() {
@@ -139,7 +142,7 @@ public class MyReleaseGoodsAdapter extends RecyclerView.Adapter<MyReleaseGoodsAd
                 releaseGoods.getG_name(), releaseGoods.getG_desc(), releaseGoods.getG_price(),
                 releaseGoods.getG_originalPrice(), releaseGoods.getG_pic1(), releaseGoods.getG_pic2(),
                 releaseGoods.getG_pic3(), releaseGoods.getG_state(), releaseGoods.getG_like(),
-                releaseGoods.getG_updateTime(), u_id, u_nick, u_photo, u_sex);
+                releaseGoods.getG_updateTime(), releaseGoods.getG_t_id(), u_id, u_nick, u_photo, u_sex);
         Intent intent = new Intent(mContext, GoodsInfoActivity.class);
         intent.putExtra(GOODS_BEAN, goods);
         mContext.startActivity(intent);
@@ -157,11 +160,19 @@ public class MyReleaseGoodsAdapter extends RecyclerView.Adapter<MyReleaseGoodsAd
         this.onDeleteClick = onDeleteClick;
     }
 
+    public void setOnEditClick(OnEditClick onEditClick) {
+        this.onEditClick = onEditClick;
+    }
+
     public interface OnPolishClick {
         void click(View view, TextView tvUpdateTime, ReleaseGoods goods);
     }
 
     public interface OnDeleteClick {
+        void click(ReleaseGoods goods);
+    }
+
+    public interface OnEditClick {
         void click(ReleaseGoods goods);
     }
 

@@ -7,6 +7,7 @@ import com.cose.easywu.gson.User;
 import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.gson.msg.LoginMsg;
 import com.cose.easywu.gson.msg.PersonMsg;
+import com.cose.easywu.gson.msg.ReleaseMsg;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -43,6 +44,17 @@ public class Utility {
         if (!TextUtils.isEmpty(response)) {
             LoginMsg loginMsg = new Gson().fromJson(response, LoginMsg.class);
             return loginMsg;
+        }
+        return null;
+    }
+
+    /**
+     * 解析和处理服务器返回的商品发布数据
+     */
+    public static ReleaseMsg handleReleaseResponse(String response) {
+        if (!TextUtils.isEmpty(response)) {
+            ReleaseMsg releaseMsg = new Gson().fromJson(response, ReleaseMsg.class);
+            return releaseMsg;
         }
         return null;
     }

@@ -82,7 +82,7 @@ public class NewestGridViewAdapter extends BaseAdapter {
         if (!TextUtils.isEmpty(newest_info.getG_pic1())) {
             viewHolder.iv_newest_item_pic1.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(Constant.BASE_PIC_URL + newest_info.getG_pic1())
-                    .apply(new RequestOptions().placeholder(R.drawable.ic_loading_pic))
+                    .apply(new RequestOptions().placeholder(R.drawable.ic_loading_pic).error(R.drawable.ic_error_goods))
                     .into(viewHolder.iv_newest_item_pic1);
         } else {
             viewHolder.iv_newest_item_pic1.setVisibility(View.GONE);
@@ -90,7 +90,7 @@ public class NewestGridViewAdapter extends BaseAdapter {
         if (!TextUtils.isEmpty(newest_info.getG_pic2())) {
             viewHolder.iv_newest_item_pic2.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(Constant.BASE_PIC_URL + newest_info.getG_pic2())
-                    .apply(new RequestOptions().placeholder(R.drawable.ic_loading_pic))
+                    .apply(new RequestOptions().placeholder(R.drawable.ic_loading_pic).error(R.drawable.ic_error_goods))
                     .into(viewHolder.iv_newest_item_pic2);
             viewHolder.iv_newest_item_pic3.setVisibility(View.GONE);
         } else {
@@ -99,7 +99,7 @@ public class NewestGridViewAdapter extends BaseAdapter {
         if (!TextUtils.isEmpty(newest_info.getG_pic3())) {
             viewHolder.iv_newest_item_pic3.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(Constant.BASE_PIC_URL + newest_info.getG_pic3())
-                    .apply(new RequestOptions().placeholder(R.drawable.ic_loading_pic))
+                    .apply(new RequestOptions().placeholder(R.drawable.ic_loading_pic).error(R.drawable.ic_error_goods))
                     .into(viewHolder.iv_newest_item_pic3);
         } else {
             viewHolder.iv_newest_item_pic3.setVisibility(View.GONE);

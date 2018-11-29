@@ -60,16 +60,16 @@ public class MyLikeGoodsAdapter extends RecyclerView.Adapter<MyLikeGoodsAdapter.
         Glide.with(mContext).load(goods.getG_u_sex()==0?R.drawable.ic_female:R.drawable.ic_male)
                 .into(holder.ivUserSex);
         Glide.with(mContext).load(Constant.BASE_PIC_URL + goods.getG_pic1()).apply(new RequestOptions()
-                .placeholder(R.drawable.ic_loading_pic)).into(holder.ivPic1);
+                .placeholder(R.drawable.ic_loading_pic).error(R.drawable.ic_error_goods)).into(holder.ivPic1);
         if (goods.getG_pic2() != null) {
             Glide.with(mContext).load(Constant.BASE_PIC_URL + goods.getG_pic2()).apply(new RequestOptions()
-                    .placeholder(R.drawable.ic_loading_pic)).into(holder.ivPic2);
+                    .placeholder(R.drawable.ic_loading_pic).error(R.drawable.ic_error_goods)).into(holder.ivPic2);
         } else {
             holder.ivPic2.setVisibility(View.GONE);
         }
         if (goods.getG_pic3() != null) {
             Glide.with(mContext).load(Constant.BASE_PIC_URL + goods.getG_pic3()).apply(new RequestOptions()
-                    .placeholder(R.drawable.ic_loading_pic)).into(holder.ivPic3);
+                    .placeholder(R.drawable.ic_loading_pic).error(R.drawable.ic_error_goods)).into(holder.ivPic3);
         } else {
             holder.ivPic3.setVisibility(View.GONE);
         }
@@ -138,8 +138,8 @@ public class MyLikeGoodsAdapter extends RecyclerView.Adapter<MyLikeGoodsAdapter.
                 likeGoods.getG_name(), likeGoods.getG_desc(), likeGoods.getG_price(),
                 likeGoods.getG_originalPrice(), likeGoods.getG_pic1(), likeGoods.getG_pic2(),
                 likeGoods.getG_pic3(), likeGoods.getG_state(), likeGoods.getG_like(),
-                likeGoods.getG_updateTime(), likeGoods.getG_u_id(), likeGoods.getG_u_nick(),
-                likeGoods.getG_u_photo(), likeGoods.getG_u_sex());
+                likeGoods.getG_updateTime(), likeGoods.getG_t_id(), likeGoods.getG_u_id(),
+                likeGoods.getG_u_nick(), likeGoods.getG_u_photo(), likeGoods.getG_u_sex());
         Intent intent = new Intent(mContext, GoodsInfoActivity.class);
         intent.putExtra(GOODS_BEAN, goods);
         mContext.startActivity(intent);

@@ -17,6 +17,7 @@ public class LikeGoods extends LitePalSupport {
     private int g_state;
     private int g_like;
     private Date g_updateTime;
+    private String g_t_id;
     private String g_u_id;
     private String g_u_nick;
     private String g_u_photo;
@@ -25,7 +26,7 @@ public class LikeGoods extends LitePalSupport {
     public LikeGoods() {
     }
 
-    public LikeGoods(String g_id, String g_name, String g_desc, double g_price, double g_originalPrice, String g_pic1, String g_pic2, String g_pic3, int g_state, int g_like, Date g_updateTime, String g_u_id, String g_u_nick, String g_u_photo, int g_u_sex) {
+    public LikeGoods(String g_id, String g_name, String g_desc, double g_price, double g_originalPrice, String g_pic1, String g_pic2, String g_pic3, int g_state, int g_like, Date g_updateTime, String g_t_id, String g_u_id, String g_u_nick, String g_u_photo, int g_u_sex) {
         this.g_id = g_id;
         this.g_name = g_name;
         this.g_desc = g_desc;
@@ -37,6 +38,7 @@ public class LikeGoods extends LitePalSupport {
         this.g_state = g_state;
         this.g_like = g_like;
         this.g_updateTime = g_updateTime;
+        this.g_t_id = g_t_id;
         this.g_u_id = g_u_id;
         this.g_u_nick = g_u_nick;
         this.g_u_photo = g_u_photo;
@@ -131,6 +133,14 @@ public class LikeGoods extends LitePalSupport {
         this.g_updateTime = g_updateTime;
     }
 
+    public String getG_t_id() {
+        return g_t_id;
+    }
+
+    public void setG_t_id(String g_t_id) {
+        this.g_t_id = g_t_id;
+    }
+
     public String getG_u_id() {
         return g_u_id;
     }
@@ -177,6 +187,7 @@ public class LikeGoods extends LitePalSupport {
                 ", g_state=" + g_state +
                 ", g_like=" + g_like +
                 ", g_updateTime=" + g_updateTime +
+                ", g_t_id='" + g_t_id + '\'' +
                 ", g_u_id='" + g_u_id + '\'' +
                 ", g_u_nick='" + g_u_nick + '\'' +
                 ", g_u_photo='" + g_u_photo + '\'' +
