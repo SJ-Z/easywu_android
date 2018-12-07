@@ -84,7 +84,7 @@ public class UserFragment extends BaseFragment {
         int likeGoodsCount = LitePal.findAll(LikeGoods.class).size();
         mTvMylikeCount.setText(String.valueOf(likeGoodsCount));
         // 更新“我发布的”和“我卖出的”商品数量
-        int myReleaseCount = LitePal.findAll(ReleaseGoods.class).size();
+        int myReleaseCount = LitePal.where("g_state=?", "0").find(ReleaseGoods.class).size();
         List<SellGoods> sellGoodsList = LitePal.findAll(SellGoods.class);
         mTvMyreleaseCount.setText(String.valueOf(myReleaseCount));
         mTvMysellCount.setText(String.valueOf(sellGoodsList.size()));

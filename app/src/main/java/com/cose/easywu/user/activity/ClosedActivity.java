@@ -1,24 +1,22 @@
 package com.cose.easywu.user.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
 import com.cose.easywu.user.adapter.ViewPagerAdapter;
-import com.cose.easywu.user.fragment.myrelease.MyReleaseFindGoodsFragment;
-import com.cose.easywu.user.fragment.myrelease.MyReleaseFindPeopleFragment;
-import com.cose.easywu.user.fragment.myrelease.MyReleaseGoodsFragment;
+import com.cose.easywu.user.fragment.myrelease.MyClosedFindGoodsFragment;
+import com.cose.easywu.user.fragment.myrelease.MyClosedFindPeopleFragment;
+import com.cose.easywu.user.fragment.myrelease.MyClosedGoodsFragment;
 
 import java.util.ArrayList;
 
-public class MyReleaseActivity extends BaseActivity {
+public class ClosedActivity extends BaseActivity {
 
     private ViewPager viewPager;
     private TabLayout tabLayout;
@@ -26,12 +24,11 @@ public class MyReleaseActivity extends BaseActivity {
     private ViewPagerAdapter adapter;
 
     private ImageView mIvBack;
-    private TextView mTvClosed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_release);
+        setContentView(R.layout.activity_closed);
 
         initView();
         initFragment();
@@ -44,12 +41,6 @@ public class MyReleaseActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 finish();
-            }
-        });
-        mTvClosed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MyReleaseActivity.this, ClosedActivity.class));
             }
         });
     }
@@ -66,15 +57,14 @@ public class MyReleaseActivity extends BaseActivity {
 
     private void initFragment() {
         fragments = new ArrayList<>();
-        fragments.add(new MyReleaseGoodsFragment());
-        fragments.add(new MyReleaseFindGoodsFragment());
-        fragments.add(new MyReleaseFindPeopleFragment());
+        fragments.add(new MyClosedGoodsFragment());
+        fragments.add(new MyClosedFindGoodsFragment());
+        fragments.add(new MyClosedFindPeopleFragment());
     }
 
     private void initView() {
-        viewPager = findViewById(R.id.viewPager_myrelease);
-        tabLayout = findViewById(R.id.tabLayout_myrelease);
-        mIvBack = findViewById(R.id.iv_myrelease_back);
-        mTvClosed = findViewById(R.id.tv_myrelease_closed);
+        viewPager = findViewById(R.id.viewPager_myrelease_closed);
+        tabLayout = findViewById(R.id.tabLayout_myrelease_closed);
+        mIvBack = findViewById(R.id.iv_myrelease_closed_back);
     }
 }

@@ -2,6 +2,7 @@ package com.cose.easywu.release.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -27,7 +28,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +37,6 @@ import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
 import com.cose.easywu.db.ReleaseGoods;
 import com.cose.easywu.db.Type;
-import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.gson.msg.ReleaseMsg;
 import com.cose.easywu.release.util.KeyboardUtil;
 import com.cose.easywu.release.util.MyKeyBoardView;
@@ -73,7 +72,7 @@ public class ReleaseActivity extends BaseActivity {
     private List<RelativeLayout> mRlPicList = new ArrayList<>();
     private LinearLayout mLlChoosePic;
     private TextView mTvPrice, mTvType, mTvRelease;
-    private ProgressBar mPb;
+    private ProgressDialog progressDialog;
 
     // 键盘的控件
     private EditText mEtPrice, mEtOriginalPrice;
@@ -237,8 +236,8 @@ public class ReleaseActivity extends BaseActivity {
         if (!checkContent()) { // 检查内容是否填写完整
             return;
         }
-        // 显示进度条
-        mPb.setVisibility(View.VISIBLE);
+        // 显示提示窗体
+        showProgressDialog();
         // 上传到服务器
         Map<String, String> params = new HashMap<>();
         final String g_name = mEtName.getText().toString().trim();
@@ -274,7 +273,7 @@ public class ReleaseActivity extends BaseActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mPb.setVisibility(View.GONE);
+                                progressDialog.dismiss();
                                 ToastUtil.showMsgOnCenter(ReleaseActivity.this, "发布失败", Toast.LENGTH_SHORT);
                                 Log.e("ReleaseActivity", "发布失败: " + e.getMessage());
                             }
@@ -296,7 +295,7 @@ public class ReleaseActivity extends BaseActivity {
                             return;
                         }
                         if (msg.getCode().equals("1")) {
-                            mPb.setVisibility(View.GONE);
+                            progressDialog.dismiss();
                             clearUIData();
                             clearReleaseContent();
                             // 发送广播
@@ -323,6 +322,7 @@ public class ReleaseActivity extends BaseActivity {
                                 }
                                 releaseGoods.setG_updateTime(new Date(msg.getG_updateTime()));
                                 releaseGoods.setG_t_id(g_t_id);
+                                releaseGoods.setG_state(0);
                                 releaseGoods.save();
                             } else { // 商品是新发布的
                                 ReleaseGoods releaseGoods = new ReleaseGoods();
@@ -348,7 +348,7 @@ public class ReleaseActivity extends BaseActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mPb.setVisibility(View.GONE);
+                                    progressDialog.dismiss();
                                     ToastUtil.showMsgOnCenter(ReleaseActivity.this,
                                             msg.getMsg(), Toast.LENGTH_SHORT);
                                 }
@@ -721,6 +721,13 @@ public class ReleaseActivity extends BaseActivity {
         myKeyBoardView = findViewById(R.id.keyboard_view);
         mLlPriceSelect = findViewById(R.id.ll_release_price_select);
 
-        mPb = findViewById(R.id.pb_release);
+    }
+
+    private void showProgressDialog() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("正在发布中，请等待...");
+        }
+        progressDialog.show();
     }
 }

@@ -11,6 +11,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     public static int TYPE_MYLIKE = 0;
     public static int TYPE_MYRELEASE = 1;
+    public static int TYPE_MYCLOSED = 2;
 
     private int currnetType;
 
@@ -36,7 +37,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        if (currnetType == TYPE_MYLIKE || currnetType == TYPE_MYRELEASE) {
+        if (currnetType == TYPE_MYLIKE || currnetType == TYPE_MYRELEASE || currnetType == TYPE_MYCLOSED) {
             if (position == 0) {
                 return "宝贝";
             } else if (position == 1) {
