@@ -48,7 +48,8 @@
         <activity android:name=".release.activity.ReleaseActivity" />
         <activity android:name=".user.activity.MyLikeActivity" />
         <activity android:name=".user.activity.MyReleaseActivity" />
-        <activity android:name=".user.activity.ClosedActivity"></activity>
+        <activity android:name=".user.activity.ClosedActivity" />
+        <activity android:name=".user.activity.MySellActivity"></activity>
     </application>
 
 </manifest>
