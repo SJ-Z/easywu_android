@@ -4,35 +4,56 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
 import com.cose.easywu.db.LikeGoods;
 import com.cose.easywu.db.ReleaseGoods;
+import com.cose.easywu.db.SellGoods;
+import com.cose.easywu.db.Type;
+import com.cose.easywu.db.User;
 import com.cose.easywu.gson.msg.BaseMsg;
+import com.cose.easywu.home.adapter.CommentExpandAdapter;
 import com.cose.easywu.home.adapter.HomeFragmentAdapter;
+import com.cose.easywu.home.bean.CommentBean;
+import com.cose.easywu.home.bean.CommentDetailBean;
 import com.cose.easywu.home.bean.HomeDataBean;
+import com.cose.easywu.home.bean.ReplyDetailBean;
 import com.cose.easywu.release.activity.ReleaseActivity;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.DateUtil;
 import com.cose.easywu.utils.HttpUtil;
 import com.cose.easywu.utils.ImageUtils;
+import com.cose.easywu.utils.NestedExpandableListView;
 import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.cose.easywu.widget.MessageDialog;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,7 +62,9 @@ import org.litepal.LitePal;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -53,9 +76,12 @@ public class GoodsInfoActivity extends BaseActivity {
 
     private ImageView mIvBack, mIvUserPhoto, mIvUserSex, mIvGoodsPic1, mIvGoodsPic2, mIvGoodsPic3, mIvLike;
     private TextView mTvTitlePrice, mTvUserNick, mTvUserUpdateTime, mTvPrice, mTvOriginalPrice,
-                        mTvGoodsName, mTvGoodsDesc, mTvMsgNum, mTvLeaveMsg, mTvContact, mTvEdit, mTvDelete;
+                        mTvGoodsName, mTvGoodsDesc, mTvMsgNum, mTvContact, mTvEdit, mTvDelete;
     private LinearLayout mLlOriginalPrice, mLlLeaveMsg, mLlLike, mLlManage;
+    private NestedExpandableListView mElvComment;
+    private CommentExpandAdapter adapter;
     private ProgressDialog progressDialog;
+    private BottomSheetDialog dialog;
 
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
@@ -63,6 +89,9 @@ public class GoodsInfoActivity extends BaseActivity {
     private LikeGoods likeGoods;
     private boolean like = false;
     private String u_id;
+    private User user;
+    private List<CommentDetailBean> commentList;
+    private int goodsCommentBean_id;
 
     private MyHandler mHandler = new MyHandler(GoodsInfoActivity.this);
     private static int MSG_PICLEN = 0;
@@ -114,7 +143,7 @@ public class GoodsInfoActivity extends BaseActivity {
         mLlLeaveMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showCommentDialog();
             }
         });
         mTvContact.setOnClickListener(new View.OnClickListener() {
@@ -330,6 +359,7 @@ public class GoodsInfoActivity extends BaseActivity {
         pref = PreferenceManager.getDefaultSharedPreferences(this);
         editor = pref.edit();
         u_id = pref.getString("u_id", "");
+        user = LitePal.where("u_id=?", u_id).findFirst(User.class);
         goods = (HomeDataBean.NewestInfoBean) getIntent().getSerializableExtra(HomeFragmentAdapter.GOODS_BEAN);
         if (goods != null) {
             // 加载图片
@@ -379,7 +409,47 @@ public class GoodsInfoActivity extends BaseActivity {
                 mLlManage.setVisibility(View.VISIBLE);
                 mTvContact.setVisibility(View.GONE);
             }
+
+            // 向服务器发起请求加载评论
+            getCommentFromServer();
         }
+    }
+
+    private void getCommentFromServer() {
+        String json = "{'g_id':'" + goods.getG_id() + "'}";
+        String address = Constant.GOODS_COMMENT_URL;
+
+        HttpUtil.sendPostRequest(address, json, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                mTvMsgNum.setText("加载失败");
+                Log.e("GoodsInfoActivity", "评论加载失败==" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (null == response.body()) {
+                    return;
+                }
+                // 解析数据
+                String responseText = URLDecoder.decode(response.body().string(), "utf-8");
+                CommentBean commentBean = Utility.handleCommentResponse(responseText);
+                if (commentBean != null) {
+                    goodsCommentBean_id = commentBean.getId();
+                    commentList = commentBean.getList();
+                } else {
+                    goodsCommentBean_id = -1;
+                    commentList = new ArrayList<>();
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        initExpandableListView();
+                    }
+                });
+                Log.d("GoodsInfoActivity", "评论加载成功==" + responseText);
+            }
+        });
     }
 
     // 启动ReleaseActivity
@@ -411,9 +481,199 @@ public class GoodsInfoActivity extends BaseActivity {
         mLlLike = findViewById(R.id.ll_goodsInfo_like);
         mTvContact = findViewById(R.id.tv_goodsInfo_contact);
         mLlManage = findViewById(R.id.ll_goodsInfo_manage);
+        mElvComment = findViewById(R.id.lv_goodsInfo_comment);
 
         // 给商品原价添加删除线
         mTvOriginalPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+    }
+
+    /**
+     * 初始化评论和回复列表
+     */
+    private void initExpandableListView(){
+        mElvComment.setGroupIndicator(null);
+        //默认展开所有回复
+        adapter = new CommentExpandAdapter(this, commentList);
+        mElvComment.setAdapter(adapter);
+        int size = commentList.size();
+        mTvMsgNum.setText(String.valueOf(size));
+        for(int i = 0; i < size; i++){
+            mElvComment.expandGroup(i);
+        }
+        mElvComment.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView expandableListView, View view, int groupPosition, long l) {
+                showReplyDialog(groupPosition);
+//                boolean isExpanded = expandableListView.isGroupExpanded(groupPosition);
+//                Log.e("GoodsInfoActivity", "onGroupClick: 当前的评论id>>>"+commentList.get(groupPosition).getId());
+//
+//                if(isExpanded) {
+//                    expandableListView.collapseGroup(groupPosition);
+//                } else {
+//                    expandableListView.expandGroup(groupPosition, true);
+//                }
+
+                return false;
+            }
+        });
+
+        mElvComment.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l) {
+                Toast.makeText(GoodsInfoActivity.this,"点击了回复",Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
+        mElvComment.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                //toast("展开第"+groupPosition+"个分组");
+
+            }
+        });
+
+    }
+
+    // 弹出评论框
+    private void showCommentDialog() {
+        dialog = new BottomSheetDialog(this);
+        View commentView = LayoutInflater.from(this).inflate(R.layout.comment_dialog_layout,null);
+        final EditText commentText = commentView.findViewById(R.id.dialog_comment_et);
+        final Button bt_comment = commentView.findViewById(R.id.dialog_comment_bt);
+        dialog.setContentView(commentView);
+        /**
+         * 解决BottomSheetDialog显示不全的情况
+         */
+        View parent = (View) commentView.getParent();
+        BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
+        commentView.measure(0,0);
+        behavior.setPeekHeight(commentView.getMeasuredHeight());
+
+        bt_comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String commentContent = commentText.getText().toString().trim();
+                if(!TextUtils.isEmpty(commentContent)) {
+                    dialog.dismiss();
+                    CommentDetailBean detailBean = new CommentDetailBean(user.getU_nick(),
+                            user.getU_photo(), commentContent, new Date());
+                    addTheCommentData(detailBean);
+                } else {
+                    Toast.makeText(GoodsInfoActivity.this,"评论内容不能为空",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        commentText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(!TextUtils.isEmpty(charSequence) && charSequence.length()>2){
+                    bt_comment.setBackgroundColor(Color.parseColor("#FFB568"));
+                }else {
+                    bt_comment.setBackgroundColor(Color.parseColor("#D8D8D8"));
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        dialog.show();
+    }
+
+    // 向服务器添加评论数据
+    private void addTheCommentData(final CommentDetailBean commentDetailBean) {
+        com.alibaba.fastjson.JSONObject jsonObject = new com.alibaba.fastjson.JSONObject();
+        jsonObject.put("commentDetailBean", commentDetailBean);
+        jsonObject.put("gc_id", goodsCommentBean_id);
+        jsonObject.put("g_id", goods.getG_id());
+        String address = Constant.GOODS_ADD_COMMENT_URL;
+
+        HttpUtil.sendPostRequest(address, jsonObject.toString(), new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                mTvMsgNum.setText("留言失败");
+                Log.e("GoodsInfoActivity", "留言失败==" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (null == response.body()) {
+                    return;
+                }
+                // 解析数据
+                String responseText = URLDecoder.decode(response.body().string(), "utf-8");
+                final BaseMsg msg = Utility.handleBaseMsgResponse(responseText);
+                if (null == msg) {
+                    return;
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if ("1".equals(msg.getCode())) {
+                            adapter.addTheCommentData(commentDetailBean);
+                            ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "留言成功", Toast.LENGTH_SHORT);
+                            Log.d("GoodsInfoActivity", "留言成功");
+                        } else {
+                            ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "留言失败", Toast.LENGTH_SHORT);
+                            Log.d("GoodsInfoActivity", "留言失败");
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    // 弹出回复框
+    private void showReplyDialog(final int position){
+        dialog = new BottomSheetDialog(this);
+        View commentView = LayoutInflater.from(this).inflate(R.layout.comment_dialog_layout,null);
+        final EditText commentText = commentView.findViewById(R.id.dialog_comment_et);
+        final Button bt_comment = commentView.findViewById(R.id.dialog_comment_bt);
+        commentText.setHint("回复 " + commentList.get(position).getNickName() + " 的评论:");
+        dialog.setContentView(commentView);
+        bt_comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String replyContent = commentText.getText().toString().trim();
+                if(!TextUtils.isEmpty(replyContent)){
+                    dialog.dismiss();
+                    ReplyDetailBean detailBean = new ReplyDetailBean("小红",replyContent);
+                    adapter.addTheReplyData(detailBean, position);
+                    mElvComment.expandGroup(position);
+                    Toast.makeText(GoodsInfoActivity.this,"回复成功",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(GoodsInfoActivity.this,"回复内容不能为空",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        commentText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(!TextUtils.isEmpty(charSequence) && charSequence.length()>2){
+                    bt_comment.setBackgroundColor(Color.parseColor("#FFB568"));
+                }else {
+                    bt_comment.setBackgroundColor(Color.parseColor("#D8D8D8"));
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        dialog.show();
     }
 
     private static class MyHandler extends Handler {
