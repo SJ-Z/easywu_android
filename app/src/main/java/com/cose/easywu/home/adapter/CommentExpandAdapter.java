@@ -24,7 +24,6 @@ import java.util.List;
 
 public class CommentExpandAdapter extends BaseExpandableListAdapter {
 
-    private static final String TAG = "CommentExpandAdapter";
     private List<CommentDetailBean> commentBeanList;
     private Context mContext;
 
@@ -122,7 +121,7 @@ public class CommentExpandAdapter extends BaseExpandableListAdapter {
 
     public void addTheCommentData(CommentDetailBean commentDetailBean) {
         if(commentDetailBean != null) {
-            commentBeanList.add(commentDetailBean);
+            commentBeanList.add(0, commentDetailBean);
             notifyDataSetChanged();
         } else {
             throw new IllegalArgumentException("评论数据为空!");

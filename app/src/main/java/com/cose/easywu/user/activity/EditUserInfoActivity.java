@@ -91,7 +91,6 @@ public class EditUserInfoActivity extends BaseActivity implements View.OnClickLi
         mIvBack.setOnClickListener(this);
         mTvEditPwd.setOnClickListener(this);
         mLlPhoto.setOnClickListener(this);
-        mLlNick.setOnClickListener(this);
         mLlSex.setOnClickListener(this);
     }
 
@@ -106,9 +105,6 @@ public class EditUserInfoActivity extends BaseActivity implements View.OnClickLi
                 break;
             case R.id.ll_userinfo_photo:
                 startActivity(new Intent(EditUserInfoActivity.this, EditPhotoActivity.class));
-                break;
-            case R.id.ll_userinfo_nick:
-                startActivity(new Intent(EditUserInfoActivity.this, EditNickActivity.class));
                 break;
             case R.id.ll_userinfo_sex:
                 chooseSex();

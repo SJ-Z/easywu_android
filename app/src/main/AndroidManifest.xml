@@ -28,7 +28,6 @@
         <activity android:name=".app.ResetPwdActivity" />
         <activity android:name=".user.activity.EditUserInfoActivity" />
         <activity android:name=".user.activity.EditPwdActivity" />
-        <activity android:name=".user.activity.EditNickActivity" />
         <activity
             android:name=".user.activity.EditPhotoActivity"
             android:theme="@style/EditPhotoDialogStyle" />

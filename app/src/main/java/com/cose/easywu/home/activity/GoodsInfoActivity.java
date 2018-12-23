@@ -26,17 +26,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
 import com.cose.easywu.db.LikeGoods;
 import com.cose.easywu.db.ReleaseGoods;
-import com.cose.easywu.db.SellGoods;
-import com.cose.easywu.db.Type;
 import com.cose.easywu.db.User;
 import com.cose.easywu.gson.msg.BaseMsg;
+import com.cose.easywu.gson.msg.CommentMsg;
 import com.cose.easywu.home.adapter.CommentExpandAdapter;
 import com.cose.easywu.home.adapter.HomeFragmentAdapter;
 import com.cose.easywu.home.bean.CommentBean;
@@ -52,8 +50,6 @@ import com.cose.easywu.utils.NestedExpandableListView;
 import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.cose.easywu.widget.MessageDialog;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -513,26 +509,17 @@ public class GoodsInfoActivity extends BaseActivity {
 //                    expandableListView.expandGroup(groupPosition, true);
 //                }
 
-                return false;
+                return true; // 返回true表示点击评论后，回复列表不自动展开
             }
         });
 
         mElvComment.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l) {
-                Toast.makeText(GoodsInfoActivity.this,"点击了回复",Toast.LENGTH_SHORT).show();
+                showReplyDialog(groupPosition, childPosition);
                 return false;
             }
         });
-
-        mElvComment.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-            @Override
-            public void onGroupExpand(int groupPosition) {
-                //toast("展开第"+groupPosition+"个分组");
-
-            }
-        });
-
     }
 
     // 弹出评论框
@@ -556,9 +543,7 @@ public class GoodsInfoActivity extends BaseActivity {
                 String commentContent = commentText.getText().toString().trim();
                 if(!TextUtils.isEmpty(commentContent)) {
                     dialog.dismiss();
-                    CommentDetailBean detailBean = new CommentDetailBean(user.getU_nick(),
-                            user.getU_photo(), commentContent, new Date());
-                    addTheCommentData(detailBean);
+                    addTheCommentData(commentContent);
                 } else {
                     Toast.makeText(GoodsInfoActivity.this,"评论内容不能为空",Toast.LENGTH_SHORT).show();
                 }
@@ -572,7 +557,7 @@ public class GoodsInfoActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(!TextUtils.isEmpty(charSequence) && charSequence.length()>2){
+                if(!TextUtils.isEmpty(charSequence)){
                     bt_comment.setBackgroundColor(Color.parseColor("#FFB568"));
                 }else {
                     bt_comment.setBackgroundColor(Color.parseColor("#D8D8D8"));
@@ -588,11 +573,12 @@ public class GoodsInfoActivity extends BaseActivity {
     }
 
     // 向服务器添加评论数据
-    private void addTheCommentData(final CommentDetailBean commentDetailBean) {
+    private void addTheCommentData(final String commentContent) {
         com.alibaba.fastjson.JSONObject jsonObject = new com.alibaba.fastjson.JSONObject();
-        jsonObject.put("commentDetailBean", commentDetailBean);
+        jsonObject.put("comment", commentContent);
         jsonObject.put("gc_id", goodsCommentBean_id);
         jsonObject.put("g_id", goods.getG_id());
+        jsonObject.put("u_id", u_id);
         String address = Constant.GOODS_ADD_COMMENT_URL;
 
         HttpUtil.sendPostRequest(address, jsonObject.toString(), new Callback() {
@@ -609,7 +595,7 @@ public class GoodsInfoActivity extends BaseActivity {
                 }
                 // 解析数据
                 String responseText = URLDecoder.decode(response.body().string(), "utf-8");
-                final BaseMsg msg = Utility.handleBaseMsgResponse(responseText);
+                final CommentMsg msg = Utility.handleMakeCommentResponse(responseText);
                 if (null == msg) {
                     return;
                 }
@@ -617,7 +603,11 @@ public class GoodsInfoActivity extends BaseActivity {
                     @Override
                     public void run() {
                         if ("1".equals(msg.getCode())) {
+                            CommentDetailBean commentDetailBean = new CommentDetailBean(msg.getId(),
+                                    user.getU_nick(), user.getU_photo(), commentContent, msg.getTime());
                             adapter.addTheCommentData(commentDetailBean);
+                            mElvComment.expandGroup(commentList.size() - 1);
+                            mTvMsgNum.setText(String.valueOf(commentList.size()));
                             ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "留言成功", Toast.LENGTH_SHORT);
                             Log.d("GoodsInfoActivity", "留言成功");
                         } else {
@@ -630,24 +620,38 @@ public class GoodsInfoActivity extends BaseActivity {
         });
     }
 
+    private void showReplyDialog(final int groupPosition) {
+        showReplyDialog(groupPosition, -1);
+    }
+
     // 弹出回复框
-    private void showReplyDialog(final int position){
+    private void showReplyDialog(final int groupPosition, final int childPosition) {
         dialog = new BottomSheetDialog(this);
         View commentView = LayoutInflater.from(this).inflate(R.layout.comment_dialog_layout,null);
         final EditText commentText = commentView.findViewById(R.id.dialog_comment_et);
         final Button bt_comment = commentView.findViewById(R.id.dialog_comment_bt);
-        commentText.setHint("回复 " + commentList.get(position).getNickName() + " 的评论:");
+        if (childPosition == -1) {
+            commentText.setHint("回复 " + commentList.get(groupPosition).getNickName() + " 的评论:");
+        } else {
+            commentText.setHint("回复 " + commentList.get(groupPosition).getReplyList().get(childPosition).getNickName() + " 的评论:");
+        }
         dialog.setContentView(commentView);
         bt_comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String replyContent = commentText.getText().toString().trim();
+                String replyContent;
+                if (childPosition != -1) {
+                    StringBuffer sb = new StringBuffer("回复@");
+                    sb.append(commentList.get(groupPosition).getReplyList().get(childPosition).getNickName())
+                            .append(":").append(commentText.getText().toString().trim());
+                    replyContent = sb.toString();
+                } else {
+                    replyContent = commentText.getText().toString().trim();
+                }
                 if(!TextUtils.isEmpty(replyContent)){
                     dialog.dismiss();
-                    ReplyDetailBean detailBean = new ReplyDetailBean("小红",replyContent);
-                    adapter.addTheReplyData(detailBean, position);
-                    mElvComment.expandGroup(position);
-                    Toast.makeText(GoodsInfoActivity.this,"回复成功",Toast.LENGTH_SHORT).show();
+                    // 发送回复数据到服务器
+                    sendReplyToServer(replyContent, groupPosition);
                 } else {
                     Toast.makeText(GoodsInfoActivity.this,"回复内容不能为空",Toast.LENGTH_SHORT).show();
                 }
@@ -661,7 +665,7 @@ public class GoodsInfoActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(!TextUtils.isEmpty(charSequence) && charSequence.length()>2){
+                if(!TextUtils.isEmpty(charSequence)){
                     bt_comment.setBackgroundColor(Color.parseColor("#FFB568"));
                 }else {
                     bt_comment.setBackgroundColor(Color.parseColor("#D8D8D8"));
@@ -674,6 +678,55 @@ public class GoodsInfoActivity extends BaseActivity {
             }
         });
         dialog.show();
+    }
+
+    // 发送回复数据到服务器
+    private void sendReplyToServer(final String replyContent, final int groupPosition) {
+        final CommentDetailBean commentDetailBean = commentList.get(groupPosition);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("u_id", u_id);
+            jsonObject.put("reply", replyContent);
+            jsonObject.put("comment_id", commentDetailBean.getId());
+            String json = jsonObject.toString();
+            HttpUtil.sendPostRequest(Constant.GOODS_ADD_REPLY_URL, json, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (null == response.body()) {
+                        return;
+                    }
+
+                    String responseText = URLDecoder.decode(response.body().string(), "utf-8");
+                    final CommentMsg msg = Utility.handleMakeCommentResponse(responseText);
+                    if (null == msg) {
+                        return;
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if ("1".equals(msg.getCode())) {
+                                ReplyDetailBean replyDetailBean = new ReplyDetailBean(msg.getId(),
+                                        user.getU_nick(), commentDetailBean.getId(),
+                                        replyContent, msg.getTime());
+                                adapter.addTheReplyData(replyDetailBean, groupPosition);
+                                ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "回复成功", Toast.LENGTH_SHORT);
+                                Log.d("GoodsInfoActivity", "回复成功");
+                            } else {
+                                ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "回复失败", Toast.LENGTH_SHORT);
+                                Log.d("GoodsInfoActivity", "回复失败");
+                            }
+                        }
+                    });
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private static class MyHandler extends Handler {

@@ -11,7 +11,8 @@ public class CommentDetailBean {
     private Date createTime;
     private List<ReplyDetailBean> replyList;
 
-    public CommentDetailBean(String nickName, String userPhoto, String content, Date createTime) {
+    public CommentDetailBean(int id, String nickName, String userPhoto, String content, Date createTime) {
+        this.id = id;
         this.nickName = nickName;
         this.userPhoto = userPhoto;
         this.content = content;

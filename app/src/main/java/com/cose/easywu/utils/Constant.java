@@ -20,7 +20,6 @@ public class Constant {
     public static String PERSONAL_CENTER_URL = BASE_URL + "/user/personalCenter"; // 个人中心
     public static String EDITPWD_URL = BASE_URL + "/user/editPwd"; // 修改密码
     public static String EDITSEX_URL = BASE_URL + "/user/editSex"; // 修改性别
-    public static String EDITNICK_URL = BASE_URL + "/user/editNick"; // 修改昵称
     public static String EDITPHOTO_URL = BASE_URL + "/user/editPhoto"; // 修改头像
 
     public static String HOME_URL = BASE_URL + "/home/home"; // 主页
@@ -32,5 +31,6 @@ public class Constant {
     public static String REMOVE_GOODS_URL = BASE_URL + "/goods/removeGoods"; // 移除商品（用户界面不再显示）
     public static String GOODS_COMMENT_URL = BASE_URL + "/goods/goodsComment"; // 获取商品评论
     public static String GOODS_ADD_COMMENT_URL = BASE_URL + "/goods/goodsAddComment"; // 添加商品评论
+    public static String GOODS_ADD_REPLY_URL = BASE_URL + "/goods/goodsAddReply"; // 添加商品回复
 
 }

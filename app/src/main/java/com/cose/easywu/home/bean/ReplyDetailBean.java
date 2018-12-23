@@ -5,14 +5,16 @@ import java.util.Date;
 public class ReplyDetailBean {
     private int id;
     private String nickName;
-    private String userPhoto;
-    private String commentId;
+    private int commentId;
     private String content;
     private Date createTime;
 
-    public ReplyDetailBean(String nickName, String content) {
+    public ReplyDetailBean(int id, String nickName, int commentId, String content, Date createTime) {
+        this.id = id;
         this.nickName = nickName;
+        this.commentId = commentId;
         this.content = content;
+        this.createTime = createTime;
     }
 
     public void setNickName(String nickName) {
@@ -31,19 +33,11 @@ public class ReplyDetailBean {
         this.id = id;
     }
 
-    public String getUserPhoto() {
-        return userPhoto;
-    }
-
-    public void setUserPhoto(String userPhoto) {
-        this.userPhoto = userPhoto;
-    }
-
-    public String getCommentId() {
+    public int getCommentId() {
         return commentId;
     }
 
-    public void setCommentId(String commentId) {
+    public void setCommentId(int commentId) {
         this.commentId = commentId;
     }
 
@@ -68,8 +62,7 @@ public class ReplyDetailBean {
         return "ReplyDetailBean{" +
                 "id=" + id +
                 ", nickName='" + nickName + '\'' +
-                ", userPhoto='" + userPhoto + '\'' +
-                ", commentId='" + commentId + '\'' +
+                ", commentId=" + commentId +
                 ", content='" + content + '\'' +
                 ", createTime=" + createTime +
                 '}';
