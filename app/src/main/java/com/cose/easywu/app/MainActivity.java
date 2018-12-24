@@ -34,7 +34,7 @@ public class MainActivity extends FragmentActivity {
     private RadioGroup rgMain;
     private PublishDialog publishDialog;
 
-    private ArrayList<BaseFragment> fragments;
+    private ArrayList<Fragment> fragments;
     private int position = 0;
     // 上次显示的Fragment
     private Fragment tempFragment;
@@ -84,7 +84,7 @@ public class MainActivity extends FragmentActivity {
                         break;
                 }
                 // 根据位置取不同的Fragment
-                BaseFragment to = getFragment(position);
+                Fragment to = getFragment(position);
                 // 第一个参数：上次显示的Fragment，第二个参数：当前正要显示的Fragment
                 switchFragment(tempFragment, to);
             }
@@ -166,7 +166,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     // 根据位置得到对应的Fragment
-    private BaseFragment getFragment(int position) {
+    private Fragment getFragment(int position) {
         if (fragments != null && fragments.size() > 0) {
             return fragments.get(position);
         }

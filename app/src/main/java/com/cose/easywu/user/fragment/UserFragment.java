@@ -36,6 +36,8 @@ import com.cose.easywu.utils.ImageUtils;
 import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.cose.easywu.widget.MessageDialog;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
 
 import org.litepal.LitePal;
 
@@ -240,8 +242,46 @@ public class UserFragment extends BaseFragment {
                 editor.remove("u_id");
                 editor.putBoolean("autoLogin", false);
                 editor.apply();
-                ActivityCollector.finishAll();
-                startActivity(new Intent(mContext, LoginActivity.class));
+
+                // 退出环信
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 登录环信服务器退出登录
+                        EMClient.getInstance().logout(false, new EMCallBack() {
+                            @Override
+                            public void onSuccess() {
+                                if (getActivity() != null) {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            // 回到登录页面
+                                            ActivityCollector.finishAll();
+                                            startActivity(new Intent(mContext, LoginActivity.class));
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onError(int i, final String s) {
+                                if (getActivity() != null) {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(getActivity(), "退出失败：" + s, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onProgress(int i, String s) {
+
+                            }
+                        });
+                    }
+                }).start();
             }
         });
         // 个人资料设置

@@ -41,6 +41,7 @@ import com.cose.easywu.home.bean.CommentBean;
 import com.cose.easywu.home.bean.CommentDetailBean;
 import com.cose.easywu.home.bean.HomeDataBean;
 import com.cose.easywu.home.bean.ReplyDetailBean;
+import com.cose.easywu.message.activity.ChatActivity;
 import com.cose.easywu.release.activity.ReleaseActivity;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.DateUtil;
@@ -50,6 +51,8 @@ import com.cose.easywu.utils.NestedExpandableListView;
 import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.cose.easywu.widget.MessageDialog;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.easeui.EaseConstant;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -148,6 +151,8 @@ public class GoodsInfoActivity extends BaseActivity {
                 if (goods.getG_u_id().equals(pref.getString("u_id", ""))) {
                     ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "你就是卖家啦~", Toast.LENGTH_SHORT);
                     return;
+                } else {
+                    chatWithSeller();
                 }
 
             }
@@ -164,6 +169,13 @@ public class GoodsInfoActivity extends BaseActivity {
                 handleDelete();
             }
         });
+    }
+
+    private void chatWithSeller() {
+        Intent intent = new Intent(this, ChatActivity.class);
+        // 传递参数，会话id即环信id
+        intent.putExtra(EaseConstant.EXTRA_USER_ID, goods.getG_u_id());
+        startActivity(intent);
     }
 
     private void showProgressDialog() {
