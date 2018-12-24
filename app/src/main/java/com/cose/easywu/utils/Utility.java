@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.gson.msg.CommentMsg;
+import com.cose.easywu.gson.msg.HXMsg;
 import com.cose.easywu.gson.msg.LoginMsg;
 import com.cose.easywu.gson.msg.PersonMsg;
 import com.cose.easywu.gson.msg.ReleaseMsg;
@@ -22,6 +23,17 @@ import java.lang.reflect.Type;
 import java.util.Date;
 
 public class Utility {
+
+    /**
+     * 解析和处理服务器返回的环信需要的数据
+     */
+    public static HXMsg handleHXMsgResponse(String response) {
+        if (!TextUtils.isEmpty(response)) {
+            HXMsg hxMsg = new Gson().fromJson(response, HXMsg.class);
+            return hxMsg;
+        }
+        return null;
+    }
 
     /**
      * 解析和处理服务器返回的评论的数据

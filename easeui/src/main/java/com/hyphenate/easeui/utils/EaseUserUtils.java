@@ -15,7 +15,8 @@ import com.hyphenate.easeui.domain.EaseUser;
 public class EaseUserUtils {
     
     static EaseUserProfileProvider userProvider;
-    
+    static String BASE_PHOTO_URL = "http://172.20.10.8:8080/easywu/user_photo/";
+
     static {
         userProvider = EaseUI.getInstance().getUserProfileProvider();
     }
@@ -28,7 +29,7 @@ public class EaseUserUtils {
     public static EaseUser getUserInfo(String username){
         if(userProvider != null)
             return userProvider.getUser(username);
-        
+
         return null;
     }
     
@@ -44,12 +45,12 @@ public class EaseUserUtils {
                 Glide.with(context).load(avatarResId).into(imageView);
             } catch (Exception e) {
                 //use default avatar
-                Glide.with(context).load(user.getAvatar())
-                        .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.ease_default_avatar))
+                Glide.with(context).load(BASE_PHOTO_URL + user.getAvatar())
+                        .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.nav_icon))
                         .into(imageView);
             }
-        }else{
-            Glide.with(context).load(R.drawable.ease_default_avatar).into(imageView);
+        } else {
+            Glide.with(context).load(R.drawable.nav_icon).into(imageView);
         }
     }
     

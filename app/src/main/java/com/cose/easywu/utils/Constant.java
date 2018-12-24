@@ -21,6 +21,7 @@ public class Constant {
     public static String EDITPWD_URL = BASE_URL + "/user/editPwd"; // 修改密码
     public static String EDITSEX_URL = BASE_URL + "/user/editSex"; // 修改性别
     public static String EDITPHOTO_URL = BASE_URL + "/user/editPhoto"; // 修改头像
+    public static String HXUSER_INFO_URL = BASE_URL + "/user/hxInfo"; // 获取用户的环信信息
 
     public static String HOME_URL = BASE_URL + "/home/home"; // 主页
     public static String RELEASE_GOODS_URL = BASE_URL + "/goods/release_goods"; // 发布闲置

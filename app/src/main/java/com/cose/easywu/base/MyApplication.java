@@ -2,27 +2,53 @@ package com.cose.easywu.base;
 
 import android.app.ActivityManager;
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.cose.easywu.R;
+import com.cose.easywu.db.HXUserInfo;
+import com.cose.easywu.db.ReleaseGoods;
+import com.cose.easywu.gson.msg.BaseMsg;
+import com.cose.easywu.gson.msg.HXMsg;
+import com.cose.easywu.home.activity.GoodsInfoActivity;
+import com.cose.easywu.utils.Constant;
+import com.cose.easywu.utils.HttpUtil;
+import com.cose.easywu.utils.ToastUtil;
+import com.cose.easywu.utils.Utility;
+import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.easeui.EaseUI;
+import com.hyphenate.easeui.domain.EaseUser;
+import com.hyphenate.exceptions.HyphenateException;
+import com.hyphenate.util.EMLog;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.litepal.LitePal;
 
+import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
+import okhttp3.Response;
 
 public class MyApplication extends Application {
 
     private static Context context;
     // 记录环信SDK是否已经初始化
     private boolean isInit = false;
+    private EMMessageListener messageListener;
 
     public static Context getContext() {
         return context;
@@ -89,6 +115,70 @@ public class MyApplication extends Application {
 
         // 设置初始化已经完成
         isInit = true;
+
+        // 注册消息监听
+        registerMessageListener();
+
+        EaseUI.getInstance().setUserProfileProvider(new EaseUI.EaseUserProfileProvider() {
+            @Override
+            public EaseUser getUser(String username) {
+                return getUserInfo(username);
+            }
+        });
+    }
+
+    private EaseUser getUserInfo(String username) {
+        // 创建对象
+        EaseUser easeUser = new EaseUser(username);
+        // 先从本地数据库中查找数据
+        HXUserInfo hxUserInfo = LitePal.where("uid=?", username).findFirst(HXUserInfo.class);
+        if (hxUserInfo != null) {
+            easeUser.setNickname(hxUserInfo.getNick());
+            easeUser.setAvatar(hxUserInfo.getPhoto());
+            return easeUser;
+        }
+        // 本地数据库没有，就子线程联网请求一条数据
+        updateUserInfo(username);
+        // 暂时返回ID作为昵称
+        easeUser.setNickname(username);
+        easeUser.setAvatar(String.valueOf(R.drawable.nav_icon));
+
+        return easeUser;
+    }
+
+    private void updateUserInfo(final String username) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("u_id", username);
+            String json = jsonObject.toString();
+            HttpUtil.sendPostRequest(Constant.HXUSER_INFO_URL, json, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e("MyApplication", "请求环信信息失败:" + e.getMessage());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (null == response.body()) {
+                        return;
+                    }
+
+                    String responseText = URLDecoder.decode(response.body().string(), "utf-8");
+                    final HXMsg msg = Utility.handleHXMsgResponse(responseText);
+                    if (null == msg) {
+                        return;
+                    }
+                    if (msg.getCode().equals("1")) {
+                        HXUserInfo hxUserInfo = new HXUserInfo(username, msg.getNick(), msg.getPhoto());
+                        hxUserInfo.save();
+                    } else {
+
+                    }
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -126,6 +216,71 @@ public class MyApplication extends Application {
                 .build();
 
         OkHttpUtils.initClient(okHttpClient);
+    }
+
+    protected void registerMessageListener() {
+        messageListener = new EMMessageListener() {
+            @Override
+            public void onMessageReceived(List<EMMessage> messages) {
+                for (EMMessage message : messages) {
+                    EMLog.d("MyApplication", "onMessageReceived id : " + message.getMsgId());
+                    //接收并处理扩展消息
+                    String uid = "";
+                    String nick = "";
+                    String photo = "";
+                    try {
+                        uid = message.getStringAttribute("uid");
+                        nick = message.getStringAttribute("nick");
+                        photo = message.getStringAttribute("photo");
+                    } catch (HyphenateException e) {
+                        e.printStackTrace();
+                        // 只要有一个取不出来，就放弃缓存这条信息携带的昵称、头像
+                        continue;
+                    }
+                    // 缓存昵称、头像
+                    HXUserInfo hxUserInfo = LitePal.where("uid=?", uid).findFirst(HXUserInfo.class);
+                    if (hxUserInfo != null) {
+                        hxUserInfo.setNick(nick);
+                        hxUserInfo.setPhoto(photo);
+                    } else {
+                        hxUserInfo = new HXUserInfo(uid, nick, photo);
+                    }
+                    hxUserInfo.save();
+
+                    String hxIdFrom = message.getFrom();
+                    EaseUser easeUser = new EaseUser(hxIdFrom);
+                    easeUser.setAvatar(Constant.BASE_PHOTO_URL + photo);
+                    easeUser.setNickname(nick);
+                }
+            }
+            @Override
+            public void onCmdMessageReceived(List<EMMessage> messages) {
+                for (EMMessage message : messages) {
+                    EMLog.d("MyApplication", "receive command message");
+                    //get message body
+                    //end of red packet code
+                    //获取扩展属性 此处省略
+                    //maybe you need get extension of your message
+                    //message.getStringAttribute("");
+                }
+            }
+            @Override
+            public void onMessageRead(List<EMMessage> messages) {
+            }
+            @Override
+            public void onMessageDelivered(List<EMMessage> message) {
+            }
+
+            @Override
+            public void onMessageRecalled(List<EMMessage> list) {
+
+            }
+
+            @Override
+            public void onMessageChanged(EMMessage message, Object change) {
+            }
+        };
+        EMClient.getInstance().chatManager().addMessageListener(messageListener);
     }
 
 }

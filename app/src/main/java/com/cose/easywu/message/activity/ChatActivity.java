@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.cose.easywu.R;
 import com.cose.easywu.base.ActivityCollector;
+import com.cose.easywu.message.fragment.MyChatFragment;
 import com.cose.easywu.utils.HandleBackUtil;
 import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.ui.EaseChatFragment;
@@ -26,12 +27,16 @@ public class ChatActivity extends FragmentActivity {
 
     private void initData() {
         // 创建一个会话的fragment
-        EaseChatFragment easeChatFragment = new EaseChatFragment();
+        MyChatFragment myChatFragment = new MyChatFragment();
         mHxid = getIntent().getStringExtra(EaseConstant.EXTRA_USER_ID);
-        easeChatFragment.setArguments(getIntent().getExtras());
+        myChatFragment.setArguments(getIntent().getExtras());
+
+//        EaseChatFragment easeChatFragment = new EaseChatFragment();
+//        mHxid = getIntent().getStringExtra(EaseConstant.EXTRA_USER_ID);
+//        easeChatFragment.setArguments(getIntent().getExtras());
         // 替换fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fl_chat, easeChatFragment).commit();
+        transaction.replace(R.id.fl_chat, myChatFragment).commit();
     }
 
     @Override
