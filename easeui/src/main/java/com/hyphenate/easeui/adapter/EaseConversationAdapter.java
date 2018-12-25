@@ -57,7 +57,7 @@ public class EaseConversationAdapter extends ArrayAdapter<EMConversation> {
                                    List<EMConversation> objects) {
         super(context, resource, objects);
         conversationList = objects;
-        copyConversationList = new ArrayList<EMConversation>();
+        copyConversationList = new ArrayList<>();
         copyConversationList.addAll(objects);
     }
 

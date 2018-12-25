@@ -72,8 +72,6 @@
         <activity android:name=".user.activity.MySellActivity" />
         <activity android:name=".message.activity.ChatActivity"></activity>
 
-        <activity android:name="com.hyphenate.easeui.ui.EaseShowBigImageActivity" />
-
         <!-- 设置环信应用的AppKey -->
         <meta-data android:name="EASEMOB_APPKEY"  android:value="1189181014177255#easywu" />
         <!-- 声明sdk所需的service SDK核心功能-->

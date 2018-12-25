@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.R;
 import com.hyphenate.easeui.EaseUI;
 import com.hyphenate.easeui.EaseUI.EaseUserProfileProvider;
@@ -15,7 +16,6 @@ import com.hyphenate.easeui.domain.EaseUser;
 public class EaseUserUtils {
     
     static EaseUserProfileProvider userProvider;
-    static String BASE_PHOTO_URL = "http://172.20.10.8:8080/easywu/user_photo/";
 
     static {
         userProvider = EaseUI.getInstance().getUserProfileProvider();
@@ -45,7 +45,7 @@ public class EaseUserUtils {
                 Glide.with(context).load(avatarResId).into(imageView);
             } catch (Exception e) {
                 //use default avatar
-                Glide.with(context).load(BASE_PHOTO_URL + user.getAvatar())
+                Glide.with(context).load(EaseConstant.BASE_PHOTO_URL + user.getAvatar())
                         .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.nav_icon))
                         .into(imageView);
             }
