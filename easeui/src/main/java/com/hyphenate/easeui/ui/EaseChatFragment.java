@@ -98,6 +98,8 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
     protected static final int TYPING_SHOW_TIME = 5000;
 
     private static final int PERMISSION_LOCATION_CODE = 1;
+    private static final int PERMISSION_CAMERA = 2;
+    private static final int PERMISSION_RECORD_AUDIO = 3;
 
     /**
      * params to fragment
@@ -217,12 +219,22 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
             @Override
             public boolean onPressToSpeakBtnTouch(View v, MotionEvent event) {
                 return voiceRecorderView.onPressToSpeakBtnTouch(v, event, new EaseVoiceRecorderCallback() {
-                    
+
                     @Override
                     public void onVoiceRecordComplete(String voiceFilePath, int voiceTimeLength) {
                         sendVoiceMessage(voiceFilePath, voiceTimeLength);
                     }
                 });
+            }
+
+            @Override
+            public void onVoiceBtnClicked() {
+                if (ContextCompat.checkSelfPermission(getContext(),
+                        Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_RECORD_AUDIO);
+                } else {
+                    inputMenu.hideExtendMenuContainer();
+                }
             }
 
             @Override
@@ -786,19 +798,19 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
                 }
             }
             switch (itemId) {
-            case ITEM_TAKE_PICTURE:
-                selectPicFromCamera();
-                break;
-            case ITEM_PICTURE:
-                selectPicFromLocal();
-                break;
-            case ITEM_LOCATION:
-                locationClick();
-                break;
+                case ITEM_TAKE_PICTURE:
+                    checkCamaraPermission();
+                    break;
+                case ITEM_PICTURE:
+                    selectPicFromLocal();
+                    break;
+                case ITEM_LOCATION:
+                    locationClick();
+                    break;
 
-            default:
-                break;
-            }
+                default:
+                    break;
+                }
         }
 
     }
@@ -835,6 +847,37 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
                     Toast.makeText(getContext(), "发生未知错误", Toast.LENGTH_SHORT).show();
                 }
                 break;
+
+            case PERMISSION_CAMERA:
+                if (grantResults.length > 0) {
+                    for (int result : grantResults) {
+                        if (result != PackageManager.PERMISSION_GRANTED) {
+                            Toast.makeText(getContext(), "必须授予权限才能打开相机",
+                                    Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                    selectPicFromCamera();
+                } else {
+                    Toast.makeText(getContext(), "发生未知错误", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            case PERMISSION_RECORD_AUDIO:
+                if (grantResults.length > 0) {
+                    for (int result : grantResults) {
+                        if (result != PackageManager.PERMISSION_GRANTED) {
+                            Toast.makeText(getContext(), "必须授予权限才能使用麦克风",
+                                    Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                    inputMenu.hideExtendMenuContainer();
+                } else {
+                    Toast.makeText(getContext(), "发生未知错误", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
             default:
         }
     }
@@ -1037,6 +1080,15 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
             return;
         }
         sendFileMessage(filePath);
+    }
+
+    protected void checkCamaraPermission() {
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSION_CAMERA);
+        } else {
+            selectPicFromCamera();
+        }
     }
 
     /**

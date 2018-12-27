@@ -195,7 +195,7 @@ public class EaseChatInputMenu extends LinearLayout {
 
             @Override
             public void onToggleVoiceBtnClicked() {
-                hideExtendMenuContainer();
+                listener.onVoiceBtnClicked();
             }
 
             @Override
@@ -246,8 +246,8 @@ public class EaseChatInputMenu extends LinearLayout {
         });
 
     }
-    
-   
+
+
     /**
      * insert text
      * @param text
@@ -371,6 +371,8 @@ public class EaseChatInputMenu extends LinearLayout {
          * @return
          */
         boolean onPressToSpeakBtnTouch(View v, MotionEvent event);
+
+        void onVoiceBtnClicked();
     }
     
 }

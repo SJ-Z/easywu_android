@@ -37,8 +37,8 @@
         <activity android:name=".app.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
         <activity android:name=".app.LoginActivity" />
@@ -55,6 +55,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
+            tools:replace="android:authorities"
             android:authorities="com.cose.easywu.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">

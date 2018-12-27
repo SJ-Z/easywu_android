@@ -20,6 +20,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -56,8 +57,10 @@ import okhttp3.Call;
 
 public class EditPhotoActivity extends Activity implements View.OnClickListener {
 
-    private static final int TAKE_PHOTO = 1;
-    private static final int CHOOSE_PHOTO = 2;
+    private static final int PERMISSION_CAMARA = 1;
+    private static final int PERMISSION_ALBUM = 2;
+    private static final int CHOOSE_PHOTO = 3;
+    private static final int TAKE_PHOTO = 4;
 
     private CircleImageView mIvPhoto;
     private Button mBtnTakePhoto, mBtnChoosePhoto;
@@ -183,7 +186,7 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
         if (ContextCompat.checkSelfPermission(EditPhotoActivity.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(EditPhotoActivity.this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_ALBUM);
         } else {
             openAlbum();
         }
@@ -197,6 +200,17 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
     }
 
     private void takePhoto() {
+        // 检查权限
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            String[] permissions = new String[]{Manifest.permission.CAMERA};
+            ActivityCompat.requestPermissions(this, permissions, PERMISSION_CAMARA);
+        } else {
+            openCamara();
+        }
+    }
+
+    private void openCamara() {
         // 创建File对象，用于存储拍照后的照片
         photoFile = new File(getExternalCacheDir(), "user_photo.jpg");
         try {
@@ -310,7 +324,14 @@ public class EditPhotoActivity extends Activity implements View.OnClickListener 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case 1:
+            case PERMISSION_CAMARA:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openCamara();
+                } else {
+                    ToastUtil.showMsgOnCenter(this, "权限被拒绝，无法打开相机", Toast.LENGTH_SHORT);
+                }
+                break;
+            case PERMISSION_ALBUM:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openAlbum();
                 } else {

@@ -233,8 +233,8 @@ public class EaseChatPrimaryMenu extends EaseChatPrimaryMenuBase implements OnCl
         } else {
         }
     }
-    
-    
+
+
     /**
      * show voice icon when speak bar is touched
      * 
