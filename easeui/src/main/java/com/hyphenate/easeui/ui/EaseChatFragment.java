@@ -56,6 +56,7 @@ import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.model.EaseAtMessageHelper;
 import com.hyphenate.easeui.model.EaseCompat;
 import com.hyphenate.easeui.model.EaseDingMessageHelper;
+import com.hyphenate.easeui.model.GoodsMessageHelper;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 import com.hyphenate.easeui.widget.EaseAlertDialog;
@@ -174,6 +175,12 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
 
         this.turnOnTyping = turnOnTyping();
 
+        boolean isGoods = fragmentArgs.getBoolean("isGoods");
+        if (isGoods) {
+            sendGoodsMessage(fragmentArgs.getString("goods_id"), fragmentArgs.getString("goods_name"),
+                    fragmentArgs.getString("goods_pic"), fragmentArgs.getDouble("goods_price"));
+        }
+
         super.onActivityCreated(savedInstanceState);
 
         localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
@@ -187,6 +194,18 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
             }
         };
         localBroadcastManager.registerReceiver(receiver, intentFilter);
+    }
+
+    // 发送商品消息
+    protected void sendGoodsMessage(String id, String name, String pic, double price) {
+        EMMessage message = EMMessage.createTxtSendMessage(name, toChatUsername);
+        message.setAttribute(GoodsMessageHelper.GOODS_ID, id);
+        message.setAttribute(GoodsMessageHelper.GOODS_NAME, name);
+        message.setAttribute(GoodsMessageHelper.GOODS_PIC, pic);
+        message.setAttribute(GoodsMessageHelper.GOODS_PRICE, String.valueOf(price));
+        message.setAttribute("CHATTYPE", GoodsMessageHelper.CHATTYPE);
+        EMClient.getInstance().chatManager().sendMessage(message);
+        Log.d(TAG, "sendGoodsMessage: 发送商品消息");
     }
 
     protected boolean turnOnTyping() {

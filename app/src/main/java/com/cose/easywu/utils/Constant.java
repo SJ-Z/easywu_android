@@ -31,6 +31,7 @@ public class Constant {
     public static String POLISH_GOODS_URL = BASE_URL + "/goods/polishGoods"; // 擦亮商品
     public static String DELETE_GOODS_URL = BASE_URL + "/goods/deleteGoods"; // 删除商品（将商品从发布移到下架）
     public static String REMOVE_GOODS_URL = BASE_URL + "/goods/removeGoods"; // 移除商品（用户界面不再显示）
+    public static String GET_GOODS_URL = BASE_URL + "/goods/getGoodsInfo"; // 查询商品信息
     public static String GOODS_COMMENT_URL = BASE_URL + "/goods/goodsComment"; // 获取商品评论
     public static String GOODS_ADD_COMMENT_URL = BASE_URL + "/goods/goodsAddComment"; // 添加商品评论
     public static String GOODS_ADD_REPLY_URL = BASE_URL + "/goods/goodsAddReply"; // 添加商品回复

@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ import com.cose.easywu.db.ReleaseGoods;
 import com.cose.easywu.db.User;
 import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.gson.msg.CommentMsg;
+import com.cose.easywu.gson.msg.GoodsMsg;
 import com.cose.easywu.home.adapter.CommentExpandAdapter;
 import com.cose.easywu.home.adapter.HomeFragmentAdapter;
 import com.cose.easywu.home.bean.CommentBean;
@@ -53,6 +55,7 @@ import com.cose.easywu.utils.Utility;
 import com.cose.easywu.widget.MessageDialog;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.EaseConstant;
+import com.hyphenate.easeui.model.GoodsMessageHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,6 +80,7 @@ public class GoodsInfoActivity extends BaseActivity {
     private TextView mTvTitlePrice, mTvUserNick, mTvUserUpdateTime, mTvPrice, mTvOriginalPrice,
                         mTvGoodsName, mTvGoodsDesc, mTvMsgNum, mTvContact, mTvEdit, mTvDelete;
     private LinearLayout mLlOriginalPrice, mLlLeaveMsg, mLlLike, mLlManage;
+    private ScrollView mSv;
     private NestedExpandableListView mElvComment;
     private CommentExpandAdapter adapter;
     private ProgressDialog progressDialog;
@@ -175,6 +179,12 @@ public class GoodsInfoActivity extends BaseActivity {
         Intent intent = new Intent(this, ChatActivity.class);
         // 传递参数，会话id即环信id
         intent.putExtra(EaseConstant.EXTRA_USER_ID, goods.getG_u_id());
+        // 传递商品信息
+        intent.putExtra("isGoods", true);
+        intent.putExtra("goods_id", goods.getG_id());
+        intent.putExtra("goods_name", goods.getG_name());
+        intent.putExtra("goods_pic", Constant.BASE_PIC_URL + goods.getG_pic1());
+        intent.putExtra("goods_price", goods.getG_price());
         startActivity(intent);
     }
 
@@ -368,59 +378,120 @@ public class GoodsInfoActivity extends BaseActivity {
         editor = pref.edit();
         u_id = pref.getString("u_id", "");
         user = LitePal.where("u_id=?", u_id).findFirst(User.class);
+
+        // 判断进入该Activity是否是由聊天窗口点击进来的
+        Intent intent = getIntent();
+        if (intent.getBooleanExtra(GoodsMessageHelper.CHATTYPE, false)) {
+            // 利用商品id查找本地数据库
+            ReleaseGoods releaseGoods = LitePal.where("g_id=?", intent.getStringExtra(GoodsMessageHelper.GOODS_ID)).findFirst(ReleaseGoods.class);
+            if (releaseGoods != null) {
+                goods = new HomeDataBean.NewestInfoBean(releaseGoods.getG_id(), releaseGoods.getG_name(), releaseGoods.getG_desc(),
+                        releaseGoods.getG_price(), releaseGoods.getG_originalPrice(), releaseGoods.getG_pic1(), releaseGoods.getG_pic2(),
+                        releaseGoods.getG_pic3(), releaseGoods.getG_state(), releaseGoods.getG_like(), releaseGoods.getG_updateTime(),
+                        releaseGoods.getG_t_id(), u_id, user.getU_nick(), user.getU_photo(), user.getU_sex());
+                loadGoodsInfo(goods);
+            } else {
+                // 利用商品id去服务器请求数据
+                loadGoodsFromServer(intent.getStringExtra(GoodsMessageHelper.GOODS_ID));
+            }
+        }
+
         goods = (HomeDataBean.NewestInfoBean) getIntent().getSerializableExtra(HomeFragmentAdapter.GOODS_BEAN);
         if (goods != null) {
-            // 加载图片
-            Glide.with(this).load(Constant.BASE_PHOTO_URL + goods.getG_u_photo())
-                    .apply(new RequestOptions().placeholder(R.drawable.nav_icon).skipMemoryCache(true))
-                    .into(mIvUserPhoto);
-            Glide.with(this).load(goods.getG_u_sex()==0?R.drawable.ic_female:R.drawable.ic_male).into(mIvUserSex);
-            Glide.with(this).load(Constant.BASE_PIC_URL + goods.getG_pic1())
-                    .apply(new RequestOptions().placeholder(R.drawable.pic_loading_goods).skipMemoryCache(true))
-                    .into(mIvGoodsPic1);
-            if (goods.getG_pic2() != null) {
-                Glide.with(this).load(Constant.BASE_PIC_URL + goods.getG_pic2())
-                        .apply(new RequestOptions().placeholder(R.drawable.pic_loading_goods).skipMemoryCache(true))
-                        .into(mIvGoodsPic2);
-            } else {
-                mIvGoodsPic2.setVisibility(View.GONE);
-            }
-            if (goods.getG_pic3() != null) {
-                Glide.with(this).load(Constant.BASE_PIC_URL + goods.getG_pic3())
-                        .apply(new RequestOptions().placeholder(R.drawable.pic_loading_goods).skipMemoryCache(true))
-                        .into(mIvGoodsPic3);
-            } else {
-                mIvGoodsPic3.setVisibility(View.GONE);
-            }
-            // 加载文本
-            mTvTitlePrice.setText(String.valueOf(goods.getG_price()));
-            mTvUserNick.setText(goods.getG_u_nick());
-            mTvUserUpdateTime.setText(DateUtil.getDatePoor(goods.getG_updateTime(), new Date()) + "来过");
-            mTvPrice.setText(String.valueOf(goods.getG_price()));
-            if (goods.getG_originalPrice() > 0) {
-                mTvOriginalPrice.setText(String.valueOf(goods.getG_originalPrice()));
-                mLlOriginalPrice.setVisibility(View.VISIBLE);
-            }
-            mTvGoodsName.setText(goods.getG_name());
-            mTvGoodsDesc.setText(goods.getG_desc());
-            mTvMsgNum.setText("0"); // 设置留言数量
-
-            // 检测是否已收藏该商品
-            likeGoods = LitePal.where("g_id=?", goods.getG_id()).findFirst(LikeGoods.class);
-            if (likeGoods != null) {
-                like = true;
-                mIvLike.setImageResource(R.drawable.ic_goods_like_press);
-            }
-
-            // 检测是否是商品的发布者
-            if (goods.getG_u_id().equals(pref.getString("u_id", ""))) {
-                mLlManage.setVisibility(View.VISIBLE);
-                mTvContact.setVisibility(View.GONE);
-            }
-
-            // 向服务器发起请求加载评论
-            getCommentFromServer();
+            loadGoodsInfo(goods);
         }
+    }
+
+    private void loadGoodsFromServer(String g_id) {
+        HttpUtil.sendPostRequest(Constant.GET_GOODS_URL, g_id, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "加载商品失败", Toast.LENGTH_SHORT);
+                Log.e("GoodsInfoActivity", "加载商品失败:" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (null == response.body()) {
+                    return;
+                }
+
+                String responseText = URLDecoder.decode(response.body().string(), "utf-8");
+                final GoodsMsg msg = Utility.handleGoodsResponse(responseText);
+                if (null == msg) {
+                    return;
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (msg.getCode().equals("1")) {
+                            goods = new HomeDataBean.NewestInfoBean(msg.getGoods().getG_id(), msg.getGoods().getG_name(),
+                                    msg.getGoods().getG_desc(), msg.getGoods().getG_price(), msg.getGoods().getG_originalPrice(),
+                                    msg.getGoods().getG_pic1(), msg.getGoods().getG_pic2(), msg.getGoods().getG_pic3(),
+                                    msg.getGoods().getG_state(), msg.getGoods().getG_like(), new Date(msg.getGoods().getG_updateTime()),
+                                    msg.getGoods().getG_t_id(), u_id, user.getU_nick(), user.getU_photo(), user.getU_sex());
+                            loadGoodsInfo(goods);
+                        } else {
+                            ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "商品已失效", Toast.LENGTH_SHORT);
+                            Log.e("GoodsInfoActivity", "商品已失效");
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    private void loadGoodsInfo(HomeDataBean.NewestInfoBean goods) {
+        // 加载图片
+        Glide.with(this).load(Constant.BASE_PHOTO_URL + goods.getG_u_photo())
+                .apply(new RequestOptions().placeholder(R.drawable.nav_icon).skipMemoryCache(true))
+                .into(mIvUserPhoto);
+        Glide.with(this).load(goods.getG_u_sex()==0?R.drawable.ic_female:R.drawable.ic_male).into(mIvUserSex);
+        Glide.with(this).load(Constant.BASE_PIC_URL + goods.getG_pic1())
+                .apply(new RequestOptions().placeholder(R.drawable.pic_loading_goods).skipMemoryCache(true))
+                .into(mIvGoodsPic1);
+        if (goods.getG_pic2() != null) {
+            Glide.with(this).load(Constant.BASE_PIC_URL + goods.getG_pic2())
+                    .apply(new RequestOptions().placeholder(R.drawable.pic_loading_goods).skipMemoryCache(true))
+                    .into(mIvGoodsPic2);
+        } else {
+            mIvGoodsPic2.setVisibility(View.GONE);
+        }
+        if (goods.getG_pic3() != null) {
+            Glide.with(this).load(Constant.BASE_PIC_URL + goods.getG_pic3())
+                    .apply(new RequestOptions().placeholder(R.drawable.pic_loading_goods).skipMemoryCache(true))
+                    .into(mIvGoodsPic3);
+        } else {
+            mIvGoodsPic3.setVisibility(View.GONE);
+        }
+        // 加载文本
+        mTvTitlePrice.setText(String.valueOf(goods.getG_price()));
+        mTvUserNick.setText(goods.getG_u_nick());
+        mTvUserUpdateTime.setText(DateUtil.getDatePoor(goods.getG_updateTime(), new Date()) + "来过");
+        mTvPrice.setText(String.valueOf(goods.getG_price()));
+        if (goods.getG_originalPrice() > 0) {
+            mTvOriginalPrice.setText(String.valueOf(goods.getG_originalPrice()));
+            mLlOriginalPrice.setVisibility(View.VISIBLE);
+        }
+        mTvGoodsName.setText(goods.getG_name());
+        mTvGoodsDesc.setText(goods.getG_desc());
+        mTvMsgNum.setText("0"); // 设置留言数量
+
+        // 检测是否已收藏该商品
+        likeGoods = LitePal.where("g_id=?", goods.getG_id()).findFirst(LikeGoods.class);
+        if (likeGoods != null) {
+            like = true;
+            mIvLike.setImageResource(R.drawable.ic_goods_like_press);
+        }
+
+        // 检测是否是商品的发布者
+        if (goods.getG_u_id().equals(pref.getString("u_id", ""))) {
+            mLlManage.setVisibility(View.VISIBLE);
+            mTvContact.setVisibility(View.GONE);
+        }
+
+        // 向服务器发起请求加载评论
+        getCommentFromServer();
     }
 
     private void getCommentFromServer() {
@@ -453,6 +524,7 @@ public class GoodsInfoActivity extends BaseActivity {
                     @Override
                     public void run() {
                         initExpandableListView();
+                        mSv.scrollTo(0, 0);
                     }
                 });
                 Log.d("GoodsInfoActivity", "评论加载成功==" + responseText);
@@ -487,6 +559,7 @@ public class GoodsInfoActivity extends BaseActivity {
         mTvDelete = findViewById(R.id.tv_goodsInfo_delete);
         mLlLeaveMsg = findViewById(R.id.ll_goodsInfo_leaveMsg);
         mLlLike = findViewById(R.id.ll_goodsInfo_like);
+        mSv = findViewById(R.id.scroll_view_goodsInfo);
         mTvContact = findViewById(R.id.tv_goodsInfo_contact);
         mLlManage = findViewById(R.id.ll_goodsInfo_manage);
         mElvComment = findViewById(R.id.lv_goodsInfo_comment);

@@ -26,10 +26,12 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.easeui.EaseConstant;
+import com.hyphenate.easeui.model.GoodsMessageHelper;
 import com.hyphenate.easeui.model.styles.EaseMessageListItemStyle;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 import com.hyphenate.easeui.widget.EaseChatMessageList.MessageListItemClickListener;
 import com.hyphenate.easeui.widget.chatrow.EaseCustomChatRowProvider;
+import com.hyphenate.easeui.widget.chatrow.GoodsChatRow;
 import com.hyphenate.easeui.widget.presenter.EaseChatBigExpressionPresenter;
 import com.hyphenate.easeui.widget.presenter.EaseChatFilePresenter;
 import com.hyphenate.easeui.widget.presenter.EaseChatImagePresenter;
@@ -38,6 +40,7 @@ import com.hyphenate.easeui.widget.presenter.EaseChatRowPresenter;
 import com.hyphenate.easeui.widget.presenter.EaseChatTextPresenter;
 import com.hyphenate.easeui.widget.presenter.EaseChatVideoPresenter;
 import com.hyphenate.easeui.widget.presenter.EaseChatVoicePresenter;
+import com.hyphenate.easeui.widget.presenter.GoodsChatRowPresenter;
 
 public class EaseMessageAdapter extends BaseAdapter{
 
@@ -63,6 +66,9 @@ public class EaseMessageAdapter extends BaseAdapter{
 	private static final int MESSAGE_TYPE_RECV_FILE = 11;
 	private static final int MESSAGE_TYPE_SENT_EXPRESSION = 12;
 	private static final int MESSAGE_TYPE_RECV_EXPRESSION = 13;
+
+	private static final int MESSAGE_TYPE_SENT_GOODS = 14;
+	private static final int MESSAGE_TYPE_RECV_GOODS = 15;
 	
 	
 	public int itemTypeCount; 
@@ -171,9 +177,9 @@ public class EaseMessageAdapter extends BaseAdapter{
 	 */
 	public int getViewTypeCount() {
 	    if(customRowProvider != null && customRowProvider.getCustomChatRowTypeCount() > 0){
-	        return customRowProvider.getCustomChatRowTypeCount() + 14;
+	        return customRowProvider.getCustomChatRowTypeCount() + 16;
 	    }
-        return 14;
+        return 16;
     }
 	
 
@@ -186,15 +192,19 @@ public class EaseMessageAdapter extends BaseAdapter{
 			return -1;
 		}
 		
-		if(customRowProvider != null && customRowProvider.getCustomChatRowType(message) > 0){
-		    return customRowProvider.getCustomChatRowType(message) + 13;
+		if (customRowProvider != null && customRowProvider.getCustomChatRowType(message) > 0){
+		    return customRowProvider.getCustomChatRowType(message) + 15;
 		}
 		
 		if (message.getType() == EMMessage.Type.TXT) {
 		    if(message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION, false)){
 		        return message.direct() == EMMessage.Direct.RECEIVE ? MESSAGE_TYPE_RECV_EXPRESSION : MESSAGE_TYPE_SENT_EXPRESSION;
 		    }
-			return message.direct() == EMMessage.Direct.RECEIVE ? MESSAGE_TYPE_RECV_TXT : MESSAGE_TYPE_SENT_TXT;
+//			return message.direct() == EMMessage.Direct.RECEIVE ? MESSAGE_TYPE_RECV_TXT : MESSAGE_TYPE_SENT_TXT;
+			if (GoodsMessageHelper.isGoodsChatType(message)) {
+		    	return message.direct() == EMMessage.Direct.RECEIVE ? MESSAGE_TYPE_RECV_GOODS : MESSAGE_TYPE_SENT_GOODS;
+			}
+			return -1;
 		}
 		if (message.getType() == EMMessage.Type.IMAGE) {
 			return message.direct() == EMMessage.Direct.RECEIVE ? MESSAGE_TYPE_RECV_IMAGE : MESSAGE_TYPE_SENT_IMAGE;
@@ -212,6 +222,9 @@ public class EaseMessageAdapter extends BaseAdapter{
 		if (message.getType() == EMMessage.Type.FILE) {
 			return message.direct() == EMMessage.Direct.RECEIVE ? MESSAGE_TYPE_RECV_FILE : MESSAGE_TYPE_SENT_FILE;
 		}
+		if (GoodsMessageHelper.isGoodsChatType(message)) {
+			return message.direct() == EMMessage.Direct.RECEIVE ? MESSAGE_TYPE_RECV_GOODS : MESSAGE_TYPE_SENT_GOODS;
+		}
 
 		return -1;// invalid
 	}
@@ -221,13 +234,17 @@ public class EaseMessageAdapter extends BaseAdapter{
 			return customRowProvider.getCustomChatRow(message, position, this);
         }
 
+        if (GoodsMessageHelper.isGoodsChatType(message)) {
+        	return new GoodsChatRowPresenter();
+		}
+
         EaseChatRowPresenter presenter = null;
 
         switch (message.getType()) {
         case TXT:
             if(message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION, false)){
 				presenter = new EaseChatBigExpressionPresenter();
-            }else{
+            } else {
 				presenter = new EaseChatTextPresenter();
             }
             break;

@@ -1,9 +1,11 @@
 package com.cose.easywu.utils;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.gson.msg.CommentMsg;
+import com.cose.easywu.gson.msg.GoodsMsg;
 import com.cose.easywu.gson.msg.HXMsg;
 import com.cose.easywu.gson.msg.LoginMsg;
 import com.cose.easywu.gson.msg.PersonMsg;
@@ -25,12 +27,21 @@ import java.util.Date;
 public class Utility {
 
     /**
+     * 解析和处理服务器返回的商品信息
+     */
+    public static GoodsMsg handleGoodsResponse(String response) {
+        if (!TextUtils.isEmpty(response)) {
+            return new Gson().fromJson(response, GoodsMsg.class);
+        }
+        return null;
+    }
+
+    /**
      * 解析和处理服务器返回的环信需要的数据
      */
     public static HXMsg handleHXMsgResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
-            HXMsg hxMsg = new Gson().fromJson(response, HXMsg.class);
-            return hxMsg;
+            return new Gson().fromJson(response, HXMsg.class);
         }
         return null;
     }
@@ -87,8 +98,7 @@ public class Utility {
      */
     public static PersonMsg handlePersonMsgResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
-            PersonMsg personMsg = new Gson().fromJson(response, PersonMsg.class);
-            return personMsg;
+            return new Gson().fromJson(response, PersonMsg.class);
         }
         return null;
     }
@@ -98,8 +108,7 @@ public class Utility {
      */
     public static BaseMsg handleBaseMsgResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
-            BaseMsg baseMsg = new Gson().fromJson(response, BaseMsg.class);
-            return baseMsg;
+            return new Gson().fromJson(response, BaseMsg.class);
         }
         return null;
     }
@@ -109,8 +118,7 @@ public class Utility {
      */
     public static LoginMsg handleLoginResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
-            LoginMsg loginMsg = new Gson().fromJson(response, LoginMsg.class);
-            return loginMsg;
+            return new Gson().fromJson(response, LoginMsg.class);
         }
         return null;
     }
@@ -120,8 +128,7 @@ public class Utility {
      */
     public static ReleaseMsg handleReleaseResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
-            ReleaseMsg releaseMsg = new Gson().fromJson(response, ReleaseMsg.class);
-            return releaseMsg;
+            return new Gson().fromJson(response, ReleaseMsg.class);
         }
         return null;
     }
