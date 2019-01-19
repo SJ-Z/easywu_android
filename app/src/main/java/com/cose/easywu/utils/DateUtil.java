@@ -23,8 +23,8 @@ public class DateUtil {
         long second = diff / 1000;
         // 计算差多少秒//输出结果
         // long sec = diff % nd % nh % nm / ns;
-        if (day > 31) { // 直接显示日期yyyy-MM-dd HH:mm:ss
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (day > 31) { // 直接显示日期yyyy-MM-dd
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             return formatter.format(startDate);
         } else if (day > 0) {
 //            return day + "天" + hour + "小时" + min + "分钟";

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 import com.cose.easywu.message.activity.ChatActivity;
 import com.cose.easywu.utils.HandleBackInterface;
@@ -26,6 +28,9 @@ public class MessageFragment extends EaseConversationListFragment implements Han
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getActivity();
+        if (getActivity() != null) { // 设置默认软键盘不弹出
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        }
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
@@ -31,7 +32,9 @@ public class WelcomeActivity extends BaseActivity {
                 }
                 // 启动主页面
                 if (autoEnter) {
-                    startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
+                    Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+                    intent.putExtra("chat", getIntent().getBooleanExtra("chat", false));
+                    startActivity(intent);
                 } else {
                     // 启动登录页面
                     startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));

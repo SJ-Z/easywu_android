@@ -18,5 +18,16 @@
         android:layout_centerInParent="true"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/ease_photo_view_save_pic"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorLoginButton"
+        android:gravity="center"
+        android:text="保存图片"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

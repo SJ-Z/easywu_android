@@ -14,6 +14,8 @@
 package com.hyphenate.easeui.ui;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,12 +26,17 @@ import com.hyphenate.chat.EMMessage;
 import com.hyphenate.easeui.R;
 import com.hyphenate.easeui.model.EaseImageCache;
 import com.hyphenate.easeui.utils.EaseLoadLocalBigImgTask;
+import com.hyphenate.easeui.utils.MyFileUtils;
+import com.hyphenate.easeui.utils.ToastUtil;
 import com.hyphenate.easeui.widget.photoview.EasePhotoView;
 import com.hyphenate.util.EMLog;
 import com.hyphenate.util.ImageUtils;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -41,6 +48,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * download and show original image
@@ -50,6 +59,7 @@ public class EaseShowBigImageActivity extends EaseBaseActivity {
 	private static final String TAG = "ShowBigImage"; 
 	private ProgressDialog pd;
 	private EasePhotoView image;
+	private TextView tv_save;
 	private int default_res = R.drawable.ease_default_image;
 	private String localFilePath;
 	private Bitmap bitmap;
@@ -63,6 +73,7 @@ public class EaseShowBigImageActivity extends EaseBaseActivity {
 
 		image = findViewById(R.id.image);
 		ProgressBar loadLocalPb = findViewById(R.id.pb_load_local);
+		tv_save = findViewById(R.id.ease_photo_view_save_pic);
 		default_res = getIntent().getIntExtra("default_image", R.drawable.ease_default_avatar);
 		Uri uri = getIntent().getParcelableExtra("uri");
 		localFilePath = getIntent().getExtras().getString("localUrl");
@@ -90,7 +101,7 @@ public class EaseShowBigImageActivity extends EaseBaseActivity {
 			}
 		} else if(msgId != null) {
 		    downloadImage(msgId);
-		}else {
+		} else {
 			image.setImageResource(default_res);
 		}
 
@@ -98,6 +109,47 @@ public class EaseShowBigImageActivity extends EaseBaseActivity {
 			@Override
 			public void onClick(View v) {
 				finish();
+			}
+		});
+
+		// 设置图片的长按监听
+		image.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View view) {
+				tv_save.setVisibility(View.VISIBLE);
+				tv_save.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						if (bitmap == null) {
+                            ToastUtil.showMsgOnCenter(EaseShowBigImageActivity.this,
+                                    "图片在手机上已存在", Toast.LENGTH_SHORT);
+							return;
+						}
+
+						tv_save.setVisibility(View.INVISIBLE);
+
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								MyFileUtils fileUtil = new MyFileUtils(EaseShowBigImageActivity.this);
+								//保存到本地
+								final File saveFile = fileUtil.save2local(bitmap);
+								if (saveFile != null) {
+									// 更新相册
+									sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(saveFile)));
+									runOnUiThread(new Runnable() {
+										@Override
+										public void run() {
+                                            ToastUtil.showMsgOnCenter(EaseShowBigImageActivity.this,
+                                                    "保存成功" + saveFile.toString(), Toast.LENGTH_SHORT);
+										}
+									});
+								}
+							}
+						}).start();
+					}
+				});
+				return true;
 			}
 		});
 	}
@@ -195,4 +247,5 @@ public class EaseShowBigImageActivity extends EaseBaseActivity {
 			setResult(RESULT_OK);
 		finish();
 	}
+
 }

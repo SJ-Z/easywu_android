@@ -1,7 +1,10 @@
 package com.cose.easywu.app;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -18,6 +21,7 @@ import com.cose.easywu.find.fragment.FindFragment;
 import com.cose.easywu.home.fragment.HomeFragment;
 import com.cose.easywu.message.fragment.MessageFragment;
 import com.cose.easywu.release.activity.ReleaseActivity;
+import com.cose.easywu.service.ChatMessageService;
 import com.cose.easywu.user.fragment.UserFragment;
 import com.cose.easywu.utils.HandleBackUtil;
 import com.cose.easywu.utils.ToastUtil;
@@ -42,6 +46,20 @@ public class MainActivity extends FragmentActivity {
     // 是否退出程序的标志位
     private boolean isExit = false;
 
+    private ChatMessageService.ChatMessageBinder chatMessageBinder;
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            chatMessageBinder = (ChatMessageService.ChatMessageBinder) service;
+            chatMessageBinder.startListen();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +73,13 @@ public class MainActivity extends FragmentActivity {
         initFragment();
         // 设置RadioGroup的监听
         initListener();
+        // 绑定服务
+//        initService();
+    }
+
+    private void initService() {
+        Intent bindIntent = new Intent(this, ChatMessageService.class);
+        bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);
     }
 
     // 设置RadioGroup的监听
@@ -73,7 +98,7 @@ public class MainActivity extends FragmentActivity {
                         rgMain.check(getCurrentFragmentId());
                         showPublishDialog();
                         break;
-                    case R.id.rb_message: // 发现
+                    case R.id.rb_message: // 消息
                         position = 2;
                         break;
                     case R.id.rb_user: // 用户中心
@@ -90,7 +115,11 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        rgMain.check(R.id.rb_home);
+        if (getIntent() != null && getIntent().getBooleanExtra("chat", false)) {
+            rgMain.check(R.id.rb_message);
+        } else {
+            rgMain.check(R.id.rb_home);
+        }
     }
 
     private int getCurrentFragmentId() {
@@ -243,6 +272,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unbindService(serviceConnection); // 解绑服务
         ActivityCollector.removeActivity(this);
     }
 }

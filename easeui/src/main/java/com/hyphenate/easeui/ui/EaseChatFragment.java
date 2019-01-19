@@ -3,9 +3,11 @@ package com.hyphenate.easeui.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,6 +19,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
@@ -147,6 +150,9 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
     // "正在输入"功能的开关，打开后本设备发送消息将持续发送cmd类型消息通知对方"正在输入"
     private boolean turnOnTyping;
 
+    private BroadcastReceiver receiver;
+    private LocalBroadcastManager localBroadcastManager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ease_fragment_chat, container, false);
@@ -169,6 +175,18 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
         this.turnOnTyping = turnOnTyping();
 
         super.onActivityCreated(savedInstanceState);
+
+        localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        // 注册广播
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(EaseConstant.HX_USER_INFO);
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                titleBar.setTitle(intent.getStringExtra("user_nick"));
+            }
+        };
+        localBroadcastManager.registerReceiver(receiver, intentFilter);
     }
 
     protected boolean turnOnTyping() {
@@ -657,6 +675,11 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
 
         if(chatType == EaseConstant.CHATTYPE_CHATROOM){
             EMClient.getInstance().chatroomManager().leaveChatRoom(toChatUsername);
+        }
+
+        if (receiver != null) {
+            localBroadcastManager.unregisterReceiver(receiver);
+            receiver = null;
         }
     }
 

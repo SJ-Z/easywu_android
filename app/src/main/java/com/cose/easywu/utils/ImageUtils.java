@@ -1,17 +1,11 @@
 package com.cose.easywu.utils;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.preference.PreferenceManager;
+import android.os.Environment;
 import android.util.Log;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.cose.easywu.R;
-import com.cose.easywu.base.MyApplication;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -20,25 +14,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.SoftReference;
-import java.text.DecimalFormat;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class ImageUtils {
 
     // 从sd卡中获取用户头像
     public static Bitmap getPhotoFromStorage(String u_id) {
-        String photoPath = android.os.Environment.getExternalStorageDirectory() + "/photo/" + u_id + ".jpg";
+        String photoPath = Environment.getExternalStorageDirectory() + "/easywu/photo/" + u_id + ".jpg";
         return getBitmapFromPath(photoPath, 80, 80);
     }
 
     // 从sd卡中删除用户头像
     public static void deletePhotoFromStorage(String u_id) {
-        String photoPath = android.os.Environment.getExternalStorageDirectory() + "/photo/";
+        String photoPath = Environment.getExternalStorageDirectory() + "/easywu/photo/";
         File file = new File(photoPath + u_id + ".jpg");
         if (file.exists()) {
             file.delete();
@@ -49,8 +36,7 @@ public class ImageUtils {
     public static void savePhotoToStorage(Bitmap photoBitmap, String u_id) {
         //更改的名字
         String photoName = u_id + ".jpg";
-        String photoPath = android.os.Environment.getExternalStorageDirectory() +
-                "/photo";
+        String photoPath = Environment.getExternalStorageDirectory() + "/easywu/photo";
 
         File fileDir = new File(photoPath);
         if (!fileDir.exists()) {
@@ -175,7 +161,7 @@ public class ImageUtils {
         File oldFile = new File(filePath);
         // 压缩文件路径 照片路径
         String photoName = oldFile.getName();
-        String photoPath = android.os.Environment.getExternalStorageDirectory() + "/picCache";
+        String photoPath = android.os.Environment.getExternalStorageDirectory() + "/easywu/picCache";
         File outputFile = new File(photoPath, photoName);
         FileOutputStream out = null;
         try {
@@ -239,7 +225,7 @@ public class ImageUtils {
      */
     public static String savePhotoToCache(Bitmap bitmap, String picName) {
         String photoName = picName + ".jpg";
-        String basePath = android.os.Environment.getExternalStorageDirectory() + "/picCache";
+        String basePath = android.os.Environment.getExternalStorageDirectory() + "/easywu/picCache";
         File fileDir = new File(basePath);
         if (!fileDir.exists()) {
             fileDir.mkdirs();

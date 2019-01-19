@@ -5,6 +5,7 @@ public class Constant {
     // 广播
     public static String RELEASE_CHOOSE_TYPE = "com.cose.easywu.release.chooseType";
     public static String RELEASE_NEW_RELEASE = "com.cose.easywu.release.newRelease";
+//    public static String HX_USER_INFO = "com.cose.easywu.chat_userInfo"; // 在EaseConstant中声明
 
     // 服务器地址
 //    public static String BASE_URL = "http://10.0.2.2:8080/easywu";

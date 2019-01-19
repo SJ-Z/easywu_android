@@ -4,7 +4,9 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,6 +24,7 @@ import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMOptions;
+import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.EaseUI;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.exceptions.HyphenateException;
@@ -49,6 +52,7 @@ public class MyApplication extends Application {
     // 记录环信SDK是否已经初始化
     private boolean isInit = false;
     private EMMessageListener messageListener;
+    private LocalBroadcastManager localBroadcastManager;
 
     public static Context getContext() {
         return context;
@@ -63,6 +67,7 @@ public class MyApplication extends Application {
         initOkhttpClient();
         // 初始化环信SDK
         initEasemob();
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
     }
 
     private void initEasemob() {
@@ -171,6 +176,10 @@ public class MyApplication extends Application {
                     if (msg.getCode().equals("1")) {
                         HXUserInfo hxUserInfo = new HXUserInfo(username, msg.getNick(), msg.getPhoto());
                         hxUserInfo.save();
+                        // 发送广播
+                        Intent intent = new Intent(EaseConstant.HX_USER_INFO);
+                        intent.putExtra("user_nick", msg.getNick());
+                        localBroadcastManager.sendBroadcast(intent);
                     } else {
 
                     }

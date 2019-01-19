@@ -2,6 +2,8 @@ package com.cose.easywu.base;
 
 import android.app.Activity;
 
+import com.cose.easywu.app.MainActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 

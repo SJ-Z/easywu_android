@@ -18,6 +18,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -29,6 +30,7 @@ import android.support.v4.app.NotificationCompat;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.easeui.EaseUI;
 import com.hyphenate.easeui.EaseUI.EaseSettingsProvider;
+import com.hyphenate.easeui.R;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 import com.hyphenate.util.EMLog;
 import com.hyphenate.util.EasyUtils;
@@ -240,10 +242,14 @@ public class EaseNotifier {
         PackageManager pm = appContext.getPackageManager();
         String title = pm.getApplicationLabel(appContext.getApplicationInfo()).toString();
         Intent i = appContext.getPackageManager().getLaunchIntentForPackage(packageName);
+        if (i != null)
+            i.putExtra("chat", true);
         PendingIntent pendingIntent = PendingIntent.getActivity(appContext, NOTIFY_ID, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
         return new NotificationCompat.Builder(appContext, CHANNEL_ID)
-                .setSmallIcon(appContext.getApplicationInfo().icon)
+//                .setSmallIcon(appContext.getApplicationInfo().icon)
+                .setSmallIcon(R.mipmap.ic_logo)
+                .setLargeIcon(BitmapFactory.decodeResource(appContext.getResources(), R.mipmap.ic_logo))
                 .setContentTitle(title)
                 .setTicker(content)
                 .setContentText(content)
