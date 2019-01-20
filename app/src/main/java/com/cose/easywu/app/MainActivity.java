@@ -1,17 +1,25 @@
 package com.cose.easywu.app;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cose.easywu.R;
@@ -23,9 +31,12 @@ import com.cose.easywu.message.fragment.MessageFragment;
 import com.cose.easywu.release.activity.ReleaseActivity;
 import com.cose.easywu.service.ChatMessageService;
 import com.cose.easywu.user.fragment.UserFragment;
+import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HandleBackUtil;
 import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.widget.PublishDialog;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMConversation;
 
 import org.litepal.LitePal;
 
@@ -37,6 +48,11 @@ public class MainActivity extends FragmentActivity {
 
     private RadioGroup rgMain;
     private PublishDialog publishDialog;
+    private TextView msgNum;
+
+    private IntentFilter intentFilter;
+    private BroadcastReceiver receiver;
+    private LocalBroadcastManager localBroadcastManager;
 
     private ArrayList<Fragment> fragments;
     private int position = 0;
@@ -69,6 +85,7 @@ public class MainActivity extends FragmentActivity {
         LitePal.getDatabase();
 
         initView();
+        initData();
         // 初始化Fragment
         initFragment();
         // 设置RadioGroup的监听
@@ -162,8 +179,43 @@ public class MainActivity extends FragmentActivity {
         publishDialog.show();
     }
 
+    private void setUnreadMsgNum() {
+        int count = EMClient.getInstance().chatManager().getUnreadMessageCount();
+        if (count > 0) {
+            if (count < 100) {
+                msgNum.setText(String.valueOf(count));
+            } else {
+                msgNum.setText("99+");
+            }
+            msgNum.setVisibility(View.VISIBLE);
+        } else {
+            msgNum.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUnreadMsgNum();
+    }
+
+    private void initData() {
+        // 注册广播接收器
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(Constant.RECEIVE_NEW_MESSAGE);
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                setUnreadMsgNum(); // 刷新未读消息数量
+            }
+        };
+        localBroadcastManager.registerReceiver(receiver, intentFilter);
+    }
+
     private void initView() {
         rgMain = findViewById(R.id.rg_main);
+        msgNum = findViewById(R.id.msg_num);
     }
 
     // 解决了切换Fragment导致Fragment重新被创建的问题
@@ -272,6 +324,10 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (receiver != null) {
+            localBroadcastManager.unregisterReceiver(receiver);
+            receiver = null;
+        }
         unbindService(serviceConnection); // 解绑服务
         ActivityCollector.removeActivity(this);
     }

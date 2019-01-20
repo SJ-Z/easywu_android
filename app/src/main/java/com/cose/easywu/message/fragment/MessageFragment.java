@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+import com.cose.easywu.db.HXUserInfo;
 import com.cose.easywu.message.activity.ChatActivity;
 import com.cose.easywu.utils.HandleBackInterface;
 import com.cose.easywu.utils.HandleBackUtil;
@@ -18,6 +20,8 @@ import com.hyphenate.chat.EMMessage;
 import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.EaseUI;
 import com.hyphenate.easeui.ui.EaseConversationListFragment;
+
+import org.litepal.LitePal;
 
 import java.util.List;
 
@@ -57,6 +61,15 @@ public class MessageFragment extends EaseConversationListFragment implements Han
     @Override
     public boolean onBackPressed() {
         return HandleBackUtil.handleBackPress(this);
+    }
+
+    @Override
+    protected CharSequence searchUser(CharSequence s) {
+        HXUserInfo hxUserInfo = LitePal.where("nick LIKE ?", s.toString() + "%").findFirst(HXUserInfo.class);
+        if (hxUserInfo != null) {
+            return hxUserInfo.getUid();
+        }
+        return "#";
     }
 
     private EMMessageListener emMessageListener = new EMMessageListener() {

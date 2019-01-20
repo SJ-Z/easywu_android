@@ -100,6 +100,7 @@ public class EaseConversationListFragment extends EaseBaseFragment{
         
         query.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                s = searchUser(s);
                 conversationListView.filter(s);
                 if (s.length() > 0) {
                     clearSearch.setVisibility(View.VISIBLE);
@@ -119,6 +120,7 @@ public class EaseConversationListFragment extends EaseBaseFragment{
             public void onClick(View v) {
                 query.getText().clear();
                 hideSoftKeyboard();
+                clearSearch.setVisibility(View.INVISIBLE);
             }
         });
         
@@ -307,6 +309,11 @@ public class EaseConversationListFragment extends EaseBaseFragment{
      */
     public void setConversationListItemClickListener(EaseConversationListItemClickListener listItemClickListener){
         this.listItemClickListener = listItemClickListener;
+    }
+
+    protected CharSequence searchUser(CharSequence s) {
+        // 由子类重写
+        return "#";
     }
 
 }

@@ -10,7 +10,7 @@
         style="@style/chat_text_date_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_gravity="center_horizontal"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -52,6 +52,18 @@
                 android:textColor="#ff000000"
                 android:textSize="15sp" />
         </RelativeLayout>
+
+        <Button
+            android:id="@+id/btn_delete_msg"
+            android:layout_width="55dp"
+            android:layout_height="35dp"
+            android:background="@drawable/message_rectangle_btn"
+            android:layout_toRightOf="@id/bubble"
+            android:layout_centerVertical="true"
+            android:text="删除"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/tv_userid"

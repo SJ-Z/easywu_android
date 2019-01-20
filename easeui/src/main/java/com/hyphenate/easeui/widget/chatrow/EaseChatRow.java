@@ -2,22 +2,34 @@ package com.hyphenate.easeui.widget.chatrow;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMMessage.Direct;
 import com.hyphenate.easeui.EaseUI;
 import com.hyphenate.easeui.R;
+import com.hyphenate.easeui.adapter.EaseConversationAdapter;
 import com.hyphenate.easeui.adapter.EaseMessageAdapter;
 import com.hyphenate.easeui.domain.EaseAvatarOptions;
 import com.hyphenate.easeui.model.styles.EaseMessageListItemStyle;
+import com.hyphenate.easeui.ui.SupportPopupWindow;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 import com.hyphenate.easeui.widget.EaseChatMessageList;
 import com.hyphenate.easeui.widget.EaseChatMessageList.MessageListItemClickListener;
@@ -44,9 +56,11 @@ public abstract class EaseChatRow extends LinearLayout {
     protected int position;
 
     protected TextView timeStampView;
+    protected Button deleteBtn;
     protected ImageView userAvatarView;
     protected View bubbleLayout;
     protected TextView usernickView;
+    protected SupportPopupWindow popupWindow;
 
     protected TextView percentageView;
     protected ProgressBar progressBar;
@@ -91,6 +105,7 @@ public abstract class EaseChatRow extends LinearLayout {
     private void initView() {
         onInflateView();
         timeStampView = (TextView) findViewById(R.id.timestamp);
+        deleteBtn = findViewById(R.id.btn_delete_msg);
         userAvatarView = (ImageView) findViewById(R.id.iv_userhead);
         bubbleLayout = findViewById(R.id.bubble);
         usernickView = (TextView) findViewById(R.id.tv_userid);
@@ -233,6 +248,30 @@ public abstract class EaseChatRow extends LinearLayout {
     
                 @Override
                 public boolean onLongClick(View v) {
+                    View view = inflater.inflate(R.layout.delete_msg_popwindow, null);
+                    Button btn_delete = view.findViewById(R.id.btn_delete_msg);
+                    btn_delete.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            popupWindow.dismiss();
+                            EMConversation conversation = EMClient.getInstance().chatManager().getConversation(message.conversationId());
+                            conversation.removeMessage(message.getMsgId());
+                            ((EaseMessageAdapter) adapter).refresh();
+                        }
+                    });
+                    popupWindow = new SupportPopupWindow(view, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    popupWindow.setBackgroundDrawable(getDrawable());//设置背景透明以便点击外部消失
+                    popupWindow.setOutsideTouchable(true); //设置点击外部区域，菜单收起
+                    popupWindow.setFocusable(true); //设置点击按钮后，菜单打开、收起
+
+                    view.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+                    bubbleLayout.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+                    if (message.direct() == EMMessage.Direct.RECEIVE) { // 消息是接收的
+                        popupWindow.showAsDropDown(bubbleLayout, bubbleLayout.getMeasuredWidth() + 5, -bubbleLayout.getMeasuredHeight() + 5);
+                    } else { // 消息是发送的
+                        popupWindow.showAsDropDown(bubbleLayout, -view.getMeasuredWidth() - 5, -bubbleLayout.getMeasuredHeight() + 5);
+                    }
+
                     if (itemClickListener != null) {
                         itemClickListener.onBubbleLongClick(message);
                     }
@@ -286,6 +325,25 @@ public abstract class EaseChatRow extends LinearLayout {
                 }
             });
         }
+
+//        deleteBtn.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                EMConversation conversation = EMClient.getInstance().chatManager().getConversation(message.conversationId());
+//                conversation.removeMessage(message.getMsgId());
+//                ((EaseMessageAdapter) adapter).refresh();
+//            }
+//        });
+    }
+
+
+    /**
+     * 生成一个透明的背景图片
+     */
+    private Drawable getDrawable(){
+        ShapeDrawable bgdrawable =new ShapeDrawable(new OvalShape());
+        bgdrawable.getPaint().setColor(getContext().getResources().getColor(android.R.color.transparent));
+        return bgdrawable;
     }
 
     protected abstract void onInflateView();

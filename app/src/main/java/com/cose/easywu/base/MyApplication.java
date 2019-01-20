@@ -231,6 +231,10 @@ public class MyApplication extends Application {
         messageListener = new EMMessageListener() {
             @Override
             public void onMessageReceived(List<EMMessage> messages) {
+                // 发送广播
+                Intent intent = new Intent(Constant.RECEIVE_NEW_MESSAGE);
+                localBroadcastManager.sendBroadcast(intent);
+
                 for (EMMessage message : messages) {
                     EMLog.d("MyApplication", "onMessageReceived id : " + message.getMsgId());
                     //接收并处理扩展消息
