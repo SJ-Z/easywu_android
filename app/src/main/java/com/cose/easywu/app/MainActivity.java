@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cn.jpush.android.api.JPushInterface;
+
 public class MainActivity extends FragmentActivity {
 
     private RadioGroup rgMain;
@@ -200,6 +202,9 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void initData() {
+        // 初始化极光推送的别名
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        JPushInterface.setAlias(this, 0, pref.getString("u_id", ""));
         // 注册广播接收器
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         intentFilter = new IntentFilter();
@@ -328,7 +333,7 @@ public class MainActivity extends FragmentActivity {
             localBroadcastManager.unregisterReceiver(receiver);
             receiver = null;
         }
-        unbindService(serviceConnection); // 解绑服务
+//        unbindService(serviceConnection); // 解绑服务
         ActivityCollector.removeActivity(this);
     }
 }

@@ -664,6 +664,8 @@ public class GoodsInfoActivity extends BaseActivity {
         jsonObject.put("gc_id", goodsCommentBean_id);
         jsonObject.put("g_id", goods.getG_id());
         jsonObject.put("u_id", u_id);
+        jsonObject.put("owner_id", goods.getG_u_id());
+        jsonObject.put("goods_name", goods.getG_name());
         String address = Constant.GOODS_ADD_COMMENT_URL;
 
         HttpUtil.sendPostRequest(address, jsonObject.toString(), new Callback() {
@@ -689,7 +691,7 @@ public class GoodsInfoActivity extends BaseActivity {
                     public void run() {
                         if ("1".equals(msg.getCode())) {
                             CommentDetailBean commentDetailBean = new CommentDetailBean(msg.getId(),
-                                    user.getU_nick(), user.getU_photo(), commentContent, msg.getTime());
+                                    user.getU_id(), user.getU_nick(), user.getU_photo(), commentContent, msg.getTime());
                             adapter.addTheCommentData(commentDetailBean);
                             mElvComment.expandGroup(commentList.size() - 1);
                             mTvMsgNum.setText(String.valueOf(commentList.size()));
@@ -718,28 +720,34 @@ public class GoodsInfoActivity extends BaseActivity {
         if (childPosition == -1) {
             commentText.setHint("回复 " + commentList.get(groupPosition).getNickName() + " 的评论:");
         } else {
+            if (u_id.equals(commentList.get(groupPosition).getReplyList().get(childPosition).getUid())) {
+                ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "不能回复自己哦~", Toast.LENGTH_SHORT);
+                return;
+            }
             commentText.setHint("回复 " + commentList.get(groupPosition).getReplyList().get(childPosition).getNickName() + " 的评论:");
         }
         dialog.setContentView(commentView);
         bt_comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String replyContent;
+                String replyContent = commentText.getText().toString().trim();
+                String origin_uid;
+                if (TextUtils.isEmpty(replyContent)) {
+                    Toast.makeText(GoodsInfoActivity.this,"回复内容不能为空",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (childPosition != -1) {
                     StringBuffer sb = new StringBuffer("回复@");
                     sb.append(commentList.get(groupPosition).getReplyList().get(childPosition).getNickName())
-                            .append(":").append(commentText.getText().toString().trim());
+                            .append(":").append(replyContent);
                     replyContent = sb.toString();
+                    origin_uid = commentList.get(groupPosition).getReplyList().get(childPosition).getUid();
                 } else {
-                    replyContent = commentText.getText().toString().trim();
+                    origin_uid = commentList.get(groupPosition).getUid();
                 }
-                if(!TextUtils.isEmpty(replyContent)){
-                    dialog.dismiss();
-                    // 发送回复数据到服务器
-                    sendReplyToServer(replyContent, groupPosition);
-                } else {
-                    Toast.makeText(GoodsInfoActivity.this,"回复内容不能为空",Toast.LENGTH_SHORT).show();
-                }
+                dialog.dismiss();
+                // 发送回复数据到服务器
+                sendReplyToServer(replyContent, groupPosition, origin_uid);
             }
         });
         commentText.addTextChangedListener(new TextWatcher() {
@@ -766,13 +774,14 @@ public class GoodsInfoActivity extends BaseActivity {
     }
 
     // 发送回复数据到服务器
-    private void sendReplyToServer(final String replyContent, final int groupPosition) {
+    private void sendReplyToServer(final String replyContent, final int groupPosition, String origin_uid) {
         final CommentDetailBean commentDetailBean = commentList.get(groupPosition);
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("u_id", u_id);
             jsonObject.put("reply", replyContent);
             jsonObject.put("comment_id", commentDetailBean.getId());
+            jsonObject.put("origin_uid", origin_uid);
             String json = jsonObject.toString();
             HttpUtil.sendPostRequest(Constant.GOODS_ADD_REPLY_URL, json, new Callback() {
                 @Override
@@ -796,7 +805,7 @@ public class GoodsInfoActivity extends BaseActivity {
                         public void run() {
                             if ("1".equals(msg.getCode())) {
                                 ReplyDetailBean replyDetailBean = new ReplyDetailBean(msg.getId(),
-                                        user.getU_nick(), commentDetailBean.getId(),
+                                        user.getU_id(), user.getU_nick(), commentDetailBean.getId(),
                                         replyContent, msg.getTime());
                                 adapter.addTheReplyData(replyDetailBean, groupPosition);
                                 ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "回复成功", Toast.LENGTH_SHORT);

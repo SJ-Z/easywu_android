@@ -4,17 +4,27 @@ import java.util.Date;
 
 public class ReplyDetailBean {
     private int id;
+    private String uid;
     private String nickName;
     private int commentId;
     private String content;
     private Date createTime;
 
-    public ReplyDetailBean(int id, String nickName, int commentId, String content, Date createTime) {
+    public ReplyDetailBean(int id, String uid, String nickName, int commentId, String content, Date createTime) {
         this.id = id;
+        this.uid = uid;
         this.nickName = nickName;
         this.commentId = commentId;
         this.content = content;
         this.createTime = createTime;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public void setNickName(String nickName) {
@@ -61,6 +71,7 @@ public class ReplyDetailBean {
     public String toString() {
         return "ReplyDetailBean{" +
                 "id=" + id +
+                ", uid='" + uid + '\'' +
                 ", nickName='" + nickName + '\'' +
                 ", commentId=" + commentId +
                 ", content='" + content + '\'' +

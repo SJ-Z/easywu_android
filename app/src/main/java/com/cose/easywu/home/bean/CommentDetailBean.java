@@ -5,14 +5,16 @@ import java.util.List;
 
 public class CommentDetailBean {
     private int id;
+    private String uid;
     private String nickName;
     private String userPhoto;
     private String content;
     private Date createTime;
     private List<ReplyDetailBean> replyList;
 
-    public CommentDetailBean(int id, String nickName, String userPhoto, String content, Date createTime) {
+    public CommentDetailBean(int id, String uid, String nickName, String userPhoto, String content, Date createTime) {
         this.id = id;
+        this.uid = uid;
         this.nickName = nickName;
         this.userPhoto = userPhoto;
         this.content = content;
@@ -25,6 +27,14 @@ public class CommentDetailBean {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getNickName() {
@@ -71,6 +81,7 @@ public class CommentDetailBean {
     public String toString() {
         return "CommentDetailBean{" +
                 "id=" + id +
+                ", uid='" + uid + '\'' +
                 ", nickName='" + nickName + '\'' +
                 ", userPhoto='" + userPhoto + '\'' +
                 ", content='" + content + '\'' +

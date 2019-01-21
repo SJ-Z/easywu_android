@@ -39,4 +39,6 @@ dependencies {
     implementation(project(':easeui')) {
         exclude group: 'com.android.support'
     }
+    implementation files('libs/jcore-android-1.2.6.jar')
+    implementation files('libs/jpush-android-3.1.8.jar')
 }

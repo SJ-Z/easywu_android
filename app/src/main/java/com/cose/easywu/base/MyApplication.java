@@ -5,7 +5,9 @@ import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -41,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import cn.jpush.android.api.JPushInterface;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -67,7 +70,14 @@ public class MyApplication extends Application {
         initOkhttpClient();
         // 初始化环信SDK
         initEasemob();
+        // 初始化极光推送
+        initJPush();
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
+    }
+
+    private void initJPush() {
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(context);
     }
 
     private void initEasemob() {
