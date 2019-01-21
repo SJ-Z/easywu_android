@@ -9,6 +9,8 @@ public class GoodsMessageHelper {
     public static String GOODS_NAME = "goods_name";
     public static String GOODS_PRICE = "goods_price";
     public static String GOODS_PIC = "goods_pic";
+    public static String MESSAGE_TIME = "time";
+    public static String MESSAGE_TYPE = "type";
 
     public static boolean isGoodsChatType(EMMessage emMessage) {
         String TYPE = emMessage.getStringAttribute("CHATTYPE", null);

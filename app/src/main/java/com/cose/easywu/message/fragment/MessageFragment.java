@@ -5,13 +5,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.cose.easywu.db.HXUserInfo;
+import com.cose.easywu.db.Notification;
 import com.cose.easywu.message.activity.ChatActivity;
+import com.cose.easywu.message.activity.SystemMsgActivity;
+import com.cose.easywu.utils.DateUtil;
 import com.cose.easywu.utils.HandleBackInterface;
 import com.cose.easywu.utils.HandleBackUtil;
+import com.cose.easywu.utils.NotificationHelper;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMChatManager;
 import com.hyphenate.chat.EMClient;
@@ -56,6 +61,39 @@ public class MessageFragment extends EaseConversationListFragment implements Han
         conversationList.clear();
         // 监听会话消息
         EMClient.getInstance().chatManager().addMessageListener(emMessageListener);
+    }
+
+    @Override
+    protected void initSystemMessageInterface() {
+        systemMessageInterface = new SystemMessageInterface() {
+            @Override
+            public void onClick() {
+                startActivity(new Intent(getContext(), SystemMsgActivity.class));
+            }
+
+            @Override
+            public void setUnreadSystemMsgNum() {
+                int count = LitePal.where("state=?",
+                        String.valueOf(NotificationHelper.STATE_RECEIVE)).count(Notification.class);
+                if (count > 0) {
+                    tv_system_msg_num.setText(String.valueOf(count));
+                    tv_system_msg_num.setVisibility(View.VISIBLE);
+                } else {
+                    tv_system_msg_num.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void initContent() {
+                Notification notification = LitePal.order("time desc").findFirst(Notification.class);
+                if (notification != null) {
+                    tv_system_msg_time.setText(DateUtil.getShowTime(notification.getTime()));
+                    tv_system_msg_content.setText(notification.getContent());
+                } else {
+                    tv_system_msg_content.setText("暂时没有系统消息");
+                }
+            }
+        };
     }
 
     @Override

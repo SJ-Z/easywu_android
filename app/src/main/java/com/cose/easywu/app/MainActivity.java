@@ -1,21 +1,17 @@
 package com.cose.easywu.app;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RadioGroup;
@@ -24,15 +20,16 @@ import android.widget.Toast;
 
 import com.cose.easywu.R;
 import com.cose.easywu.base.ActivityCollector;
+import com.cose.easywu.db.Notification;
 import com.cose.easywu.find.fragment.FindFragment;
 import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.home.fragment.HomeFragment;
 import com.cose.easywu.message.fragment.MessageFragment;
 import com.cose.easywu.release.activity.ReleaseActivity;
-import com.cose.easywu.service.ChatMessageService;
 import com.cose.easywu.user.fragment.UserFragment;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HandleBackUtil;
+import com.cose.easywu.utils.NotificationHelper;
 import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.widget.PublishDialog;
 import com.hyphenate.chat.EMClient;
@@ -64,20 +61,6 @@ public class MainActivity extends FragmentActivity {
     // 是否退出程序的标志位
     private boolean isExit = false;
 
-    private ChatMessageService.ChatMessageBinder chatMessageBinder;
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            chatMessageBinder = (ChatMessageService.ChatMessageBinder) service;
-            chatMessageBinder.startListen();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,8 +75,6 @@ public class MainActivity extends FragmentActivity {
         initFragment();
         // 设置RadioGroup的监听
         initListener();
-        // 绑定服务
-//        initService();
 
         // 判断是否响应通知，跳转到商品界面
         checkTurn2GoodsInfoActivity();
@@ -107,11 +88,6 @@ public class MainActivity extends FragmentActivity {
             intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
             startActivity(intent);
         }
-    }
-
-    private void initService() {
-        Intent bindIntent = new Intent(this, ChatMessageService.class);
-        bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);
     }
 
     // 设置RadioGroup的监听
@@ -194,11 +170,15 @@ public class MainActivity extends FragmentActivity {
         publishDialog.show();
     }
 
+    // 未读消息数量 = 未读用户消息 + 未读系统消息
     private void setUnreadMsgNum() {
-        int count = EMClient.getInstance().chatManager().getUnreadMessageCount();
-        if (count > 0) {
-            if (count < 100) {
-                msgNum.setText(String.valueOf(count));
+        int userMsgCount = EMClient.getInstance().chatManager().getUnreadMessageCount();
+        int systemMsgCount = LitePal.where("state=?", String.valueOf(
+                NotificationHelper.STATE_RECEIVE)).count(Notification.class);
+        int totalCount = userMsgCount + systemMsgCount;
+        if (totalCount > 0) {
+            if (totalCount < 100) {
+                msgNum.setText(String.valueOf(totalCount));
             } else {
                 msgNum.setText("99+");
             }
@@ -346,7 +326,6 @@ public class MainActivity extends FragmentActivity {
             localBroadcastManager.unregisterReceiver(receiver);
             receiver = null;
         }
-//        unbindService(serviceConnection); // 解绑服务
         ActivityCollector.removeActivity(this);
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,6 +20,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMConversationListener;
@@ -38,7 +41,7 @@ import java.util.Map;
  * conversation list fragment
  *
  */
-public class EaseConversationListFragment extends EaseBaseFragment{
+public class EaseConversationListFragment extends EaseBaseFragment {
 	private final static int MSG_REFRESH = 2;
     protected EditText query;
     protected ImageButton clearSearch;
@@ -46,6 +49,9 @@ public class EaseConversationListFragment extends EaseBaseFragment{
     protected List<EMConversation> conversationList = new ArrayList<EMConversation>();
     protected EaseConversationList conversationListView;
     protected FrameLayout errorItemContainer;
+    protected LinearLayout ll_system_msg_main;
+    protected TextView tv_system_msg_time, tv_system_msg_content, tv_system_msg_num;
+    protected SystemMessageInterface systemMessageInterface;
 
     protected boolean isConflict;
     
@@ -78,10 +84,20 @@ public class EaseConversationListFragment extends EaseBaseFragment{
         // button to clear content in search bar
         clearSearch = (ImageButton) getView().findViewById(R.id.search_clear);
         errorItemContainer = (FrameLayout) getView().findViewById(R.id.fl_error_item);
+        ll_system_msg_main = getView().findViewById(R.id.ll_system_msg_main);
+        tv_system_msg_time = getView().findViewById(R.id.tv_system_msg_time);
+        tv_system_msg_content = getView().findViewById(R.id.tv_system_msg_content);
+        tv_system_msg_num = getView().findViewById(R.id.tv_system_msg_num);
     }
     
     @Override
     protected void setUpView() {
+        initSystemMessageInterface(); // 初始化自定义的系统通知消息接口
+        if (systemMessageInterface != null) {
+            systemMessageInterface.setUnreadSystemMsgNum();
+            systemMessageInterface.initContent();
+        }
+
         conversationList.addAll(loadConversationList());
         conversationListView.init(conversationList);
         
@@ -130,6 +146,14 @@ public class EaseConversationListFragment extends EaseBaseFragment{
             public boolean onTouch(View v, MotionEvent event) {
                 hideSoftKeyboard();
                 return false;
+            }
+        });
+
+        ll_system_msg_main.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (systemMessageInterface != null)
+                    systemMessageInterface.onClick();
             }
         });
     }
@@ -279,6 +303,10 @@ public class EaseConversationListFragment extends EaseBaseFragment{
         if (!hidden) {
             refresh();
         }
+        if (systemMessageInterface != null) {
+            systemMessageInterface.setUnreadSystemMsgNum();
+            systemMessageInterface.initContent();
+        }
     }
     
     @Override
@@ -314,6 +342,16 @@ public class EaseConversationListFragment extends EaseBaseFragment{
     protected CharSequence searchUser(CharSequence s) {
         // 由子类重写
         return "#";
+    }
+
+    protected void initSystemMessageInterface() {
+
+    }
+
+    public interface SystemMessageInterface {
+        void onClick();
+        void setUnreadSystemMsgNum(); // 设置未读的系统通知数量
+        void initContent(); // 初始化系统通知的第一条内容
     }
 
 }

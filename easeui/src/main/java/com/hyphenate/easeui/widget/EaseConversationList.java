@@ -14,7 +14,7 @@ import com.hyphenate.easeui.adapter.EaseConversationAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EaseConversationList extends ListView{
+public class EaseConversationList extends ListView {
     
     protected int primaryColor;
     protected int secondaryColor;

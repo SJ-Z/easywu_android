@@ -5,6 +5,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtil {
+    static SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
+    static SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
     // 计算时间差
     public static String getDatePoor(Date startDate, Date endDate) {
         long nd = 1000 * 24 * 60 * 60;
@@ -57,6 +60,44 @@ public class DateUtil {
             return true;
         }
         return false;
+    }
+
+    public static String getShowTime(Date date) {
+        String timeStr = sdf1.format(date);
+        int hour = Integer.valueOf(timeStr.split(":")[0]);
+        int minute = Integer.valueOf(timeStr.split(":")[1]);
+        StringBuilder stringBuilder = new StringBuilder();
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(date);
+        int year1 = c1.get(Calendar.YEAR);
+        int month1 = c1.get(Calendar.MONTH) + 1;
+        int day1 = c1.get(Calendar.DAY_OF_MONTH);
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(new Date());
+        int year2 = c2.get(Calendar.YEAR);
+        int month2 = c2.get(Calendar.MONTH) + 1;
+        int day2 = c2.get(Calendar.DAY_OF_MONTH);
+        if (year1 == year2 && month1 == month2 && day1 == day2) { // 今天
+            if (hour > 12) {
+                return stringBuilder.append("下午 ").append(hour-12).append(":").append(minute).toString();
+            } else {
+                return stringBuilder.append("上午 ").append(timeStr).toString();
+            }
+        } else if (year1 == year2 && month1 == month2 && day1 == day2 + 1) { // 昨天
+            if (hour > 12) {
+                return stringBuilder.append("昨天 下午 ").append(hour-12).append(":").append(minute).toString();
+            } else {
+                return stringBuilder.append("昨天 上午 ").append(timeStr).toString();
+            }
+        } else if (year1 == year2 && month1 == month2 && day1 == day2 + 2) { // 前天
+            if (hour > 12) {
+                return stringBuilder.append("前天 下午 ").append(hour-12).append(":").append(minute).toString();
+            } else {
+                return stringBuilder.append("前天 上午 ").append(timeStr).toString();
+            }
+        } else {
+            return sdf2.format(date);
+        }
     }
 
 }
