@@ -24,8 +24,8 @@ import android.widget.Toast;
 
 import com.cose.easywu.R;
 import com.cose.easywu.base.ActivityCollector;
-import com.cose.easywu.base.BaseFragment;
 import com.cose.easywu.find.fragment.FindFragment;
+import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.home.fragment.HomeFragment;
 import com.cose.easywu.message.fragment.MessageFragment;
 import com.cose.easywu.release.activity.ReleaseActivity;
@@ -36,7 +36,7 @@ import com.cose.easywu.utils.HandleBackUtil;
 import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.widget.PublishDialog;
 import com.hyphenate.chat.EMClient;
-import com.hyphenate.chat.EMConversation;
+import com.hyphenate.easeui.model.GoodsMessageHelper;
 
 import org.litepal.LitePal;
 
@@ -94,6 +94,19 @@ public class MainActivity extends FragmentActivity {
         initListener();
         // 绑定服务
 //        initService();
+
+        // 判断是否响应通知，跳转到商品界面
+        checkTurn2GoodsInfoActivity();
+    }
+
+    private void checkTurn2GoodsInfoActivity() {
+        Intent originIntent = getIntent();
+        if (originIntent.getBooleanExtra(GoodsMessageHelper.CHATTYPE, false)) {
+            Intent intent = new Intent(MainActivity.this, GoodsInfoActivity.class);
+            intent.putExtra(GoodsMessageHelper.CHATTYPE, true); // 让GoodsInfoActivity识别的标志位
+            intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
+            startActivity(intent);
+        }
     }
 
     private void initService() {
@@ -134,7 +147,7 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        if (getIntent() != null && getIntent().getBooleanExtra("chat", false)) {
+        if (getIntent() != null && getIntent().getBooleanExtra(GoodsMessageHelper.CHATTYPE, false)) {
             rgMain.check(R.id.rb_message);
         } else {
             rgMain.check(R.id.rb_home);

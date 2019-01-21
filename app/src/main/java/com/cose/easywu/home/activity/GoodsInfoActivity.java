@@ -378,7 +378,7 @@ public class GoodsInfoActivity extends BaseActivity {
         u_id = pref.getString("u_id", "");
         user = LitePal.where("u_id=?", u_id).findFirst(User.class);
 
-        // 判断进入该Activity是否是由聊天窗口点击进来的
+        // 判断进入该Activity的intent是否携带指定信息
         Intent intent = getIntent();
         if (intent.getBooleanExtra(GoodsMessageHelper.CHATTYPE, false)) {
             // 利用商品id查找本地数据库
@@ -781,6 +781,7 @@ public class GoodsInfoActivity extends BaseActivity {
             jsonObject.put("reply", replyContent);
             jsonObject.put("comment_id", commentDetailBean.getId());
             jsonObject.put("origin_uid", origin_uid);
+            jsonObject.put("g_id", goods.getG_id());
             String json = jsonObject.toString();
             HttpUtil.sendPostRequest(Constant.GOODS_ADD_REPLY_URL, json, new Callback() {
                 @Override

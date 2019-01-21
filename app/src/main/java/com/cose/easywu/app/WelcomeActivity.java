@@ -11,6 +11,7 @@ import android.util.Log;
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
 import com.cose.easywu.base.MyApplication;
+import com.hyphenate.easeui.model.GoodsMessageHelper;
 
 public class WelcomeActivity extends BaseActivity {
 
@@ -33,7 +34,12 @@ public class WelcomeActivity extends BaseActivity {
                 // 启动主页面
                 if (autoEnter) {
                     Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
-                    intent.putExtra("chat", getIntent().getBooleanExtra("chat", false));
+                    Intent originIntent = getIntent();
+                    if (originIntent.getBooleanExtra(GoodsMessageHelper.CHATTYPE, false)) {
+                        Log.e("----------", "run: ");
+                        intent.putExtra(GoodsMessageHelper.CHATTYPE, true); // 让GoodsInfoActivity识别的标志位
+                        intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
+                    }
                     startActivity(intent);
                 } else {
                     // 启动登录页面
