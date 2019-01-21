@@ -9,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +21,7 @@ import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.EditTextClearTools;
 import com.cose.easywu.utils.HttpUtil;
+import com.cose.easywu.utils.NoEmojiEditText;
 import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.google.gson.Gson;
@@ -37,10 +37,10 @@ import okhttp3.Response;
 
 public class RegistActivity extends BaseActivity implements View.OnClickListener {
 
-    private EditText mEtEmail;
-    private EditText mEtNick;
-    private EditText mEtPwd;
-    private EditText mEtPwd2;
+    private NoEmojiEditText mEtEmail;
+    private NoEmojiEditText mEtNick;
+    private NoEmojiEditText mEtPwd;
+    private NoEmojiEditText mEtPwd2;
     private ImageView mIvClearEmail;
     private ImageView mIvClearNick;
     private ImageView mIvClearPwd;

@@ -15,7 +15,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +26,7 @@ import com.cose.easywu.gson.msg.LoginMsg;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.EditTextClearTools;
 import com.cose.easywu.utils.HttpUtil;
+import com.cose.easywu.utils.NoEmojiEditText;
 import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.google.gson.Gson;
@@ -43,8 +43,8 @@ import okhttp3.Response;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
-    private EditText mEtEmail;
-    private EditText mEtPwd;
+    private NoEmojiEditText mEtEmail;
+    private NoEmojiEditText mEtPwd;
     private ImageView mIvClearEmail;
     private ImageView mIvClearPwd;
     private ImageView mIvIcon;

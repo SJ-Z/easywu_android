@@ -40,7 +40,7 @@
                         android:textColor="@android:color/black"/>
                 </RelativeLayout>
 
-                <EditText
+                <com.cose.easywu.utils.NoEmojiEditText
                     android:id="@+id/et_release_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"/>
 
-                <EditText
+                <com.cose.easywu.utils.NoEmojiEditText
                     android:id="@+id/et_release_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

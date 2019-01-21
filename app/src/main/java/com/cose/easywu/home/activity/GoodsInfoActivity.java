@@ -19,7 +19,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -50,10 +49,10 @@ import com.cose.easywu.utils.DateUtil;
 import com.cose.easywu.utils.HttpUtil;
 import com.cose.easywu.utils.ImageUtils;
 import com.cose.easywu.utils.NestedExpandableListView;
+import com.cose.easywu.utils.NoEmojiEditText;
 import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.cose.easywu.widget.MessageDialog;
-import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.model.GoodsMessageHelper;
 
@@ -611,7 +610,7 @@ public class GoodsInfoActivity extends BaseActivity {
     private void showCommentDialog() {
         dialog = new BottomSheetDialog(this);
         View commentView = LayoutInflater.from(this).inflate(R.layout.comment_dialog_layout,null);
-        final EditText commentText = commentView.findViewById(R.id.dialog_comment_et);
+        final NoEmojiEditText commentText = commentView.findViewById(R.id.dialog_comment_et);
         final Button bt_comment = commentView.findViewById(R.id.dialog_comment_bt);
         dialog.setContentView(commentView);
         /**
@@ -715,7 +714,7 @@ public class GoodsInfoActivity extends BaseActivity {
     private void showReplyDialog(final int groupPosition, final int childPosition) {
         dialog = new BottomSheetDialog(this);
         View commentView = LayoutInflater.from(this).inflate(R.layout.comment_dialog_layout,null);
-        final EditText commentText = commentView.findViewById(R.id.dialog_comment_et);
+        final NoEmojiEditText commentText = commentView.findViewById(R.id.dialog_comment_et);
         final Button bt_comment = commentView.findViewById(R.id.dialog_comment_bt);
         if (childPosition == -1) {
             commentText.setHint("回复 " + commentList.get(groupPosition).getNickName() + " 的评论:");

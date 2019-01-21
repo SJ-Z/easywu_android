@@ -44,6 +44,7 @@ import com.cose.easywu.utils.CacheUtils;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
 import com.cose.easywu.utils.ImageUtils;
+import com.cose.easywu.utils.NoEmojiEditText;
 import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.cose.easywu.widget.MessageDialog;
@@ -68,7 +69,7 @@ public class ReleaseActivity extends BaseActivity {
     private ImageView mIvBack;
     private List<ImageView> mIvPicList = new ArrayList<>();
     private List<CircleImageView> mIvDeletePicList = new ArrayList<>();
-    private EditText mEtName, mEtDesc;
+    private NoEmojiEditText mEtName, mEtDesc;
     private List<RelativeLayout> mRlPicList = new ArrayList<>();
     private LinearLayout mLlChoosePic;
     private TextView mTvPrice, mTvType, mTvRelease;

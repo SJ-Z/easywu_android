@@ -47,7 +47,7 @@
             android:layout_marginLeft="10dp"
             android:background="@color/colorCursor" />
 
-        <EditText
+        <com.cose.easywu.utils.NoEmojiEditText
             android:id="@+id/et_login_email"
             android:layout_width="0dp"
             android:layout_height="30dp"
@@ -99,7 +99,7 @@
             android:layout_marginLeft="10dp"
             android:background="@color/colorCursor" />
 
-        <EditText
+        <com.cose.easywu.utils.NoEmojiEditText
             android:id="@+id/et_login_pwd"
             android:layout_width="0dp"
             android:layout_height="30dp"

@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -20,6 +19,7 @@ import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.EditTextClearTools;
 import com.cose.easywu.utils.HttpUtil;
+import com.cose.easywu.utils.NoEmojiEditText;
 import com.cose.easywu.utils.ToastUtil;
 import com.cose.easywu.utils.Utility;
 import com.google.gson.Gson;
@@ -37,7 +37,7 @@ import okhttp3.Response;
 
 public class EditPwdActivity extends BaseActivity {
 
-    private EditText mEtOldPwd, mEtNewPwd, mEtNewPwd2;
+    private NoEmojiEditText mEtOldPwd, mEtNewPwd, mEtNewPwd2;
     private ImageView mIvClearOldPwd, mIvClearNewPwd, mIvClearNewPwd2;
     private TextView mTvTitle;
     private Button mBtnCommit;
