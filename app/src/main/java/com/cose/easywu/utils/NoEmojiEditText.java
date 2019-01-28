@@ -54,8 +54,7 @@ public class NoEmojiEditText extends AppCompatEditText {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (!resetText) {
                     if (count >= 2) {// 表情符号的字符长度最小为2
-                        CharSequence input = s.subSequence(cursorPos, cursorPos
-                                + count);
+                        CharSequence input = s.subSequence(cursorPos, cursorPos + count);
                         if (containsEmoji(input.toString())) {
                             resetText = true;
                             //暂不支持输入Emoji表情符号

@@ -5,8 +5,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtil {
-    static SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
-    static SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    static SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm"); // HH代表24小时制
+    static SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm"); // hh代表12小时制
+    static SimpleDateFormat sdf3 = new SimpleDateFormat("MM-dd HH:mm");
+    static SimpleDateFormat sdf4 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     // 计算时间差
     public static String getDatePoor(Date startDate, Date endDate) {
@@ -65,7 +67,6 @@ public class DateUtil {
     public static String getShowTime(Date date) {
         String timeStr = sdf1.format(date);
         int hour = Integer.valueOf(timeStr.split(":")[0]);
-        int minute = Integer.valueOf(timeStr.split(":")[1]);
         StringBuilder stringBuilder = new StringBuilder();
         Calendar c1 = Calendar.getInstance();
         c1.setTime(date);
@@ -79,24 +80,38 @@ public class DateUtil {
         int day2 = c2.get(Calendar.DAY_OF_MONTH);
         if (year1 == year2 && month1 == month2 && day1 == day2) { // 今天
             if (hour > 12) {
-                return stringBuilder.append("下午 ").append(hour-12).append(":").append(minute).toString();
+                return stringBuilder.append("下午 ").append(sdf2.format(date)).toString();
             } else {
                 return stringBuilder.append("上午 ").append(timeStr).toString();
             }
         } else if (year1 == year2 && month1 == month2 && day1 == day2 + 1) { // 昨天
             if (hour > 12) {
-                return stringBuilder.append("昨天 下午 ").append(hour-12).append(":").append(minute).toString();
+                return stringBuilder.append("昨天 下午 ").append(sdf2.format(date)).toString();
             } else {
                 return stringBuilder.append("昨天 上午 ").append(timeStr).toString();
             }
         } else if (year1 == year2 && month1 == month2 && day1 == day2 + 2) { // 前天
             if (hour > 12) {
-                return stringBuilder.append("前天 下午 ").append(hour-12).append(":").append(minute).toString();
+                return stringBuilder.append("前天 下午 ").append(sdf2.format(date)).toString();
             } else {
                 return stringBuilder.append("前天 上午 ").append(timeStr).toString();
             }
+        } else if (year1 == year2){
+            if (hour > 12) {
+                return stringBuilder.append(month1).append("月").append(day1).append("日下午 ")
+                        .append(sdf2.format(date)).toString();
+            } else {
+                return stringBuilder.append(month1).append("月").append(day1).append("日上午 ")
+                        .append(sdf2.format(date)).toString();
+            }
         } else {
-            return sdf2.format(date);
+            if (hour > 12) {
+                return stringBuilder.append(year1).append("年").append(month1).append("月")
+                        .append(day1).append("日下午 ").append(sdf2.format(date)).toString();
+            } else {
+                return stringBuilder.append(year1).append("年").append(month1).append("月")
+                        .append(day1).append("日上午 ").append(sdf2.format(date)).toString();
+            }
         }
     }
 

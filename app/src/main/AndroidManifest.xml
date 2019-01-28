@@ -90,7 +90,7 @@
         <activity
             android:name="cn.jpush.android.ui.PopWinActivity"
             android:exported="false"
-            android:theme="@style/MyDialogStyle"></activity>
+            android:theme="@style/MyDialogStyle" />
 
         <!-- Required SDK核心功能 -->
         <activity
@@ -197,7 +197,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".message.activity.SystemMsgActivity"></activity>
+        <activity android:name=".message.activity.SystemMsgActivity" />
+        <activity android:name=".home.activity.MoreGoodsActivity"></activity>
     </application>
 
 </manifest>

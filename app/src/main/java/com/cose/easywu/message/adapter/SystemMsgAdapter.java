@@ -25,9 +25,11 @@ public class SystemMsgAdapter extends RecyclerView.Adapter<SystemMsgAdapter.View
 
     private Context mContext;
     private List<Notification> mNotificationList;
+    private NoMsgListener noMsgListener;
 
-    public SystemMsgAdapter(List<Notification> mNotificationList) {
+    public SystemMsgAdapter(List<Notification> mNotificationList, NoMsgListener noMsgListener) {
         this.mNotificationList = mNotificationList;
+        this.noMsgListener = noMsgListener;
     }
 
     @NonNull
@@ -68,6 +70,9 @@ public class SystemMsgAdapter extends RecyclerView.Adapter<SystemMsgAdapter.View
                 notification.delete();
                 mNotificationList.remove(position);
                 notifyDataSetChanged();
+                if (mNotificationList.size() == 0) {
+                    noMsgListener.onNoMsg();
+                }
             }
         });
     }
@@ -89,5 +94,9 @@ public class SystemMsgAdapter extends RecyclerView.Adapter<SystemMsgAdapter.View
             mTvDelete = itemView.findViewById(R.id.tv_system_msg_delete);
             cardView = itemView.findViewById(R.id.cardview_system_msg);
         }
+    }
+
+    public interface NoMsgListener {
+        void onNoMsg();
     }
 }

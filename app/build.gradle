@@ -41,4 +41,6 @@ dependencies {
     }
     implementation files('libs/jcore-android-1.2.6.jar')
     implementation files('libs/jpush-android-3.1.8.jar')
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-19'
+    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-19'//没有使用特殊Header，可以不加这行
 }

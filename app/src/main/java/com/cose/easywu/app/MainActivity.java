@@ -186,6 +186,9 @@ public class MainActivity extends FragmentActivity {
         } else {
             msgNum.setVisibility(View.GONE);
         }
+        if (((MessageFragment) fragments.get(2)).isInit) {
+            ((MessageFragment) fragments.get(2)).initContent();
+        }
     }
 
     @Override

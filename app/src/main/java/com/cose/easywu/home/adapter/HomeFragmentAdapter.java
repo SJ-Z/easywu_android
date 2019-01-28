@@ -20,8 +20,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.home.activity.GoodsInfoActivity;
+import com.cose.easywu.home.activity.MoreGoodsActivity;
 import com.cose.easywu.home.bean.HomeDataBean;
 import com.cose.easywu.utils.Constant;
+import com.cose.easywu.utils.HttpUtil;
 import com.cose.easywu.utils.NoScrollGridView;
 import com.cose.easywu.utils.ToastUtil;
 import com.youth.banner.Banner;
@@ -29,15 +31,16 @@ import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
 import com.youth.banner.listener.OnBannerClickListener;
 import com.youth.banner.listener.OnLoadImageListener;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class HomeFragmentAdapter extends RecyclerView.Adapter {
 
@@ -134,33 +137,36 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
                     requestNewestGoods();
                 }
             });
+
+            // 设置查看更多按钮的监听
+            tv_newest_more.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mContext.startActivity(new Intent(mContext, MoreGoodsActivity.class));
+                }
+            });
         }
 
         public void requestNewestGoods() {
-            OkHttpUtils
-                    .get()
-                    .url(Constant.NEWEST_GOODS_URL)
-                    .build()
-                    .execute(new StringCallback()
-                    {
-                        @Override
-                        public void onError(Call call, Exception e, int id) {
-                            Log.e("最新发布商品的数据", "请求失败，原因：" + e.getMessage());
-                            ToastUtil.showMsgOnCenter(mContext, "刷新失败", Toast.LENGTH_SHORT);
-                        }
+            HttpUtil.sendGetRequest(Constant.NEWEST_GOODS_URL, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e("最新发布商品的数据", "请求失败，原因：" + e.getMessage());
+                    ToastUtil.showMsgOnCenter(mContext, "刷新失败", Toast.LENGTH_SHORT);
+                }
 
-                        @Override
-                        public void onResponse(String response, int id) {
-                            // 解析数据
-                            try {
-                                Log.e("最新发布商品的数据", "请求成功");
-                                String responseText = URLDecoder.decode(response, "utf-8");
-                                processData(responseText);
-                            } catch (UnsupportedEncodingException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    // 解析数据
+                    try {
+                        Log.e("最新发布商品的数据", "请求成功");
+                        String responseText = URLDecoder.decode(response.body().string(), "utf-8");
+                        processData(responseText);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
 
         private void processData(String json) {

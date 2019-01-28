@@ -32,6 +32,7 @@ import java.util.List;
 
 public class MessageFragment extends EaseConversationListFragment implements HandleBackInterface {
     private Context mContext;
+    public boolean isInit = false; // 初始化的标志位
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +41,8 @@ public class MessageFragment extends EaseConversationListFragment implements Han
         if (getActivity() != null) { // 设置默认软键盘不弹出
             getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         }
+        // 修改初始化的标志位
+        isInit = true;
     }
 
     @Override
@@ -94,6 +97,22 @@ public class MessageFragment extends EaseConversationListFragment implements Han
                 }
             }
         };
+    }
+
+    public void initContent() {
+        Notification notification = LitePal.order("time desc").findFirst(Notification.class);
+        int unreadCount = LitePal.where("state=?", String.valueOf(NotificationHelper.STATE_RECEIVE))
+                .count(Notification.class);
+        if (notification != null) {
+            tv_system_msg_time.setText(DateUtil.getShowTime(notification.getTime()));
+            tv_system_msg_content.setText(notification.getContent());
+            if (unreadCount > 0) {
+                tv_system_msg_num.setText(String.valueOf(unreadCount));
+                tv_system_msg_num.setVisibility(View.VISIBLE);
+            }
+        } else {
+            tv_system_msg_content.setText("暂时没有系统消息");
+        }
     }
 
     @Override
