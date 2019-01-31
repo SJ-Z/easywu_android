@@ -39,44 +39,46 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class MoreGoodsActivity extends BaseActivity {
+public class TypeGoodsActivity extends BaseActivity {
 
-    private TextView tvBack;
-    private ImageView ivLoading;
-    private RefreshLayout refreshLayout;
-    private RecyclerView recyclerView;
+    private TextView mTvBack, mTvTypeName;
+    private ImageView mIvLoading;
+    private RefreshLayout mRefreshLayout;
+    private RecyclerView mRecyclerView;
     private GoodsAdapter adapter;
-    private List<HomeDataBean.NewestInfoBean> goodsList = new ArrayList<>();
     private int pageCode = 0; // 当前加载的页数，初始为0
     private boolean isBottom = false; // 是否已加载完所有数据
+    private String type_id, type_name;
+    private List<HomeDataBean.NewestInfoBean> mGoodsList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_more_goods);
+        setContentView(R.layout.activity_type_goods);
         initView();
         initData();
         initListener();
     }
 
     private void initListener() {
-        tvBack.setOnClickListener(new View.OnClickListener() {
+        mTvBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(final RefreshLayout refreshlayout) {
                 pageCode = 0;
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put("pageCode", pageCode);
+                    jsonObject.put("type_id", type_id);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                HttpUtil.sendPostRequest(Constant.NEWEST_GOODS_URL, jsonObject.toString(), new Callback() {
+                HttpUtil.sendPostRequest(Constant.TYPE_GOODS_URL, jsonObject.toString(), new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         refreshlayout.finishRefresh(false);
@@ -90,15 +92,15 @@ public class MoreGoodsActivity extends BaseActivity {
 
                         String responseText = URLDecoder.decode(response.body().string(), "utf-8");
                         // 解析数据
-                        goodsList = JSON.parseArray(responseText, HomeDataBean.NewestInfoBean.class);
-                        if (null == goodsList) {
+                        mGoodsList = JSON.parseArray(responseText, HomeDataBean.NewestInfoBean.class);
+                        if (null == mGoodsList) {
                             return;
                         }
                         // 更新界面
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                adapter.setDatas(goodsList);
+                                adapter.setDatas(mGoodsList);
                                 adapter.notifyDataSetChanged();
                                 refreshlayout.finishRefresh(true);
                             }
@@ -107,21 +109,22 @@ public class MoreGoodsActivity extends BaseActivity {
                 });
             }
         });
-        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+        mRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(final RefreshLayout refreshlayout) {
                 if (isBottom) {
-                    ToastUtil.showMsg(MoreGoodsActivity.this, "没有更多数据了", Toast.LENGTH_SHORT);
+                    ToastUtil.showMsg(TypeGoodsActivity.this, "没有更多数据了", Toast.LENGTH_SHORT);
                     return;
                 }
                 pageCode++;
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put("pageCode", pageCode);
+                    jsonObject.put("type_id", type_id);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                HttpUtil.sendPostRequest(Constant.NEWEST_GOODS_URL, jsonObject.toString(), new Callback() {
+                HttpUtil.sendPostRequest(Constant.TYPE_GOODS_URL, jsonObject.toString(), new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         refreshlayout.finishLoadMore(false);
@@ -145,7 +148,7 @@ public class MoreGoodsActivity extends BaseActivity {
                             public void run() {
                                 if (moregoodsList.size() == 0) {
                                     isBottom = true;
-                                    ToastUtil.showMsg(MoreGoodsActivity.this, "没有更多数据了", Toast.LENGTH_SHORT);
+                                    ToastUtil.showMsg(TypeGoodsActivity.this, "没有更多数据了", Toast.LENGTH_SHORT);
                                 } else {
                                     adapter.addDatas(moregoodsList);
                                     adapter.notifyDataSetChanged();
@@ -160,24 +163,28 @@ public class MoreGoodsActivity extends BaseActivity {
     }
 
     private void initData() {
+        type_id = getIntent().getStringExtra("type_id");
+        type_name = getIntent().getStringExtra("type_name");
+        mTvTypeName.setText(type_name);
         // 联网请求最新发布的数据
         getDataFromNet();
         // 初始化RecyclerView的数据
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        adapter = new GoodsAdapter(this, goodsList);
-        recyclerView.setAdapter(adapter);
+        mRecyclerView.setLayoutManager(layoutManager);
+        adapter = new GoodsAdapter(this, mGoodsList);
+        mRecyclerView.setAdapter(adapter);
     }
 
     private void getDataFromNet() {
-        ivLoading.setVisibility(View.VISIBLE);
+        mIvLoading.setVisibility(View.VISIBLE);
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("pageCode", pageCode);
+            jsonObject.put("type_id", type_id);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        HttpUtil.sendPostRequest(Constant.NEWEST_GOODS_URL, jsonObject.toString(), new Callback() {
+        HttpUtil.sendPostRequest(Constant.TYPE_GOODS_URL, jsonObject.toString(), new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -191,17 +198,17 @@ public class MoreGoodsActivity extends BaseActivity {
 
                 String responseText = URLDecoder.decode(response.body().string(), "utf-8");
                 // 解析数据
-                goodsList = JSON.parseArray(responseText, HomeDataBean.NewestInfoBean.class);
-                if (null == goodsList) {
+                mGoodsList = JSON.parseArray(responseText, HomeDataBean.NewestInfoBean.class);
+                if (null == mGoodsList) {
                     return;
                 }
                 // 更新界面
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        adapter.setDatas(goodsList);
+                        adapter.setDatas(mGoodsList);
                         adapter.notifyDataSetChanged();
-                        ivLoading.setVisibility(View.GONE);
+                        mIvLoading.setVisibility(View.GONE);
                     }
                 });
             }
@@ -209,22 +216,24 @@ public class MoreGoodsActivity extends BaseActivity {
     }
 
     private void initView() {
-        tvBack = findViewById(R.id.tv_moregoods_back);
-        ivLoading = findViewById(R.id.iv_moregoods_loading);
+        mTvBack = findViewById(R.id.tv_type_goods_back);
+        mIvLoading = findViewById(R.id.iv_type_goods_loading);
         Glide.with(this).load(R.drawable.gif_loading).apply(new RequestOptions()
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)).into(ivLoading);
-        refreshLayout = findViewById(R.id.refreshLayout_moregoods);
-        recyclerView = findViewById(R.id.rv_moregoods);
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)).into(mIvLoading);
+        mTvTypeName = findViewById(R.id.tv_type_goods_type_name);
+        mRefreshLayout = findViewById(R.id.refreshLayout_type_goods);
+        mRecyclerView = findViewById(R.id.rv_type_goods);
         //添加分割线
-        recyclerView.addItemDecoration(new RecycleViewDivider(
+        mRecyclerView.addItemDecoration(new RecycleViewDivider(
                 this, LinearLayoutManager.VERTICAL, 2,
                 getResources().getColor(R.color.colorCut)));
 
         //设置 Header 为 贝塞尔雷达 样式
-        refreshLayout.setRefreshHeader(new FunGameHitBlockHeader(this));
+        mRefreshLayout.setRefreshHeader(new FunGameHitBlockHeader(this));
         //设置 Footer 为 球脉冲 样式
-        refreshLayout.setRefreshFooter(new BallPulseFooter(this).setSpinnerStyle(SpinnerStyle.Scale));
-        refreshLayout.setEnableRefresh(true); // 是否启用下拉刷新功能，默认值为true
-        refreshLayout.setEnableLoadMore(true); // 是否启用上拉加载功能，默认值为false
+        mRefreshLayout.setRefreshFooter(new BallPulseFooter(this).setSpinnerStyle(SpinnerStyle.Scale));
+        mRefreshLayout.setEnableRefresh(true); // 是否启用下拉刷新功能，默认值为true
+        mRefreshLayout.setEnableLoadMore(true); // 是否启用上拉加载功能，默认值为false
     }
+
 }

@@ -9,112 +9,117 @@
     android:paddingLeft="10dp"
     android:paddingRight="10dp">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/iv_newest_item_userPhoto"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@drawable/nav_icon"/>
-
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_marginLeft="15dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_newest_item_userPhoto"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/nav_icon"/>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginLeft="15dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/tv_newest_item_userNick"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="昵称"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:padding="2dp"/>
+                <ImageView
+                    android:id="@+id/iv_newest_item_sex"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_male"
+                    android:layout_marginLeft="5dp"/>
+                <TextView
+                    android:id="@+id/tv_newest_item_price"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="￥66"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/holo_red_light"/>
+            </LinearLayout>
+
             <TextView
-                android:id="@+id/tv_newest_item_userNick"
+                android:id="@+id/tv_newest_item_updateTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="昵称"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"
-                android:padding="2dp"/>
-            <ImageView
-                android:id="@+id/iv_newest_item_sex"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_male"
-                android:layout_marginLeft="5dp"/>
+                android:textSize="14sp"
+                android:textColor="@color/colorHint"
+                android:layout_marginTop="5dp"/>
+
             <TextView
-                android:id="@+id/tv_newest_item_price"
-                android:layout_width="0dp"
+                android:id="@+id/tv_newest_item_name"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:text="￥66"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/holo_red_light"/>
-        </LinearLayout>
+                android:text="名称描述"
+                android:textSize="15sp"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="10dp"/>
 
-        <TextView
-            android:id="@+id/tv_newest_item_updateTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="@color/colorHint"
-            android:layout_marginTop="5dp"/>
-
-        <TextView
-            android:id="@+id/tv_newest_item_name"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="名称描述"
-            android:textSize="15sp"
-            android:textColor="@android:color/black"
-            android:layout_marginTop="10dp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-            <ImageView
-                android:id="@+id/iv_newest_item_pic1"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_loading_pic"
-                android:layout_marginRight="10dp"
-                android:visibility="visible"/>
-            <ImageView
-                android:id="@+id/iv_newest_item_pic2"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_loading_pic"
-                android:layout_marginRight="10dp"
-                android:visibility="gone"/>
-            <ImageView
-                android:id="@+id/iv_newest_item_pic3"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_loading_pic"
-                android:visibility="gone"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@color/colorHint"
-                android:text="喜欢"/>
-            <TextView
-                android:id="@+id/tv_newest_item_like"
-                android:layout_width="wrap_content"
+                android:layout_marginTop="10dp">
+                <ImageView
+                    android:id="@+id/iv_newest_item_pic1"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_loading_pic"
+                    android:layout_marginRight="10dp"
+                    android:visibility="visible"/>
+                <ImageView
+                    android:id="@+id/iv_newest_item_pic2"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_loading_pic"
+                    android:layout_marginRight="10dp"
+                    android:visibility="gone"/>
+                <ImageView
+                    android:id="@+id/iv_newest_item_pic3"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_loading_pic"
+                    android:visibility="gone"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@color/colorHint"
-                android:text="0"/>
+                android:layout_marginTop="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="@color/colorHint"
+                    android:text="喜欢"/>
+                <TextView
+                    android:id="@+id/tv_newest_item_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="@color/colorHint"
+                    android:text="0"/>
+            </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>

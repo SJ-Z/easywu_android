@@ -4,14 +4,14 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/rl_moregoods_titlebar"
+        android:id="@+id/rl_type_goods_titlebar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorLightGray"
         android:paddingTop="5dp"
         android:paddingBottom="5dp">
         <TextView
-            android:id="@+id/tv_moregoods_back"
+            android:id="@+id/tv_type_goods_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="主页"
@@ -21,22 +21,22 @@
             android:layout_marginLeft="10dp"
             android:padding="5dp"/>
         <TextView
+            android:id="@+id/tv_type_goods_type_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:text="最新发布"
             android:textSize="20sp"
             android:textColor="@android:color/black"
             android:layout_centerInParent="true"/>
     </RelativeLayout>
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
-        android:id="@+id/refreshLayout_moregoods"
+        android:id="@+id/refreshLayout_type_goods"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/rl_moregoods_titlebar">
+        android:layout_below="@id/rl_type_goods_titlebar">
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_moregoods"
+            android:id="@+id/rv_type_goods"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:overScrollMode="never"
@@ -44,12 +44,12 @@
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
     <ImageView
-        android:id="@+id/iv_moregoods_loading"
+        android:id="@+id/iv_type_goods_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:layout_centerInParent="true"
-        android:layout_below="@id/rl_moregoods_titlebar"
+        android:layout_below="@id/rl_type_goods_titlebar"
         android:visibility="gone"/>
 
 </RelativeLayout>

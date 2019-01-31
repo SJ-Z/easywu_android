@@ -21,6 +21,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.home.activity.MoreGoodsActivity;
+import com.cose.easywu.home.activity.TypeGoodsActivity;
 import com.cose.easywu.home.bean.HomeDataBean;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
@@ -190,7 +191,11 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             gv_type.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    ToastUtil.showMsg(mContext, "position==" + position, Toast.LENGTH_SHORT);
+                    Intent intent = new Intent(mContext, TypeGoodsActivity.class);
+                    HomeDataBean.TypeInfoBean type = homeDataBean.getType_info().get(position);
+                    intent.putExtra("type_id", type.getT_id());
+                    intent.putExtra("type_name", type.getT_name());
+                    mContext.startActivity(intent);
                 }
             });
         }

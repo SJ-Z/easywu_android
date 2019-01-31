@@ -198,7 +198,8 @@
         </receiver>
 
         <activity android:name=".message.activity.SystemMsgActivity" />
-        <activity android:name=".home.activity.MoreGoodsActivity"></activity>
+        <activity android:name=".home.activity.MoreGoodsActivity" />
+        <activity android:name=".home.activity.TypeGoodsActivity"></activity>
     </application>
 
 </manifest>

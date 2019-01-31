@@ -22,12 +22,12 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MoreGoodsAdapter extends RecyclerView.Adapter<MoreGoodsAdapter.ViewHolder> {
+public class GoodsAdapter extends RecyclerView.Adapter<GoodsAdapter.ViewHolder> {
 
     private Context mContext;
     private List<HomeDataBean.NewestInfoBean> goodsList;
 
-    public MoreGoodsAdapter(Context context, List<HomeDataBean.NewestInfoBean> goodsList) {
+    public GoodsAdapter(Context context, List<HomeDataBean.NewestInfoBean> goodsList) {
         this.mContext = context;
         this.goodsList = goodsList;
     }
@@ -69,13 +69,13 @@ public class MoreGoodsAdapter extends RecyclerView.Adapter<MoreGoodsAdapter.View
 
     @NonNull
     @Override
-    public MoreGoodsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public GoodsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_newest_grid_view, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MoreGoodsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull GoodsAdapter.ViewHolder holder, int position) {
         // 根据位置得到对应的数据
         HomeDataBean.NewestInfoBean goods = goodsList.get(position);
         Glide.with(mContext).load(Constant.BASE_PHOTO_URL + goods.getG_u_photo())
