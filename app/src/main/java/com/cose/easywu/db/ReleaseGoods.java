@@ -18,6 +18,7 @@ public class ReleaseGoods extends LitePalSupport {
     private int g_like;
     private Date g_updateTime;
     private String g_t_id;
+    private String g_buyer_id;
 
     public ReleaseGoods() {
     }
@@ -133,6 +134,14 @@ public class ReleaseGoods extends LitePalSupport {
         this.g_t_id = g_t_id;
     }
 
+    public String getG_buyer_id() {
+        return g_buyer_id;
+    }
+
+    public void setG_buyer_id(String g_buyer_id) {
+        this.g_buyer_id = g_buyer_id;
+    }
+
     @Override
     public String toString() {
         return "ReleaseGoods{" +
@@ -148,6 +157,7 @@ public class ReleaseGoods extends LitePalSupport {
                 ", g_like=" + g_like +
                 ", g_updateTime=" + g_updateTime +
                 ", g_t_id='" + g_t_id + '\'' +
+                ", g_buyer_id='" + g_buyer_id + '\'' +
                 '}';
     }
 }

@@ -18,8 +18,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/ic_jw_word"/>
-        <TextView
-            android:id="@+id/tv_searchbar_search"
+        <EditText
+            android:id="@+id/et_searchbar_search"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_gravity="center_vertical"
@@ -30,7 +30,7 @@
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
             android:padding="5dp"
-            android:text="输入搜索信息"
+            android:hint="输入搜索信息"
             android:textSize="13sp"
             android:textColor="@color/colorHint"/>
         <ImageButton

@@ -199,7 +199,8 @@
 
         <activity android:name=".message.activity.SystemMsgActivity" />
         <activity android:name=".home.activity.MoreGoodsActivity" />
-        <activity android:name=".home.activity.TypeGoodsActivity"></activity>
+        <activity android:name=".home.activity.TypeGoodsActivity" />
+        <activity android:name=".home.activity.SearchResultActivity"></activity>
     </application>
 
 </manifest>

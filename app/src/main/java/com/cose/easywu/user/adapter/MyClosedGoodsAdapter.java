@@ -44,7 +44,7 @@ public class MyClosedGoodsAdapter extends RecyclerView.Adapter<MyClosedGoodsAdap
 
     public MyClosedGoodsAdapter(Context context) {
         mContext = context;
-        closedGoodsList = LitePal.where("g_state!=?", "0").order("g_updateTime desc").find(ReleaseGoods.class);
+        closedGoodsList = LitePal.where("g_state!=? and g_state!=?", "0", "5").order("g_updateTime desc").find(ReleaseGoods.class);
         u_id = PreferenceManager.getDefaultSharedPreferences(mContext).getString("u_id", "");
         com.cose.easywu.db.User user = LitePal.where("u_id=?", u_id).findFirst(com.cose.easywu.db.User.class);
         u_nick = user.getU_nick();
@@ -64,14 +64,13 @@ public class MyClosedGoodsAdapter extends RecyclerView.Adapter<MyClosedGoodsAdap
         final ReleaseGoods goods = closedGoodsList.get(position);
         holder.tvGoodsName.setText(goods.getG_name());
         holder.tvPrice.setText(String.valueOf(goods.getG_price()));
-        holder.tvMsg.setText("0");
         if (goods.getG_state() == 1) {
             holder.tvReason.setText("售出下架");
         } else if (goods.getG_state() == 2) {
             holder.tvReason.setText("被您下架");
         } else if (goods.getG_state() == 3) {
             holder.tvReason.setText("被管理员下架");
-            holder.tvDescReason.setVisibility(View.VISIBLE);
+            holder.tvRelease.setVisibility(View.GONE); // 被管理员下架的商品不可重新发布
         }
         Glide.with(mContext).load(Constant.BASE_PIC_URL + goods.getG_pic1()).apply(new RequestOptions()
                 .placeholder(R.drawable.ic_loading_pic).error(R.drawable.ic_error_goods)).into(holder.ivGoodsPic);
@@ -113,7 +112,7 @@ public class MyClosedGoodsAdapter extends RecyclerView.Adapter<MyClosedGoodsAdap
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivGoodsPic;
-        TextView tvReason, tvDescReason, tvGoodsName, tvPrice, tvMsg, tvRelease, tvDelete;
+        TextView tvReason, tvDescReason, tvGoodsName, tvPrice, tvRelease, tvDelete;
         LinearLayout llMain;
 
         public ViewHolder(@NonNull View view) {
@@ -123,7 +122,6 @@ public class MyClosedGoodsAdapter extends RecyclerView.Adapter<MyClosedGoodsAdap
             tvDescReason = view.findViewById(R.id.tv_myclosedgoods_item_desc_reason);
             tvGoodsName = view.findViewById(R.id.tv_myclosedgoods_item_name);
             tvPrice = view.findViewById(R.id.tv_myclosedgoods_item_price);
-            tvMsg = view.findViewById(R.id.tv_myclosedgoods_item_msg);
             tvRelease = view.findViewById(R.id.tv_myclosedgoods_item_release);
             tvDelete = view.findViewById(R.id.tv_myclosedgoods_item_delete);
             llMain = view.findViewById(R.id.ll_myclosedgoods_item_main);

@@ -18,11 +18,12 @@ public class SellGoods extends LitePalSupport {
     private int g_like;
     private Date g_updateTime;
     private String g_t_id;
+    private String g_buyer_id;
 
     public SellGoods() {
     }
 
-    public SellGoods(String g_id, String g_name, String g_desc, double g_price, double g_originalPrice, String g_pic1, String g_pic2, String g_pic3, int g_state, int g_like, Date g_updateTime, String g_t_id) {
+    public SellGoods(String g_id, String g_name, String g_desc, double g_price, double g_originalPrice, String g_pic1, String g_pic2, String g_pic3, int g_state, int g_like, Date g_updateTime, String g_t_id, String g_buyer_id) {
         this.g_id = g_id;
         this.g_name = g_name;
         this.g_desc = g_desc;
@@ -35,6 +36,7 @@ public class SellGoods extends LitePalSupport {
         this.g_like = g_like;
         this.g_updateTime = g_updateTime;
         this.g_t_id = g_t_id;
+        this.g_buyer_id = g_buyer_id;
     }
 
     public String getG_id() {
@@ -133,6 +135,14 @@ public class SellGoods extends LitePalSupport {
         this.g_t_id = g_t_id;
     }
 
+    public String getG_buyer_id() {
+        return g_buyer_id;
+    }
+
+    public void setG_buyer_id(String g_buyer_id) {
+        this.g_buyer_id = g_buyer_id;
+    }
+
     @Override
     public String toString() {
         return "SellGoods{" +
@@ -148,6 +158,7 @@ public class SellGoods extends LitePalSupport {
                 ", g_like=" + g_like +
                 ", g_updateTime=" + g_updateTime +
                 ", g_t_id='" + g_t_id + '\'' +
+                ", g_buyer_id='" + g_buyer_id + '\'' +
                 '}';
     }
 }

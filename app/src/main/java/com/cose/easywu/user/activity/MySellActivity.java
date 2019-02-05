@@ -14,11 +14,9 @@ import android.widget.Toast;
 
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
-import com.cose.easywu.db.LikeGoods;
 import com.cose.easywu.db.ReleaseGoods;
 import com.cose.easywu.db.SellGoods;
 import com.cose.easywu.gson.msg.BaseMsg;
-import com.cose.easywu.user.adapter.MyLikeGoodsAdapter;
 import com.cose.easywu.user.adapter.MySellAdapter;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
@@ -49,6 +47,7 @@ public class MySellActivity extends BaseActivity {
     private MySellAdapter adapter;
     private List<SellGoods> sellGoodsList;
     private String u_id;
+    private double myEarnMoney;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,17 +80,84 @@ public class MySellActivity extends BaseActivity {
     public void initData() {
         sellGoodsList = LitePal.order("g_updateTime desc").find(SellGoods.class);
         // 更新“在简物赚了xx元”的价格
-        double myEarnMoney = 0.0;
+        myEarnMoney = 0.0;
         for (SellGoods sellGoods : sellGoodsList) {
-            myEarnMoney += sellGoods.getG_price();
+            if (sellGoods.getG_state() == 1) { // 1状态为已卖出（另一状态5为下单状态）
+                myEarnMoney += sellGoods.getG_price();
+            }
         }
         mTvEarn.setText(String.valueOf(myEarnMoney));
         u_id = PreferenceManager.getDefaultSharedPreferences(this).getString("u_id", "");
         adapter = new MySellAdapter(this, sellGoodsList, u_id);
-        adapter.setOnDeleteClick(new MySellAdapter.OnDeleteClick() {
+        adapter.setOnClick(new MySellAdapter.OnClick() {
             @Override
-            public void click(String g_id) {
+            public void onDeleteClick(String g_id) {
                 handleDelete(g_id);
+            }
+
+            @Override
+            public void onConfirmClick(double g_price) {
+                myEarnMoney += g_price;
+                mTvEarn.setText(String.valueOf(myEarnMoney));
+            }
+
+            @Override
+            public void onRefuseClick(final SellGoods sellGoods) {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("g_id", sellGoods.getG_id());
+                    jsonObject.put("u_id", u_id);
+                    jsonObject.put("buyer_id", sellGoods.getG_buyer_id());
+                    jsonObject.put("g_name", sellGoods.getG_name());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                HttpUtil.sendPostRequest(Constant.NEW_GOODS_ORDER_REFUSE_URL, jsonObject.toString(), new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.e("拒绝商品订单", "请求失败，原因：" + e.getMessage());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtil.showMsg(MySellActivity.this, "拒绝订单失败", Toast.LENGTH_SHORT);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (null == response.body()) {
+                            return;
+                        }
+
+                        String responseText = URLDecoder.decode(response.body().string(), "utf-8");
+                        final BaseMsg msg = Utility.handleBaseMsgResponse(responseText);
+                        if (null == msg) {
+                            return;
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (msg.getCode().equals("1")) {
+                                    Log.e("拒绝商品订单", "请求成功");
+                                    ReleaseGoods releaseGoods = new ReleaseGoods(sellGoods.getG_id(), sellGoods.getG_name(),
+                                            sellGoods.getG_desc(), sellGoods.getG_price(), sellGoods.getG_originalPrice(),
+                                            sellGoods.getG_pic1(), sellGoods.getG_pic2(), sellGoods.getG_pic3(),
+                                            0, sellGoods.getG_like(), sellGoods.getG_updateTime(), sellGoods.getG_t_id());
+                                    releaseGoods.save();
+                                    sellGoods.delete();
+                                    adapter.removeGoods(sellGoods);
+                                    adapter.notifyDataSetChanged();
+                                    ToastUtil.showMsg(MySellActivity.this, "拒绝订单成功", Toast.LENGTH_SHORT);
+                                } else {
+                                    Log.e("拒绝商品订单", "请求失败");
+                                    ToastUtil.showMsg(MySellActivity.this, "拒绝订单失败，请重试", Toast.LENGTH_SHORT);
+                                }
+                            }
+                        });
+                    }
+                });
             }
         });
         mRv.setAdapter(adapter);

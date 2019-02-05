@@ -37,5 +37,9 @@ public class Constant {
     public static String GOODS_COMMENT_URL = BASE_URL + "/goods/goodsComment"; // 获取商品评论
     public static String GOODS_ADD_COMMENT_URL = BASE_URL + "/goods/goodsAddComment"; // 添加商品评论
     public static String GOODS_ADD_REPLY_URL = BASE_URL + "/goods/goodsAddReply"; // 添加商品回复
+    public static String SEARCH_GOODS_URL = BASE_URL + "/goods/searchGoods"; // 按关键字搜索商品
+    public static String NEW_GOODS_ORDER_URL = BASE_URL + "/goods/newGoodsOrder"; // 下单商品
+    public static String NEW_GOODS_ORDER_CONFIRM_URL = BASE_URL + "/goods/newGoodsOrderConfirm"; // 确认商品订单
+    public static String NEW_GOODS_ORDER_REFUSE_URL = BASE_URL + "/goods/newGoodsOrderRefuse"; // 拒绝商品订单
 
 }

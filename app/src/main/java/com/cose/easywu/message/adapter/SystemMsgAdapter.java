@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.cose.easywu.R;
 import com.cose.easywu.db.Notification;
 import com.cose.easywu.home.activity.GoodsInfoActivity;
+import com.cose.easywu.user.activity.MySellActivity;
 import com.cose.easywu.utils.DateUtil;
 import com.cose.easywu.utils.NotificationHelper;
 import com.hyphenate.easeui.model.GoodsMessageHelper;
@@ -48,11 +49,32 @@ public class SystemMsgAdapter extends RecyclerView.Adapter<SystemMsgAdapter.View
         Date time = notification.getTime();
         holder.mTvTime.setText(DateUtil.getShowTime(time));
         int type = notification.getType();
-        if (type == NotificationHelper.TYPE_GOODS_COMMENT || type == NotificationHelper.TYPE_GOODS_REPLY) {
+        if (type == NotificationHelper.TYPE_GOODS_COMMENT || type == NotificationHelper.TYPE_GOODS_REPLY ||
+                type == NotificationHelper.TYPE_CONFIRM_ORDER_GOODS ||
+                type == NotificationHelper.TYPE_REFUSE_ORDER_GOODS) {
             holder.mTvTitle.setText(NotificationHelper.GOODS);
             Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_goodsmarket);
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
             holder.mTvTitle.setCompoundDrawables(drawable, null, null, null);
+            // 设置条目的点击事件为跳转到商品详情页
+            holder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, GoodsInfoActivity.class);
+                    intent.putExtra(GoodsMessageHelper.CHATTYPE, true);
+                    intent.putExtra(GoodsMessageHelper.GOODS_ID, notification.getG_id());
+                    mContext.startActivity(intent);
+                }
+            });
+        } else if (type == NotificationHelper.TYPE_NEW_ORDER_GOODS) {
+            // 设置条目的点击事件为跳转到“我卖出的”
+            holder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, MySellActivity.class);
+                    mContext.startActivity(intent);
+                }
+            });
         }
         holder.mTvContent.setText(notification.getContent());
         holder.cardView.setOnClickListener(new View.OnClickListener() {

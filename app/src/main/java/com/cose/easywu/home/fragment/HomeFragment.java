@@ -164,12 +164,12 @@ public class HomeFragment extends BaseFragment {
                         LitePal.deleteAll(SellGoods.class);
                         for (ReleaseGoods goods : homeDataBean.getReleaseGoodsList()) {
                             goods.save();
-                            if (goods.getG_state() == 1) {
+                            if (goods.getG_state() == 1 || goods.getG_state() == 5) {
                                 SellGoods sellGoods = new SellGoods(goods.getG_id(), goods.getG_name(),
                                         goods.getG_desc(), goods.getG_price(), goods.getG_originalPrice(),
                                         goods.getG_pic1(), goods.getG_pic2(), goods.getG_pic3(),
                                         goods.getG_state(), goods.getG_like(), goods.getG_updateTime(),
-                                        goods.getG_t_id());
+                                        goods.getG_t_id(), goods.getG_buyer_id());
                                 sellGoods.save();
                             }
                         }

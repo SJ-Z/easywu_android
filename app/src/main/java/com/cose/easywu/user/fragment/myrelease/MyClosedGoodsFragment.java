@@ -64,7 +64,8 @@ public class MyClosedGoodsFragment extends BaseFragment {
         mSwipeRefresh.setColorSchemeResources(R.color.colorLoginButton);
         mRv = view.findViewById(R.id.rv_myclosedgoods);
         mLlNoGoods = view.findViewById(R.id.ll_myclosedgoods_nogoods);
-        if (LitePal.where("g_state!=?", "0").find(ReleaseGoods.class).size() == 0) {
+        // 判断卖出的、被用户下架和被管理员下架的商品总数是否为0
+        if (LitePal.where("g_state!=? and g_state!=?", "0", "5").find(ReleaseGoods.class).size() == 0) {
             mLlNoGoods.setVisibility(View.VISIBLE);
             mSwipeRefresh.setVisibility(View.GONE);
         } else {

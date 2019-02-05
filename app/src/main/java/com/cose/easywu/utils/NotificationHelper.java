@@ -5,6 +5,9 @@ public class NotificationHelper {
     // 通知的类型
     public static int TYPE_GOODS_COMMENT = 0;
     public static int TYPE_GOODS_REPLY = 1;
+    public static int TYPE_NEW_ORDER_GOODS = 2;
+    public static int TYPE_CONFIRM_ORDER_GOODS = 3;
+    public static int TYPE_REFUSE_ORDER_GOODS = 4;
 
     // 通知的标题
     public static String GOODS = "跳蚤市场";

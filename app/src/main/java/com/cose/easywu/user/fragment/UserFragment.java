@@ -94,7 +94,9 @@ public class UserFragment extends BaseFragment {
         // 更新“在简物赚了xx元”的价格
         double myGainMoney = 0.0;
         for (SellGoods sellGoods : sellGoodsList) {
-            myGainMoney += sellGoods.getG_price();
+            if (sellGoods.getG_state() == 1) {
+                myGainMoney += sellGoods.getG_price();
+            }
         }
         mTvGain.setText(String.valueOf(myGainMoney));
         // 设置缓存数据

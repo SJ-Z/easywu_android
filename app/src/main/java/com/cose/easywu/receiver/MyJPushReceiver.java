@@ -10,11 +10,15 @@ import android.util.Log;
 import com.alibaba.fastjson.JSONObject;
 import com.cose.easywu.app.WelcomeActivity;
 import com.cose.easywu.db.Notification;
+import com.cose.easywu.db.ReleaseGoods;
+import com.cose.easywu.db.SellGoods;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.NotificationHelper;
 import com.hyphenate.easeui.model.GoodsMessageHelper;
 
 import org.litepal.LitePal;
+
+import java.util.Date;
 
 import cn.jpush.android.api.JPushInterface;
 
@@ -52,6 +56,34 @@ public class MyJPushReceiver extends BroadcastReceiver {
                             NotificationHelper.TYPE_GOODS_REPLY);
                 }
                 notification.save();
+            } else if (jsonObject.getBoolean(GoodsMessageHelper.NewGoodsOrderType)) { // 为true说明是商品下单的通知
+                String g_id = jsonObject.getString(GoodsMessageHelper.GOODS_ID);
+                long orderTime = jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME);
+                String g_buyer_id = jsonObject.getString(GoodsMessageHelper.GOODS_BUYER_ID);
+                // 更新本地数据库
+                ReleaseGoods releaseGoods = LitePal.where("g_id=?", g_id).findFirst(ReleaseGoods.class);
+                SellGoods sellGoods = new SellGoods(releaseGoods.getG_id(), releaseGoods.getG_name(),
+                        releaseGoods.getG_desc(), releaseGoods.getG_price(), releaseGoods.getG_originalPrice(),
+                        releaseGoods.getG_pic1(), releaseGoods.getG_pic2(), releaseGoods.getG_pic3(),
+                        5, releaseGoods.getG_like(), new Date(orderTime), releaseGoods.getG_t_id(), g_buyer_id);
+                sellGoods.save();
+                releaseGoods.delete();
+
+                Notification notification = new Notification(NotificationHelper.GOODS, content, g_id,
+                        orderTime, NotificationHelper.TYPE_NEW_ORDER_GOODS);
+                notification.save();
+            } else if (jsonObject.getBoolean(GoodsMessageHelper.ConfirmGoodsOrderType)) { // 为true说明是确认商品订单的通知
+                Notification notification = new Notification(NotificationHelper.GOODS, content,
+                        jsonObject.getString(GoodsMessageHelper.GOODS_ID),
+                        jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME),
+                        NotificationHelper.TYPE_CONFIRM_ORDER_GOODS);
+                notification.save();
+            } else if (jsonObject.getBoolean(GoodsMessageHelper.RefuseGoodsOrderType)) { // 为true说明是拒绝商品订单的通知
+                Notification notification = new Notification(NotificationHelper.GOODS, content,
+                        jsonObject.getString(GoodsMessageHelper.GOODS_ID),
+                        jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME),
+                        NotificationHelper.TYPE_REFUSE_ORDER_GOODS);
+                notification.save();
             }
         } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent.getAction())) { // 通知被点击
             Log.d(TAG, "[MyReceiver] 用户点击打开了通知");
@@ -61,12 +93,37 @@ public class MyJPushReceiver extends BroadcastReceiver {
             notification.setState(NotificationHelper.STATE_READ);
             notification.save();
 
-            //打开自定义的Activity
-            Intent i = new Intent(context, WelcomeActivity.class);
-            i.putExtra(GoodsMessageHelper.CHATTYPE, true); // 让GoodsInfoActivity识别的标志位
-            i.putExtra(GoodsMessageHelper.GOODS_ID, jsonObject.getString("g_id"));
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(i);
+            if (jsonObject.getBoolean(GoodsMessageHelper.NewGoodsOrderType)) { // 为true说明是商品下单的通知
+                //打开自定义的Activity
+                Intent i = new Intent(context, WelcomeActivity.class);
+                i.putExtra(GoodsMessageHelper.NewGoodsOrderType, true); // 标志位
+                i.putExtra(GoodsMessageHelper.GOODS_ID, jsonObject.getString("g_id"));
+                i.putExtra(GoodsMessageHelper.MESSAGE_TIME, jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME));
+                i.putExtra(GoodsMessageHelper.GOODS_BUYER_ID, jsonObject.getString(GoodsMessageHelper.GOODS_BUYER_ID));
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
+            } else if (jsonObject.getBoolean(GoodsMessageHelper.CHATTYPE)) { // 为true说明是商品评论回复的通知
+                //打开自定义的Activity
+                Intent i = new Intent(context, WelcomeActivity.class);
+                i.putExtra(GoodsMessageHelper.CHATTYPE, true); // 让GoodsInfoActivity识别的标志位
+                i.putExtra(GoodsMessageHelper.GOODS_ID, jsonObject.getString("g_id"));
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
+            } else if (jsonObject.getBoolean(GoodsMessageHelper.ConfirmGoodsOrderType)) { // 为true说明是确认商品订单的通知
+                //打开自定义的Activity
+                Intent i = new Intent(context, WelcomeActivity.class);
+                i.putExtra(GoodsMessageHelper.ConfirmGoodsOrderType, true); // 标志位
+                i.putExtra(GoodsMessageHelper.GOODS_ID, jsonObject.getString("g_id"));
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
+            } else if (jsonObject.getBoolean(GoodsMessageHelper.RefuseGoodsOrderType)) { // 为true说明是拒绝商品订单的通知
+                //打开自定义的Activity
+                Intent i = new Intent(context, WelcomeActivity.class);
+                i.putExtra(GoodsMessageHelper.RefuseGoodsOrderType, true); // 标志位
+                i.putExtra(GoodsMessageHelper.GOODS_ID, jsonObject.getString("g_id"));
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
+            }
         }
     }
 }

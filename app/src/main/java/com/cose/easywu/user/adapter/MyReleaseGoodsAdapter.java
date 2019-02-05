@@ -67,7 +67,6 @@ public class MyReleaseGoodsAdapter extends RecyclerView.Adapter<MyReleaseGoodsAd
         final ReleaseGoods goods = releaseGoodsList.get(position);
         holder.tvGoodsName.setText(goods.getG_name());
         holder.tvPrice.setText(String.valueOf(goods.getG_price()));
-        holder.tvMsg.setText("0");
         holder.tvUpdateTime.setText(DateUtil.getDatePoor(goods.getG_updateTime(), new Date()) + "擦亮");
         Glide.with(mContext).load(Constant.BASE_PIC_URL + goods.getG_pic1()).apply(new RequestOptions()
                 .placeholder(R.drawable.ic_loading_pic).error(R.drawable.ic_error_goods)).into(holder.ivGoodsPic);
@@ -119,7 +118,7 @@ public class MyReleaseGoodsAdapter extends RecyclerView.Adapter<MyReleaseGoodsAd
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivGoodsPic;
-        TextView tvGoodsName, tvPrice, tvMsg, tvUpdateTime, tvPolish, tvEdit, tvDelete;
+        TextView tvGoodsName, tvPrice, tvUpdateTime, tvPolish, tvEdit, tvDelete;
         LinearLayout llMain;
 
         public ViewHolder(@NonNull View view) {
@@ -127,7 +126,6 @@ public class MyReleaseGoodsAdapter extends RecyclerView.Adapter<MyReleaseGoodsAd
             ivGoodsPic = view.findViewById(R.id.iv_myreleasegoods_pic);
             tvGoodsName = view.findViewById(R.id.tv_myreleasegoods_name);
             tvPrice = view.findViewById(R.id.tv_myreleasegoods_price);
-            tvMsg = view.findViewById(R.id.tv_myreleasegoods_msg);
             tvUpdateTime = view.findViewById(R.id.tv_myreleasegoods_updateTime);
             tvPolish = view.findViewById(R.id.tv_myreleasegoods_polish);
             tvEdit = view.findViewById(R.id.tv_myreleasegoods_edit);

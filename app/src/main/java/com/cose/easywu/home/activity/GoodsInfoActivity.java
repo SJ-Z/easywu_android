@@ -77,8 +77,8 @@ public class GoodsInfoActivity extends BaseActivity {
 
     private ImageView mIvBack, mIvUserPhoto, mIvUserSex, mIvGoodsPic1, mIvGoodsPic2, mIvGoodsPic3, mIvLike;
     private TextView mTvTitlePrice, mTvUserNick, mTvUserUpdateTime, mTvPrice, mTvOriginalPrice,
-                        mTvGoodsName, mTvGoodsDesc, mTvMsgNum, mTvContact, mTvEdit, mTvDelete;
-    private LinearLayout mLlOriginalPrice, mLlLeaveMsg, mLlLike, mLlManage;
+                        mTvGoodsName, mTvGoodsDesc, mTvMsgNum, mTvContact, mTvEdit, mTvDelete, mTvBuy;
+    private LinearLayout mLlOriginalPrice, mLlLeaveMsg, mLlLike, mLlManage, mLlBuyer;
     private ScrollView mSv;
     private NestedExpandableListView mElvComment;
     private CommentExpandAdapter adapter;
@@ -170,6 +170,64 @@ public class GoodsInfoActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 handleDelete();
+            }
+        });
+        mTvBuy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleBuy();
+            }
+        });
+    }
+
+    // 下单按钮的点击事件
+    private void handleBuy() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("g_id", goods.getG_id());
+            jsonObject.put("g_name", goods.getG_name());
+            jsonObject.put("g_u_id", goods.getG_u_id());
+            jsonObject.put("u_id", u_id);
+            jsonObject.put("u_nick", user.getU_nick());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        HttpUtil.sendPostRequest(Constant.NEW_GOODS_ORDER_URL, jsonObject.toString(), new Callback() {
+            @Override
+            public void onFailure(Call call, final IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e("GoodsInfoActivity", "商品下单失败:" + e.getMessage());
+                        ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "下单失败", Toast.LENGTH_SHORT);
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (null == response.body()) {
+                    return;
+                }
+
+                String responseText = URLDecoder.decode(response.body().string(), "utf-8");
+                final BaseMsg msg = Utility.handleBaseMsgResponse(responseText);
+                if (null == msg) {
+                    return;
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (msg.getCode().equals("1")) {
+                            Log.e("GoodsInfoActivity", "商品下单成功:" + goods.getG_id());
+                            mTvBuy.setVisibility(View.GONE); // 隐藏下单按钮
+                            ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "下单成功", Toast.LENGTH_SHORT);
+                        } else {
+                            Log.e("GoodsInfoActivity", "商品下单失败:" + goods.getG_id());
+                            ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "下单失败", Toast.LENGTH_SHORT);
+                        }
+                    }
+                });
             }
         });
     }
@@ -286,8 +344,13 @@ public class GoodsInfoActivity extends BaseActivity {
             HttpUtil.sendPostRequest(Constant.DELETE_GOODS_URL, json, new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
-                    ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "删除失败", Toast.LENGTH_SHORT);
                     Log.e("GoodsInfoActivity", "删除商品失败:" + e.getMessage());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "删除失败", Toast.LENGTH_SHORT);
+                        }
+                    });
                 }
 
                 @Override
@@ -333,13 +396,18 @@ public class GoodsInfoActivity extends BaseActivity {
             HttpUtil.sendPostRequest(Constant.SET_LIKE_GOODS_URL, json, new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
-                    if (like) {
-                        mIvLike.setImageResource(R.drawable.ic_goods_like);
-                        ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "收藏失败", Toast.LENGTH_SHORT);
-                    } else {
-                        mIvLike.setImageResource(R.drawable.ic_goods_like_press);
-                        ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "取消收藏失败", Toast.LENGTH_SHORT);
-                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (like) {
+                                mIvLike.setImageResource(R.drawable.ic_goods_like);
+                                ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "收藏失败", Toast.LENGTH_SHORT);
+                            } else {
+                                mIvLike.setImageResource(R.drawable.ic_goods_like_press);
+                                ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "取消收藏失败", Toast.LENGTH_SHORT);
+                            }
+                        }
+                    });
                 }
 
                 @Override
@@ -380,7 +448,9 @@ public class GoodsInfoActivity extends BaseActivity {
 
         // 判断进入该Activity的intent是否携带指定信息
         Intent intent = getIntent();
-        if (intent.getBooleanExtra(GoodsMessageHelper.CHATTYPE, false)) {
+        if (intent.getBooleanExtra(GoodsMessageHelper.CHATTYPE, false)
+                || intent.getBooleanExtra(GoodsMessageHelper.ConfirmGoodsOrderType, false)
+                || intent.getBooleanExtra(GoodsMessageHelper.RefuseGoodsOrderType, false)) {
             // 利用商品id查找本地数据库
             ReleaseGoods releaseGoods = LitePal.where("g_id=?", intent.getStringExtra(GoodsMessageHelper.GOODS_ID)).findFirst(ReleaseGoods.class);
             if (releaseGoods != null) {
@@ -486,7 +556,7 @@ public class GoodsInfoActivity extends BaseActivity {
         // 检测是否是商品的发布者
         if (goods.getG_u_id().equals(pref.getString("u_id", ""))) {
             mLlManage.setVisibility(View.VISIBLE);
-            mTvContact.setVisibility(View.GONE);
+            mLlBuyer.setVisibility(View.GONE);
         }
 
         // 向服务器发起请求加载评论
@@ -560,7 +630,9 @@ public class GoodsInfoActivity extends BaseActivity {
         mLlLike = findViewById(R.id.ll_goodsInfo_like);
         mSv = findViewById(R.id.scroll_view_goodsInfo);
         mTvContact = findViewById(R.id.tv_goodsInfo_contact);
+        mTvBuy = findViewById(R.id.tv_goodsInfo_buy);
         mLlManage = findViewById(R.id.ll_goodsInfo_manage);
+        mLlBuyer = findViewById(R.id.ll_goodsInfo_buyer);
         mElvComment = findViewById(R.id.lv_goodsInfo_comment);
 
         // 给商品原价添加删除线

@@ -230,8 +230,15 @@ public class MyReleaseGoodsFragment extends BaseFragment {
             HttpUtil.sendPostRequest(Constant.DELETE_GOODS_URL, json, new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
-                    ToastUtil.showMsgOnCenter(mContext, "删除失败", Toast.LENGTH_SHORT);
                     Log.e("MyReleaseGoodsFragment", "删除商品失败:" + e.getMessage());
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtil.showMsgOnCenter(mContext, "删除失败", Toast.LENGTH_SHORT);
+                            }
+                        });
+                    }
                 }
 
                 @Override

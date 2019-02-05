@@ -36,8 +36,18 @@ public class WelcomeActivity extends BaseActivity {
                     Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
                     Intent originIntent = getIntent();
                     if (originIntent.getBooleanExtra(GoodsMessageHelper.CHATTYPE, false)) {
-                        Log.e("----------", "run: ");
                         intent.putExtra(GoodsMessageHelper.CHATTYPE, true); // 让GoodsInfoActivity识别的标志位
+                        intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
+                    } else if (originIntent.getBooleanExtra(GoodsMessageHelper.NewGoodsOrderType, false)) {
+                        intent.putExtra(GoodsMessageHelper.NewGoodsOrderType, true); // 标志位
+                        intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
+                        intent.putExtra(GoodsMessageHelper.MESSAGE_TIME, originIntent.getLongExtra(GoodsMessageHelper.MESSAGE_TIME, 0));
+                        intent.putExtra(GoodsMessageHelper.GOODS_BUYER_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_BUYER_ID));
+                    } else if (originIntent.getBooleanExtra(GoodsMessageHelper.ConfirmGoodsOrderType, false)) {
+                        intent.putExtra(GoodsMessageHelper.ConfirmGoodsOrderType, true); // 让GoodsInfoActivity识别的标志位
+                        intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
+                    } else if (originIntent.getBooleanExtra(GoodsMessageHelper.ConfirmGoodsOrderType, false)) {
+                        intent.putExtra(GoodsMessageHelper.RefuseGoodsOrderType, true); // 让GoodsInfoActivity识别的标志位
                         intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
                     }
                     startActivity(intent);

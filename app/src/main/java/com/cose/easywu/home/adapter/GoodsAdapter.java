@@ -1,6 +1,7 @@
 package com.cose.easywu.home.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -8,11 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
+import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.home.bean.HomeDataBean;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.DateUtil;
@@ -21,6 +24,8 @@ import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.cose.easywu.home.adapter.HomeFragmentAdapter.GOODS_BEAN;
 
 public class GoodsAdapter extends RecyclerView.Adapter<GoodsAdapter.ViewHolder> {
 
@@ -41,6 +46,7 @@ public class GoodsAdapter extends RecyclerView.Adapter<GoodsAdapter.ViewHolder> 
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
+        LinearLayout ll_newest_item_main;
         CircleImageView iv_newest_item_userPhoto;
         TextView tv_newest_item_userNick;
         TextView tv_newest_item_price;
@@ -54,6 +60,7 @@ public class GoodsAdapter extends RecyclerView.Adapter<GoodsAdapter.ViewHolder> 
 
         public ViewHolder(@NonNull View view) {
             super(view);
+            ll_newest_item_main = view.findViewById(R.id.ll_newest_item_main);
             iv_newest_item_userPhoto = view.findViewById(R.id.iv_newest_item_userPhoto);
             tv_newest_item_userNick = view.findViewById(R.id.tv_newest_item_userNick);
             tv_newest_item_price = view.findViewById(R.id.tv_newest_item_price);
@@ -77,7 +84,7 @@ public class GoodsAdapter extends RecyclerView.Adapter<GoodsAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull GoodsAdapter.ViewHolder holder, int position) {
         // 根据位置得到对应的数据
-        HomeDataBean.NewestInfoBean goods = goodsList.get(position);
+        final HomeDataBean.NewestInfoBean goods = goodsList.get(position);
         Glide.with(mContext).load(Constant.BASE_PHOTO_URL + goods.getG_u_photo())
                 .apply(new RequestOptions().placeholder(R.drawable.nav_icon))
                 .into(holder.iv_newest_item_userPhoto);
@@ -112,6 +119,15 @@ public class GoodsAdapter extends RecyclerView.Adapter<GoodsAdapter.ViewHolder> 
         } else {
             holder.iv_newest_item_pic3.setVisibility(View.GONE);
         }
+
+        holder.ll_newest_item_main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, GoodsInfoActivity.class);
+                intent.putExtra(GOODS_BEAN, goods);
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override

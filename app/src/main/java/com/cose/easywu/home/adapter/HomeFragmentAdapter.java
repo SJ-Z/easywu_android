@@ -1,14 +1,21 @@
 package com.cose.easywu.home.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -21,6 +28,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.home.activity.MoreGoodsActivity;
+import com.cose.easywu.home.activity.SearchResultActivity;
 import com.cose.easywu.home.activity.TypeGoodsActivity;
 import com.cose.easywu.home.bean.HomeDataBean;
 import com.cose.easywu.utils.Constant;
@@ -32,6 +40,9 @@ import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
 import com.youth.banner.listener.OnBannerClickListener;
 import com.youth.banner.listener.OnLoadImageListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -149,11 +160,27 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
         }
 
         public void requestNewestGoods() {
+            // 设置刷新按钮的动画
+            Animation anim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            LinearInterpolator lin = new LinearInterpolator();
+            anim.setInterpolator(lin);
+            anim.setDuration(500); // 设置动画持续周期
+            anim.setRepeatCount(Animation.INFINITE); // 设置重复次数无限
+            anim.setRepeatMode(Animation.RESTART);
+            anim.setFillAfter(true); // 动画执行完后是否停留在执行完的状态
+            iv_newest_refresh.startAnimation(anim);
+
             HttpUtil.sendGetRequest(Constant.NEWEST_GOODS_URL, new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
                     Log.e("最新发布商品的数据", "请求失败，原因：" + e.getMessage());
-                    ToastUtil.showMsgOnCenter(mContext, "刷新失败", Toast.LENGTH_SHORT);
+                    ((Activity) mContext).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            iv_newest_refresh.getAnimation().cancel(); // 取消刷新按钮的动画
+                            ToastUtil.showMsgOnCenter(mContext, "刷新失败", Toast.LENGTH_SHORT);
+                        }
+                    });
                 }
 
                 @Override
@@ -161,8 +188,14 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
                     // 解析数据
                     try {
                         Log.e("最新发布商品的数据", "请求成功");
-                        String responseText = URLDecoder.decode(response.body().string(), "utf-8");
-                        processData(responseText);
+                        final String responseText = URLDecoder.decode(response.body().string(), "utf-8");
+                        ((Activity) mContext).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                iv_newest_refresh.getAnimation().cancel(); // 取消刷新按钮的动画
+                                processData(responseText);
+                            }
+                        });
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
@@ -250,22 +283,27 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
 
     class SearchBarViewHolder extends RecyclerView.ViewHolder {
         private Context mContext;
-        private TextView mTvSearch;
+        private EditText mEtSearch;
         private ImageButton mIbSearch;
 
         public SearchBarViewHolder(Context mContext, View itemView) {
             super(itemView);
             this.mContext = mContext;
-            mTvSearch = itemView.findViewById(R.id.tv_searchbar_search);
+            mEtSearch = itemView.findViewById(R.id.et_searchbar_search);
             mIbSearch = itemView.findViewById(R.id.ib_searchbar_search);
         }
 
         public void init() {
-            // 设置点击事件
+            // 设置搜索按钮的点击事件
             mIbSearch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    String key = mEtSearch.getText().toString();
+                    if (!TextUtils.isEmpty(key)) {
+                        Intent intent = new Intent(mContext, SearchResultActivity.class);
+                        intent.putExtra("key", key);
+                        mContext.startActivity(intent);
+                    }
                 }
             });
         }
