@@ -1,5 +1,6 @@
 package com.cose.easywu.home.bean;
 
+import com.cose.easywu.db.BuyGoods;
 import com.cose.easywu.db.LikeGoods;
 import com.cose.easywu.db.ReleaseGoods;
 
@@ -14,6 +15,7 @@ public class HomeDataBean {
     private List<NewestInfoBean> newest_info;
     private List<LikeGoods> goodsLikeList;
     private List<ReleaseGoods> releaseGoodsList;
+    private List<BuyGoods> buyGoodsList;
 
     public List<BannerInfoBean> getBanner_info() {
         return banner_info;
@@ -53,6 +55,14 @@ public class HomeDataBean {
 
     public void setReleaseGoodsList(List<ReleaseGoods> releaseGoodsList) {
         this.releaseGoodsList = releaseGoodsList;
+    }
+
+    public List<BuyGoods> getBuyGoodsList() {
+        return buyGoodsList;
+    }
+
+    public void setBuyGoodsList(List<BuyGoods> buyGoodsList) {
+        this.buyGoodsList = buyGoodsList;
     }
 
     public static class BannerInfoBean {

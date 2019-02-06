@@ -30,6 +30,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
+import com.cose.easywu.db.BuyGoods;
 import com.cose.easywu.db.LikeGoods;
 import com.cose.easywu.db.ReleaseGoods;
 import com.cose.easywu.db.User;
@@ -222,6 +223,13 @@ public class GoodsInfoActivity extends BaseActivity {
                             Log.e("GoodsInfoActivity", "商品下单成功:" + goods.getG_id());
                             mTvBuy.setVisibility(View.GONE); // 隐藏下单按钮
                             ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "下单成功", Toast.LENGTH_SHORT);
+                            // 将该商品存入“我买到的”本地数据库
+                            BuyGoods buyGoods = new BuyGoods(goods.getG_id(), goods.getG_name(), goods.getG_desc(),
+                                    goods.getG_price(), goods.getG_originalPrice(), goods.getG_pic1(),
+                                    goods.getG_pic2(), goods.getG_pic3(), 5, goods.getG_like(),
+                                    goods.getG_updateTime(), goods.getG_t_id(), goods.getG_u_id(),
+                                    goods.getG_u_nick(), goods.getG_u_photo(), goods.getG_u_sex());
+                            buyGoods.save();
                         } else {
                             Log.e("GoodsInfoActivity", "商品下单失败:" + goods.getG_id());
                             ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "下单失败", Toast.LENGTH_SHORT);

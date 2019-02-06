@@ -200,7 +200,8 @@
         <activity android:name=".message.activity.SystemMsgActivity" />
         <activity android:name=".home.activity.MoreGoodsActivity" />
         <activity android:name=".home.activity.TypeGoodsActivity" />
-        <activity android:name=".home.activity.SearchResultActivity"></activity>
+        <activity android:name=".home.activity.SearchResultActivity" />
+        <activity android:name=".user.activity.MyBuyActivity"></activity>
     </application>
 
 </manifest>

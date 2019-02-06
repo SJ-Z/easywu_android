@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cose.easywu.app.WelcomeActivity;
+import com.cose.easywu.db.BuyGoods;
 import com.cose.easywu.db.Notification;
 import com.cose.easywu.db.ReleaseGoods;
 import com.cose.easywu.db.SellGoods;
@@ -73,17 +74,24 @@ public class MyJPushReceiver extends BroadcastReceiver {
                         orderTime, NotificationHelper.TYPE_NEW_ORDER_GOODS);
                 notification.save();
             } else if (jsonObject.getBoolean(GoodsMessageHelper.ConfirmGoodsOrderType)) { // 为true说明是确认商品订单的通知
+                String g_id = jsonObject.getString(GoodsMessageHelper.GOODS_ID);
                 Notification notification = new Notification(NotificationHelper.GOODS, content,
-                        jsonObject.getString(GoodsMessageHelper.GOODS_ID),
-                        jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME),
+                        g_id, jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME),
                         NotificationHelper.TYPE_CONFIRM_ORDER_GOODS);
                 notification.save();
+                // 修改本地数据库“我买到的”商品状态
+                BuyGoods buyGoods = LitePal.where("g_id=?", g_id).findFirst(BuyGoods.class);
+                buyGoods.setG_state(1);
+                buyGoods.save();
             } else if (jsonObject.getBoolean(GoodsMessageHelper.RefuseGoodsOrderType)) { // 为true说明是拒绝商品订单的通知
+                String g_id = jsonObject.getString(GoodsMessageHelper.GOODS_ID);
                 Notification notification = new Notification(NotificationHelper.GOODS, content,
-                        jsonObject.getString(GoodsMessageHelper.GOODS_ID),
-                        jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME),
+                        g_id, jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME),
                         NotificationHelper.TYPE_REFUSE_ORDER_GOODS);
                 notification.save();
+                // 删除本地数据库“我买到的”该商品
+                BuyGoods buyGoods = LitePal.where("g_id=?", g_id).findFirst(BuyGoods.class);
+                buyGoods.delete();
             }
         } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent.getAction())) { // 通知被点击
             Log.d(TAG, "[MyReceiver] 用户点击打开了通知");

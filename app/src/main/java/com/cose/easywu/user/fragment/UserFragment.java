@@ -26,6 +26,7 @@ import com.cose.easywu.db.SellGoods;
 import com.cose.easywu.gson.User;
 import com.cose.easywu.gson.msg.PersonMsg;
 import com.cose.easywu.user.activity.EditUserInfoActivity;
+import com.cose.easywu.user.activity.MyBuyActivity;
 import com.cose.easywu.user.activity.MyLikeActivity;
 import com.cose.easywu.user.activity.MyReleaseActivity;
 import com.cose.easywu.user.activity.MySellActivity;
@@ -336,6 +337,13 @@ public class UserFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(mContext, MySellActivity.class));
+            }
+        });
+        // 我买到的
+        mLlMybuy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mContext, MyBuyActivity.class));
             }
         });
     }

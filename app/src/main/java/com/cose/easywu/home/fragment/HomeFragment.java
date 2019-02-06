@@ -23,6 +23,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseFragment;
+import com.cose.easywu.db.BuyGoods;
 import com.cose.easywu.db.LikeGoods;
 import com.cose.easywu.db.ReleaseGoods;
 import com.cose.easywu.db.SellGoods;
@@ -172,6 +173,11 @@ public class HomeFragment extends BaseFragment {
                                         goods.getG_t_id(), goods.getG_buyer_id());
                                 sellGoods.save();
                             }
+                        }
+                        // 将“我买到的”商品数据存储到本地数据库
+                        LitePal.deleteAll(BuyGoods.class);
+                        for (BuyGoods goods : homeDataBean.getBuyGoodsList()) {
+                            goods.save();
                         }
                     }
                 });
