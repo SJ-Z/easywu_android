@@ -43,7 +43,8 @@ public class MyJPushReceiver extends BroadcastReceiver {
             Intent i = new Intent(Constant.RECEIVE_NEW_MESSAGE);
             localBroadcastManager.sendBroadcast(i);
 
-            if (jsonObject.getBoolean(GoodsMessageHelper.CHATTYPE)) { // 为true说明是商品评论回复的通知
+            if (null != jsonObject.getBoolean(GoodsMessageHelper.CHATTYPE) &&
+                    jsonObject.getBoolean(GoodsMessageHelper.CHATTYPE)) { // 为true说明是商品评论回复的通知
                 Notification notification;
                 if (jsonObject.getInteger(GoodsMessageHelper.MESSAGE_TYPE) == NotificationHelper.TYPE_GOODS_COMMENT) {
                     notification = new Notification(NotificationHelper.GOODS, content,
@@ -57,7 +58,8 @@ public class MyJPushReceiver extends BroadcastReceiver {
                             NotificationHelper.TYPE_GOODS_REPLY);
                 }
                 notification.save();
-            } else if (jsonObject.getBoolean(GoodsMessageHelper.NewGoodsOrderType)) { // 为true说明是商品下单的通知
+            } else if (null != jsonObject.getBoolean(GoodsMessageHelper.NewGoodsOrderType) &&
+                    jsonObject.getBoolean(GoodsMessageHelper.NewGoodsOrderType)) { // 为true说明是商品下单的通知
                 String g_id = jsonObject.getString(GoodsMessageHelper.GOODS_ID);
                 long orderTime = jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME);
                 String g_buyer_id = jsonObject.getString(GoodsMessageHelper.GOODS_BUYER_ID);
@@ -73,7 +75,8 @@ public class MyJPushReceiver extends BroadcastReceiver {
                 Notification notification = new Notification(NotificationHelper.GOODS, content, g_id,
                         orderTime, NotificationHelper.TYPE_NEW_ORDER_GOODS);
                 notification.save();
-            } else if (jsonObject.getBoolean(GoodsMessageHelper.ConfirmGoodsOrderType)) { // 为true说明是确认商品订单的通知
+            } else if (null != jsonObject.getBoolean(GoodsMessageHelper.ConfirmGoodsOrderType) &&
+                    jsonObject.getBoolean(GoodsMessageHelper.ConfirmGoodsOrderType)) { // 为true说明是确认商品订单的通知
                 String g_id = jsonObject.getString(GoodsMessageHelper.GOODS_ID);
                 Notification notification = new Notification(NotificationHelper.GOODS, content,
                         g_id, jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME),
@@ -83,7 +86,8 @@ public class MyJPushReceiver extends BroadcastReceiver {
                 BuyGoods buyGoods = LitePal.where("g_id=?", g_id).findFirst(BuyGoods.class);
                 buyGoods.setG_state(1);
                 buyGoods.save();
-            } else if (jsonObject.getBoolean(GoodsMessageHelper.RefuseGoodsOrderType)) { // 为true说明是拒绝商品订单的通知
+            } else if (null != jsonObject.getBoolean(GoodsMessageHelper.RefuseGoodsOrderType) &&
+                    jsonObject.getBoolean(GoodsMessageHelper.RefuseGoodsOrderType)) { // 为true说明是拒绝商品订单的通知
                 String g_id = jsonObject.getString(GoodsMessageHelper.GOODS_ID);
                 Notification notification = new Notification(NotificationHelper.GOODS, content,
                         g_id, jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME),
@@ -101,34 +105,38 @@ public class MyJPushReceiver extends BroadcastReceiver {
             notification.setState(NotificationHelper.STATE_READ);
             notification.save();
 
-            if (jsonObject.getBoolean(GoodsMessageHelper.NewGoodsOrderType)) { // 为true说明是商品下单的通知
+            if (null != jsonObject.getBoolean(GoodsMessageHelper.NewGoodsOrderType) &&
+                    jsonObject.getBoolean(GoodsMessageHelper.NewGoodsOrderType)) { // 为true说明是商品下单的通知
                 //打开自定义的Activity
                 Intent i = new Intent(context, WelcomeActivity.class);
                 i.putExtra(GoodsMessageHelper.NewGoodsOrderType, true); // 标志位
-                i.putExtra(GoodsMessageHelper.GOODS_ID, jsonObject.getString("g_id"));
+                i.putExtra(GoodsMessageHelper.GOODS_ID, jsonObject.getString(GoodsMessageHelper.GOODS_ID));
                 i.putExtra(GoodsMessageHelper.MESSAGE_TIME, jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME));
                 i.putExtra(GoodsMessageHelper.GOODS_BUYER_ID, jsonObject.getString(GoodsMessageHelper.GOODS_BUYER_ID));
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
-            } else if (jsonObject.getBoolean(GoodsMessageHelper.CHATTYPE)) { // 为true说明是商品评论回复的通知
+            } else if (null != jsonObject.getBoolean(GoodsMessageHelper.CHATTYPE) &&
+                    jsonObject.getBoolean(GoodsMessageHelper.CHATTYPE)) { // 为true说明是商品评论回复的通知
                 //打开自定义的Activity
                 Intent i = new Intent(context, WelcomeActivity.class);
                 i.putExtra(GoodsMessageHelper.CHATTYPE, true); // 让GoodsInfoActivity识别的标志位
-                i.putExtra(GoodsMessageHelper.GOODS_ID, jsonObject.getString("g_id"));
+                i.putExtra(GoodsMessageHelper.GOODS_ID, jsonObject.getString(GoodsMessageHelper.GOODS_ID));
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
-            } else if (jsonObject.getBoolean(GoodsMessageHelper.ConfirmGoodsOrderType)) { // 为true说明是确认商品订单的通知
+            } else if (null != jsonObject.getBoolean(GoodsMessageHelper.ConfirmGoodsOrderType) &&
+                    jsonObject.getBoolean(GoodsMessageHelper.ConfirmGoodsOrderType)) { // 为true说明是确认商品订单的通知
                 //打开自定义的Activity
                 Intent i = new Intent(context, WelcomeActivity.class);
                 i.putExtra(GoodsMessageHelper.ConfirmGoodsOrderType, true); // 标志位
-                i.putExtra(GoodsMessageHelper.GOODS_ID, jsonObject.getString("g_id"));
+                i.putExtra(GoodsMessageHelper.GOODS_ID, jsonObject.getString(GoodsMessageHelper.GOODS_ID));
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
-            } else if (jsonObject.getBoolean(GoodsMessageHelper.RefuseGoodsOrderType)) { // 为true说明是拒绝商品订单的通知
+            } else if (null != jsonObject.getBoolean(GoodsMessageHelper.RefuseGoodsOrderType) &&
+                    jsonObject.getBoolean(GoodsMessageHelper.RefuseGoodsOrderType)) { // 为true说明是拒绝商品订单的通知
                 //打开自定义的Activity
                 Intent i = new Intent(context, WelcomeActivity.class);
                 i.putExtra(GoodsMessageHelper.RefuseGoodsOrderType, true); // 标志位
-                i.putExtra(GoodsMessageHelper.GOODS_ID, jsonObject.getString("g_id"));
+                i.putExtra(GoodsMessageHelper.GOODS_ID, jsonObject.getString(GoodsMessageHelper.GOODS_ID));
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
             }

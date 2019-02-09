@@ -20,6 +20,7 @@ import com.cose.easywu.app.LoginActivity;
 import com.cose.easywu.base.ActivityCollector;
 import com.cose.easywu.base.BaseFragment;
 import com.cose.easywu.base.MyApplication;
+import com.cose.easywu.db.BuyGoods;
 import com.cose.easywu.db.LikeGoods;
 import com.cose.easywu.db.ReleaseGoods;
 import com.cose.easywu.db.SellGoods;
@@ -46,6 +47,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.List;
 
+import cn.jpush.android.api.JPushInterface;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -87,11 +89,13 @@ public class UserFragment extends BaseFragment {
         // 更新收藏的商品数量
         int likeGoodsCount = LitePal.findAll(LikeGoods.class).size();
         mTvMylikeCount.setText(String.valueOf(likeGoodsCount));
-        // 更新“我发布的”和“我卖出的”商品数量
-        int myReleaseCount = LitePal.where("g_state=?", "0").find(ReleaseGoods.class).size();
+        // 更新“我发布的”、“我卖出的”、“我买到的”商品数量
+        int myReleaseCount = LitePal.where("g_state=?", "0").count(ReleaseGoods.class);
         List<SellGoods> sellGoodsList = LitePal.findAll(SellGoods.class);
+        int myBuyCount = LitePal.count(BuyGoods.class);
         mTvMyreleaseCount.setText(String.valueOf(myReleaseCount));
         mTvMysellCount.setText(String.valueOf(sellGoodsList.size()));
+        mTvMybuyCount.setText(String.valueOf(myBuyCount));
         // 更新“在简物赚了xx元”的价格
         double myGainMoney = 0.0;
         for (SellGoods sellGoods : sellGoodsList) {
@@ -245,6 +249,9 @@ public class UserFragment extends BaseFragment {
                 editor.remove("u_id");
                 editor.putBoolean("autoLogin", false);
                 editor.apply();
+
+                // 注销极光推送的别名
+                JPushInterface.deleteAlias(mContext, 0);
 
                 // 退出环信
                 new Thread(new Runnable() {

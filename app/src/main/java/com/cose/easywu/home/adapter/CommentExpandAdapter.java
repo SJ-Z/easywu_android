@@ -34,7 +34,7 @@ public class CommentExpandAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getGroupCount() {
-        return commentBeanList.size();
+        return commentBeanList == null ? 0 : commentBeanList.size();
     }
 
     @Override

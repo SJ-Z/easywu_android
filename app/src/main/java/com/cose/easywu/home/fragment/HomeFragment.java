@@ -56,7 +56,7 @@ public class HomeFragment extends BaseFragment {
     private SharedPreferences pref;
     private HomeFragmentAdapter adapter;
     // 返回的数据
-    HomeDataBean homeDataBean;
+    private HomeDataBean homeDataBean;
 
     private BroadcastReceiver receiver;
     private IntentFilter intentFilter;

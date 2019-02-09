@@ -6,12 +6,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RadioGroup;
@@ -21,8 +23,6 @@ import android.widget.Toast;
 import com.cose.easywu.R;
 import com.cose.easywu.base.ActivityCollector;
 import com.cose.easywu.db.Notification;
-import com.cose.easywu.db.ReleaseGoods;
-import com.cose.easywu.db.SellGoods;
 import com.cose.easywu.find.fragment.FindFragment;
 import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.home.fragment.HomeFragment;
@@ -41,11 +41,11 @@ import com.hyphenate.easeui.model.GoodsMessageHelper;
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import cn.jpush.android.api.JPushInterface;
+import cn.jpush.android.service.JPushMessageReceiver;
 
 public class MainActivity extends FragmentActivity {
 
@@ -53,8 +53,7 @@ public class MainActivity extends FragmentActivity {
     private PublishDialog publishDialog;
     private TextView msgNum;
 
-    private IntentFilter intentFilter;
-    private BroadcastReceiver receiver;
+    private BroadcastReceiver receiver_new_msg;
     private LocalBroadcastManager localBroadcastManager;
 
     private ArrayList<Fragment> fragments;
@@ -86,25 +85,34 @@ public class MainActivity extends FragmentActivity {
 
     private void checkTurn2GoodsInfoActivity() {
         Intent originIntent = getIntent();
-        if (originIntent.getBooleanExtra(GoodsMessageHelper.CHATTYPE, false)) {
-            Intent intent = new Intent(MainActivity.this, GoodsInfoActivity.class);
-            intent.putExtra(GoodsMessageHelper.CHATTYPE, true); // 让GoodsInfoActivity识别的标志位
-            intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
-            startActivity(intent);
-        } else if (originIntent.getBooleanExtra(GoodsMessageHelper.NewGoodsOrderType, false)) {
-            Intent intent = new Intent(MainActivity.this, MySellActivity.class);
-            startActivity(intent);
-        } else if (originIntent.getBooleanExtra(GoodsMessageHelper.ConfirmGoodsOrderType, false)) {
-            Intent intent = new Intent(MainActivity.this, GoodsInfoActivity.class);
-            intent.putExtra(GoodsMessageHelper.ConfirmGoodsOrderType, true); // 让GoodsInfoActivity识别的标志位
-            intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
-            startActivity(intent);
-        } else if (originIntent.getBooleanExtra(GoodsMessageHelper.RefuseGoodsOrderType, false)) {
-            Intent intent = new Intent(MainActivity.this, GoodsInfoActivity.class);
-            intent.putExtra(GoodsMessageHelper.RefuseGoodsOrderType, true); // 让GoodsInfoActivity识别的标志位
-            intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
-            startActivity(intent);
+        if (null != originIntent.getType() && originIntent.getType().equals("1")) {
+            return;
+        } else {
+            if (originIntent.getBooleanExtra(GoodsMessageHelper.CHATTYPE, false)) {
+                Intent intent = new Intent(MainActivity.this, GoodsInfoActivity.class);
+                intent.putExtra(GoodsMessageHelper.CHATTYPE, true); // 让GoodsInfoActivity识别的标志位
+                intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
+                startActivity(intent);
+                originIntent.setType("1");
+            } else if (originIntent.getBooleanExtra(GoodsMessageHelper.NewGoodsOrderType, false)) {
+                Intent intent = new Intent(MainActivity.this, MySellActivity.class);
+                startActivity(intent);
+                originIntent.setType("1");
+            } else if (originIntent.getBooleanExtra(GoodsMessageHelper.ConfirmGoodsOrderType, false)) {
+                Intent intent = new Intent(MainActivity.this, GoodsInfoActivity.class);
+                intent.putExtra(GoodsMessageHelper.ConfirmGoodsOrderType, true); // 让GoodsInfoActivity识别的标志位
+                intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
+                startActivity(intent);
+                originIntent.setType("1");
+            } else if (originIntent.getBooleanExtra(GoodsMessageHelper.RefuseGoodsOrderType, false)) {
+                Intent intent = new Intent(MainActivity.this, GoodsInfoActivity.class);
+                intent.putExtra(GoodsMessageHelper.RefuseGoodsOrderType, true); // 让GoodsInfoActivity识别的标志位
+                intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
+                startActivity(intent);
+                originIntent.setType("1");
+            }
         }
+
     }
 
     // 设置RadioGroup的监听
@@ -212,23 +220,24 @@ public class MainActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         setUnreadMsgNum();
+        checkTurn2GoodsInfoActivity();
     }
 
     private void initData() {
         // 初始化极光推送的别名
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        JPushInterface.setAlias(this, 0, pref.getString("u_id", ""));
+        JPushInterface.setAlias(MainActivity.this, 0, pref.getString("u_id", ""));
         // 注册广播接收器
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        intentFilter = new IntentFilter();
-        intentFilter.addAction(Constant.RECEIVE_NEW_MESSAGE);
-        receiver = new BroadcastReceiver() {
+        IntentFilter intentFilter_new_msg = new IntentFilter();
+        intentFilter_new_msg.addAction(Constant.RECEIVE_NEW_MESSAGE);
+        receiver_new_msg = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 setUnreadMsgNum(); // 刷新未读消息数量
             }
         };
-        localBroadcastManager.registerReceiver(receiver, intentFilter);
+        localBroadcastManager.registerReceiver(receiver_new_msg, intentFilter_new_msg);
     }
 
     private void initView() {
@@ -339,12 +348,20 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    //此方法在onResume之前执行
+    @Override
+    protected void onNewIntent(Intent intent) {
+        //每次重新到前台就主动更新intent并保存，之后就能获取到最新的intent
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (receiver != null) {
-            localBroadcastManager.unregisterReceiver(receiver);
-            receiver = null;
+        if (receiver_new_msg != null) {
+            localBroadcastManager.unregisterReceiver(receiver_new_msg);
+            receiver_new_msg = null;
         }
         ActivityCollector.removeActivity(this);
     }

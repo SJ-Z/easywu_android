@@ -56,7 +56,7 @@
             android:layout_gravity="center"
             android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"
-            android:src="@drawable/ic_delete"
+            android:src="@drawable/ic_delete3"
             android:visibility="invisible" />
     </LinearLayout>
 

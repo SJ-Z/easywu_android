@@ -113,7 +113,7 @@ public class MyReleaseGoodsAdapter extends RecyclerView.Adapter<MyReleaseGoodsAd
 
     @Override
     public int getItemCount() {
-        return releaseGoodsList.size();
+        return releaseGoodsList == null ? 0 : releaseGoodsList.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

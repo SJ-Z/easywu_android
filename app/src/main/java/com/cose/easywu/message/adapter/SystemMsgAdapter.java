@@ -101,7 +101,7 @@ public class SystemMsgAdapter extends RecyclerView.Adapter<SystemMsgAdapter.View
 
     @Override
     public int getItemCount() {
-        return mNotificationList.size();
+        return mNotificationList == null ? 0 : mNotificationList.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

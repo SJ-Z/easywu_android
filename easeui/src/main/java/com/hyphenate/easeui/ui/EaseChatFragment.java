@@ -32,9 +32,15 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.EMValueCallBack;
@@ -113,6 +119,11 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
     protected String toChatUsername;
     protected EaseChatMessageList messageList;
     protected EaseChatInputMenu inputMenu;
+    protected LinearLayout ll_goods_item;
+    protected ImageView iv_goods_pic, iv_goods_delete;
+    protected TextView tv_goods_name, tv_goods_price;
+    protected Button btn_goods_send;
+    protected OnGoodsItemClicked onGoodsItemClicked;
 
     protected EMConversation conversation;
     
@@ -175,12 +186,6 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
 
         this.turnOnTyping = turnOnTyping();
 
-        boolean isGoods = fragmentArgs.getBoolean("isGoods");
-        if (isGoods) {
-            sendGoodsMessage(fragmentArgs.getString("goods_id"), fragmentArgs.getString("goods_name"),
-                    fragmentArgs.getString("goods_pic"), fragmentArgs.getDouble("goods_price"));
-        }
-
         super.onActivityCreated(savedInstanceState);
 
         localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
@@ -216,6 +221,51 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
      * init view
      */
     protected void initView() {
+
+        boolean isGoods = fragmentArgs.getBoolean("isGoods");
+        if (isGoods) {
+            if (getView() != null) {
+                ll_goods_item = getView().findViewById(R.id.ll_chat_goods_item);
+                iv_goods_pic = getView().findViewById(R.id.iv_chat_goods_pic);
+                iv_goods_delete = getView().findViewById(R.id.iv_chat_goods_delete);
+                tv_goods_name = getView().findViewById(R.id.tv_chat_goods_name);
+                tv_goods_price = getView().findViewById(R.id.tv_chat_goods_price);
+                btn_goods_send = getView().findViewById(R.id.btn_chat_goods_send);
+            }
+            ll_goods_item.setVisibility(View.VISIBLE);
+            Glide.with(getContext()).load(fragmentArgs.getString(GoodsMessageHelper.GOODS_PIC))
+                    .apply(new RequestOptions()
+                    .placeholder(R.drawable.ic_loading_pic).error(R.drawable.ic_error_goods))
+                    .into(iv_goods_pic);
+            tv_goods_name.setText(fragmentArgs.getString(GoodsMessageHelper.GOODS_NAME));
+            tv_goods_price.setText(String.valueOf(fragmentArgs.getDouble(GoodsMessageHelper.GOODS_PRICE)));
+            btn_goods_send.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sendGoodsMessage(fragmentArgs.getString(GoodsMessageHelper.GOODS_ID),
+                            fragmentArgs.getString(GoodsMessageHelper.GOODS_NAME),
+                            fragmentArgs.getString(GoodsMessageHelper.GOODS_PIC),
+                            fragmentArgs.getDouble(GoodsMessageHelper.GOODS_PRICE));
+                    ll_goods_item.setVisibility(View.GONE);
+                    messageList.refresh();
+                }
+            });
+            iv_goods_delete.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ll_goods_item.setVisibility(View.GONE);
+                }
+            });
+            ll_goods_item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (onGoodsItemClicked != null) {
+                        onGoodsItemClicked.onclick(fragmentArgs.getString(GoodsMessageHelper.GOODS_ID));
+                    }
+                }
+            });
+        }
+
         // hold to record voice
         //noinspection ConstantConditions
         voiceRecorderView = (EaseVoiceRecorderView) getView().findViewById(R.id.voice_recorder);
@@ -1420,6 +1470,14 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
          * @return
          */
         EaseCustomChatRowProvider onSetCustomChatRowProvider();
+    }
+
+    public interface OnGoodsItemClicked {
+        void onclick(String g_id);
+    }
+
+    public void setOnGoodsItemClicked(OnGoodsItemClicked onGoodsItemClicked) {
+        this.onGoodsItemClicked = onGoodsItemClicked;
     }
     
 }

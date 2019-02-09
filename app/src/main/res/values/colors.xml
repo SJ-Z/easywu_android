@@ -14,4 +14,5 @@
     <color name="colorCut">#edeaea</color>
     <color name="colorHint">#afa8a6</color>
     <color name="colorLightGray">#f6f6f6</color>
+    <color name="colorDarkGreen">#33CC66</color>
 </resources>

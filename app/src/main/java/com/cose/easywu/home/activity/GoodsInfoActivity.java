@@ -12,6 +12,7 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -22,11 +23,13 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
@@ -76,6 +79,8 @@ import okhttp3.Response;
 
 public class GoodsInfoActivity extends BaseActivity {
 
+    private ImageView mIvLoading;
+    private RelativeLayout mRlAll, mRlBottomBar;
     private ImageView mIvBack, mIvUserPhoto, mIvUserSex, mIvGoodsPic1, mIvGoodsPic2, mIvGoodsPic3, mIvLike;
     private TextView mTvTitlePrice, mTvUserNick, mTvUserUpdateTime, mTvPrice, mTvOriginalPrice,
                         mTvGoodsName, mTvGoodsDesc, mTvMsgNum, mTvContact, mTvEdit, mTvDelete, mTvBuy;
@@ -246,10 +251,10 @@ public class GoodsInfoActivity extends BaseActivity {
         intent.putExtra(EaseConstant.EXTRA_USER_ID, goods.getG_u_id());
         // 传递商品信息
         intent.putExtra("isGoods", true);
-        intent.putExtra("goods_id", goods.getG_id());
-        intent.putExtra("goods_name", goods.getG_name());
-        intent.putExtra("goods_pic", Constant.BASE_PIC_URL + goods.getG_pic1());
-        intent.putExtra("goods_price", goods.getG_price());
+        intent.putExtra(GoodsMessageHelper.GOODS_ID, goods.getG_id());
+        intent.putExtra(GoodsMessageHelper.GOODS_NAME, goods.getG_name());
+        intent.putExtra(GoodsMessageHelper.GOODS_PIC, Constant.BASE_PIC_URL + goods.getG_pic1());
+        intent.putExtra(GoodsMessageHelper.GOODS_PRICE, goods.getG_price());
         startActivity(intent);
     }
 
@@ -569,6 +574,14 @@ public class GoodsInfoActivity extends BaseActivity {
 
         // 向服务器发起请求加载评论
         getCommentFromServer();
+
+        mIvLoading.setVisibility(View.GONE);
+        mRlAll.setVisibility(View.VISIBLE);
+
+        if (goods.getG_state() != 0 && goods.getG_state() != 5) {
+            ToastUtil.showMsgOnCenter(this, "该宝贝已失效", Toast.LENGTH_SHORT);
+            mRlBottomBar.setVisibility(View.GONE);
+        }
     }
 
     private void getCommentFromServer() {
@@ -616,6 +629,9 @@ public class GoodsInfoActivity extends BaseActivity {
     }
 
     private void initView() {
+        mIvLoading = findViewById(R.id.iv_goodInfo_loading);
+        mRlAll = findViewById(R.id.rl_goodsInfo_all);
+        mRlBottomBar = findViewById(R.id.rl_goodsInfo_bottombar);
         mIvBack = findViewById(R.id.iv_goodsInfo_back);
         mIvUserPhoto = findViewById(R.id.iv_goodsInfo_user_photo);
         mTvTitlePrice = findViewById(R.id.tv_goodsInfo_titlebar_price);
@@ -645,6 +661,11 @@ public class GoodsInfoActivity extends BaseActivity {
 
         // 给商品原价添加删除线
         mTvOriginalPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+
+        Glide.with(this).load(R.drawable.gif_loading).apply(new RequestOptions()
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)).into(mIvLoading);
+        mIvLoading.setVisibility(View.VISIBLE);
+        mRlAll.setVisibility(View.GONE);
     }
 
     /**

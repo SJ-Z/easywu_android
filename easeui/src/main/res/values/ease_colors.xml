@@ -2,6 +2,7 @@
 <resources>
 
     <color name="colorLoginButton">#FF4200</color>
+    <color name="colorLogin">#FF8C00</color>
     <color name="colorCut">#edeaea</color>
 
     <color name="common_top_bar_blue">#4ebcd3</color>

@@ -129,8 +129,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:gravity="right">
+            android:layout_marginRight="15dp">
+            <TextView
+                android:id="@+id/tv_mylikegoods_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@android:color/holo_red_light"
+                android:layout_centerVertical="true"
+                android:visibility="gone"/>
             <LinearLayout
                 android:id="@+id/ll_mylikegoods_like"
                 android:layout_width="wrap_content"
@@ -140,7 +147,8 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:padding="5dp">
+                android:padding="5dp"
+                android:layout_alignParentRight="true">
                 <ImageView
                     android:id="@+id/iv_mylikegoods_like"
                     android:layout_width="wrap_content"

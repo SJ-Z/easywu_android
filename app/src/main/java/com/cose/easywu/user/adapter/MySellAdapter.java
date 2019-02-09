@@ -74,7 +74,7 @@ public class MySellAdapter extends RecyclerView.Adapter<MySellAdapter.ViewHolder
                 .placeholder(R.drawable.ic_loading_pic).error(R.drawable.ic_error_goods)).into(holder.ivPic);
         if (goods.getG_state() == 1) {
             holder.tvMsg.setText("交易成功");
-            holder.tvMsg.setTextColor(Color.GREEN);
+            holder.tvMsg.setTextColor(mContext.getResources().getColor(R.color.colorDarkGreen));
             holder.tvDelete.setVisibility(View.VISIBLE);
             holder.tvConfirm.setVisibility(View.INVISIBLE);
             holder.tvRefuse.setVisibility(View.INVISIBLE);
@@ -193,7 +193,7 @@ public class MySellAdapter extends RecyclerView.Adapter<MySellAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        return sellGoodsList.size();
+        return sellGoodsList == null ? 0 : sellGoodsList.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

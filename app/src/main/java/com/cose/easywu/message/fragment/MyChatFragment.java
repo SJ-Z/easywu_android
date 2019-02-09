@@ -20,6 +20,15 @@ public class MyChatFragment extends EaseChatFragment implements EaseChatFragment
     protected void setUpView() {
         // 设置聊天界面的监听,需要在父类 onActivityCreated 之前设置监听
         setChatFragmentHelper(this);
+        setOnGoodsItemClicked(new OnGoodsItemClicked() {
+            @Override
+            public void onclick(String g_id) {
+                Intent intent = new Intent(getContext(), GoodsInfoActivity.class);
+                intent.putExtra(GoodsMessageHelper.CHATTYPE, true);
+                intent.putExtra(GoodsMessageHelper.GOODS_ID, g_id);
+                startActivity(intent);
+            }
+        });
         super.setUpView();
     }
 
@@ -83,4 +92,5 @@ public class MyChatFragment extends EaseChatFragment implements EaseChatFragment
     public EaseCustomChatRowProvider onSetCustomChatRowProvider() {
         return null;
     }
+
 }

@@ -73,6 +73,10 @@ public class MyLikeGoodsAdapter extends RecyclerView.Adapter<MyLikeGoodsAdapter.
         } else {
             holder.ivPic3.setVisibility(View.GONE);
         }
+        if (goods.getG_state() != 0) {
+            holder.tvState.setText("该宝贝已失效");
+            holder.tvState.setVisibility(View.VISIBLE);
+        }
         holder.llLike.setVisibility(View.VISIBLE);
         holder.llDislike.setVisibility(View.GONE);
         holder.llLike.setOnClickListener(new View.OnClickListener() {
@@ -105,12 +109,12 @@ public class MyLikeGoodsAdapter extends RecyclerView.Adapter<MyLikeGoodsAdapter.
 
     @Override
     public int getItemCount() {
-        return likeGoodsList.size();
+        return likeGoodsList == null ? 0 : likeGoodsList.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivUserPhoto, ivUserSex, ivPic1, ivPic2, ivPic3, ivLike;
-        TextView tvUserNick, tvUserUpdateTime, tvPrice, tvGoodsName, tvLike;
+        TextView tvUserNick, tvUserUpdateTime, tvPrice, tvGoodsName, tvLike, tvState;
         LinearLayout llMain, llLike, llDislike;
 
         public ViewHolder(@NonNull View view) {
@@ -126,6 +130,7 @@ public class MyLikeGoodsAdapter extends RecyclerView.Adapter<MyLikeGoodsAdapter.
             tvPrice = view.findViewById(R.id.tv_mylikegoods_price);
             tvGoodsName = view.findViewById(R.id.tv_mylikegoods_name);
             tvLike = view.findViewById(R.id.tv_mylikegoods_like);
+            tvState = view.findViewById(R.id.tv_mylikegoods_state);
             llMain = view.findViewById(R.id.ll_mylikegoods_main);
             llLike = view.findViewById(R.id.ll_mylikegoods_like);
             llDislike = view.findViewById(R.id.ll_mylikegoods_dislike);

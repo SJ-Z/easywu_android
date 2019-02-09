@@ -13,6 +13,9 @@
         <mapping class="com.cose.easywu.db.BuyGoods" />
         <mapping class="com.cose.easywu.db.HXUserInfo" />
         <mapping class="com.cose.easywu.db.Notification" />
+        <mapping class="com.cose.easywu.db.FindType" />
+        <mapping class="com.cose.easywu.db.ReleaseFindGoods" />
+        <mapping class="com.cose.easywu.db.LikeFindGoods" />
     </list>
 
 </litepal>

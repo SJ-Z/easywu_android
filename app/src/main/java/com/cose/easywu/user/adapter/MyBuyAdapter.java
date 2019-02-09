@@ -55,7 +55,7 @@ public class MyBuyAdapter extends RecyclerView.Adapter<MyBuyAdapter.ViewHolder> 
                 .placeholder(R.drawable.ic_loading_pic).error(R.drawable.ic_error_goods)).into(holder.ivPic);
         if (goods.getG_state() == 1) {
             holder.tvMsg.setText("交易成功");
-            holder.tvMsg.setTextColor(Color.GREEN);
+            holder.tvMsg.setTextColor(mContext.getResources().getColor(R.color.colorDarkGreen));
         } else {
             holder.tvMsg.setText("等待卖家确认");
             holder.tvMsg.setTextColor(Color.RED);
@@ -86,7 +86,7 @@ public class MyBuyAdapter extends RecyclerView.Adapter<MyBuyAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return buyGoodsList.size();
+        return buyGoodsList == null ? 0 : buyGoodsList.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -96,12 +96,12 @@ public class MyBuyAdapter extends RecyclerView.Adapter<MyBuyAdapter.ViewHolder> 
 
         public ViewHolder(@NonNull View view) {
             super(view);
-            ivPic = view.findViewById(R.id.iv_mysell_item_pic);
-            tvPrice = view.findViewById(R.id.tv_mysell_item_price);
-            tvGoodsName = view.findViewById(R.id.tv_mysell_item_name);
-            tvContact = view.findViewById(R.id.tv_mysell_item_contact);
-            tvMsg = view.findViewById(R.id.tv_mysell_item_msg);
-            llMain = view.findViewById(R.id.ll_mysell_item_main);
+            ivPic = view.findViewById(R.id.iv_mybuy_item_pic);
+            tvPrice = view.findViewById(R.id.tv_mybuy_item_price);
+            tvGoodsName = view.findViewById(R.id.tv_mybuy_item_name);
+            tvContact = view.findViewById(R.id.tv_mybuy_item_contact);
+            tvMsg = view.findViewById(R.id.tv_mybuy_item_msg);
+            llMain = view.findViewById(R.id.ll_mybuy_item_main);
         }
     }
 

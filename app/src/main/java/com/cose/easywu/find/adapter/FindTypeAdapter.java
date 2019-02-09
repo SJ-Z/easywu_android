@@ -1,4 +1,4 @@
-package com.cose.easywu.home.adapter;
+package com.cose.easywu.find.adapter;
 
 import android.content.Context;
 import android.view.View;
@@ -9,24 +9,25 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.cose.easywu.R;
+import com.cose.easywu.db.FindType;
 import com.cose.easywu.home.bean.HomeDataBean;
 import com.cose.easywu.utils.Constant;
 
 import java.util.List;
 
-public class TypeAdapter extends BaseAdapter {
+public class FindTypeAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<HomeDataBean.TypeInfoBean> datas;
+    private List<FindType> findTypeList;
 
-    public TypeAdapter(Context mContext, List<HomeDataBean.TypeInfoBean> type_info) {
+    public FindTypeAdapter(Context mContext, List<FindType> findTypeList) {
         this.mContext = mContext;
-        this.datas = type_info;
+        this.findTypeList = findTypeList;
     }
 
     @Override
     public int getCount() {
-        return datas == null ? 0 : datas.size();
+        return findTypeList == null ? 0 : findTypeList.size();
     }
 
     @Override
@@ -52,10 +53,10 @@ public class TypeAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         // 根据位置得到对应的数据
-        HomeDataBean.TypeInfoBean typeInfoBean = datas.get(position);
-        Glide.with(mContext).load(Constant.BASE_URL + typeInfoBean.getT_pic())
+        FindType findType = findTypeList.get(position);
+        Glide.with(mContext).load(Constant.BASE_URL + findType.getFt_pic())
                 .into(viewHolder.iv_typeImg);
-        viewHolder.tv_typeName.setText(typeInfoBean.getT_name());
+        viewHolder.tv_typeName.setText(findType.getFt_name());
         return convertView;
     }
 

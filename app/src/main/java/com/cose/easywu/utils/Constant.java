@@ -42,4 +42,6 @@ public class Constant {
     public static String NEW_GOODS_ORDER_CONFIRM_URL = BASE_URL + "/goods/newGoodsOrderConfirm"; // 确认商品订单
     public static String NEW_GOODS_ORDER_REFUSE_URL = BASE_URL + "/goods/newGoodsOrderRefuse"; // 拒绝商品订单
 
+    public static String HOME_FIND_URL = BASE_URL + "/home/find"; // 失物招领主页
+
 }

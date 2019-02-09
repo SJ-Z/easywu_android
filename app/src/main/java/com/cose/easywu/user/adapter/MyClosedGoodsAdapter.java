@@ -107,7 +107,7 @@ public class MyClosedGoodsAdapter extends RecyclerView.Adapter<MyClosedGoodsAdap
 
     @Override
     public int getItemCount() {
-        return closedGoodsList.size();
+        return closedGoodsList == null ? 0 : closedGoodsList.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

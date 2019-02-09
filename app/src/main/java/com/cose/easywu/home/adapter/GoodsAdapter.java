@@ -132,7 +132,7 @@ public class GoodsAdapter extends RecyclerView.Adapter<GoodsAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return goodsList.size();
+        return goodsList == null ? 0 : goodsList.size();
     }
 
 }
