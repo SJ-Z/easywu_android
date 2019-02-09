@@ -28,6 +28,8 @@ import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.home.fragment.HomeFragment;
 import com.cose.easywu.message.fragment.MessageFragment;
 import com.cose.easywu.release.activity.ReleaseActivity;
+import com.cose.easywu.release.activity.ReleaseFindGoodsActivity;
+import com.cose.easywu.release.activity.ReleaseFindPeopleActivity;
 import com.cose.easywu.user.activity.MySellActivity;
 import com.cose.easywu.user.fragment.UserFragment;
 import com.cose.easywu.utils.Constant;
@@ -182,13 +184,15 @@ public class MainActivity extends FragmentActivity {
             publishDialog.setHuishouClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(MainActivity.this, "寻找失主", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(MainActivity.this, ReleaseFindPeopleActivity.class));
+                    publishDialog.outDia();
                 }
             });
             publishDialog.setPingguClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(MainActivity.this, "寻找失物", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(MainActivity.this, ReleaseFindGoodsActivity.class));
+                    publishDialog.outDia();
                 }
             });
         }

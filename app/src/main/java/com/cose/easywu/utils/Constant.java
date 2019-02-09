@@ -13,6 +13,7 @@ public class Constant {
     public static String BASE_URL = "http://172.20.10.8:8080/easywu";
     public static String BASE_PHOTO_URL = BASE_URL + "/user_photo/";
     public static String BASE_PIC_URL = BASE_URL + "/goods_pic/";
+    public static String BASE_FIND_PIC_URL = BASE_URL + "/find_goods_pic/";
 
     public static String REGIST_URL = BASE_URL + "/user/regist"; // 注册
     public static String LOGIN_URL = BASE_URL + "/user/login"; // 登录
@@ -43,5 +44,6 @@ public class Constant {
     public static String NEW_GOODS_ORDER_REFUSE_URL = BASE_URL + "/goods/newGoodsOrderRefuse"; // 拒绝商品订单
 
     public static String HOME_FIND_URL = BASE_URL + "/home/find"; // 失物招领主页
+    public static String RELEASE_FIND_PEOPLE_URL = BASE_URL + "/goods/release_find_people"; // 发布寻找失主
 
 }
