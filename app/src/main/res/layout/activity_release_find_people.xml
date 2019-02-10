@@ -67,7 +67,7 @@
                 android:layout_marginBottom="15dp"
                 android:textSize="16sp"
                 android:background="@android:color/white"
-                android:hint="描述一下物品的特征、发现物品的地点等信息"
+                android:hint="描述一下物品的特征、发现物品的时间地点等信息"
                 android:gravity="top|left"
                 android:minLines="13"
                 android:maxLength="255"/>

@@ -228,6 +228,7 @@ public class ReleaseFindPeopleActivity extends BaseActivity {
         final String fg_name = mEtName.getText().toString().trim();
         final String fg_desc = mEtDesc.getText().toString().trim();
         final String fg_ft_id = findType.getFt_id();
+        params.put("type", "0");
         params.put("fg_name", fg_name);
         params.put("fg_desc", fg_desc);
         params.put("fg_ft_id", fg_ft_id);
@@ -248,7 +249,7 @@ public class ReleaseFindPeopleActivity extends BaseActivity {
             files.add(photoFileList.get(i));
         }
 
-        HttpUtil.upLoadImageListToServer(Constant.RELEASE_FIND_PEOPLE_URL, keys, filenames, files, params,
+        HttpUtil.upLoadImageListToServer(Constant.RELEASE_FIND_URL, keys, filenames, files, params,
                 new StringCallback() {
                     @Override
                     public void onError(Call call, final Exception e, int id) {
@@ -281,7 +282,7 @@ public class ReleaseFindPeopleActivity extends BaseActivity {
                             clearUIData();
                             clearReleaseContent();
                             // 发送广播
-                            localBroadcastManager.sendBroadcast(new Intent(Constant.RELEASE_NEW_RELEASE));
+                            localBroadcastManager.sendBroadcast(new Intent(Constant.RELEASE_NEW_RELEASE_FIND_PEOPLE));
                             // 删除图片
                             for (File file : photoFileList) {
                                 if (file.exists()) {

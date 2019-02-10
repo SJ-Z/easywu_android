@@ -11,16 +11,18 @@ import java.util.List;
 public class FindDataBean {
 
     private List<FindType> findTypeList;
-    private List<FindNewestInfo> findNewestInfoList;
+    private List<FindNewestInfo> newestFindPeopleList;
+    private List<FindNewestInfo> newestFindGoodsList;
     private List<ReleaseFindGoods> releaseFindGoodsList;
     private List<LikeFindGoods> likeFindGoodsList;
 
     public FindDataBean() {
     }
 
-    public FindDataBean(List<FindType> findTypeList, List<FindNewestInfo> findNewestInfoList, List<ReleaseFindGoods> releaseFindGoodsList, List<LikeFindGoods> likeFindGoodsList) {
+    public FindDataBean(List<FindType> findTypeList, List<FindNewestInfo> newestFindPeopleList, List<FindNewestInfo> newestFindGoodsList, List<ReleaseFindGoods> releaseFindGoodsList, List<LikeFindGoods> likeFindGoodsList) {
         this.findTypeList = findTypeList;
-        this.findNewestInfoList = findNewestInfoList;
+        this.newestFindPeopleList = newestFindPeopleList;
+        this.newestFindGoodsList = newestFindGoodsList;
         this.releaseFindGoodsList = releaseFindGoodsList;
         this.likeFindGoodsList = likeFindGoodsList;
     }
@@ -33,12 +35,20 @@ public class FindDataBean {
         this.findTypeList = findTypeList;
     }
 
-    public List<FindNewestInfo> getFindNewestInfoList() {
-        return findNewestInfoList;
+    public List<FindNewestInfo> getNewestFindPeopleList() {
+        return newestFindPeopleList;
     }
 
-    public void setFindNewestInfoList(List<FindNewestInfo> findNewestInfoList) {
-        this.findNewestInfoList = findNewestInfoList;
+    public void setNewestFindPeopleList(List<FindNewestInfo> newestFindPeopleList) {
+        this.newestFindPeopleList = newestFindPeopleList;
+    }
+
+    public List<FindNewestInfo> getNewestFindGoodsList() {
+        return newestFindGoodsList;
+    }
+
+    public void setNewestFindGoodsList(List<FindNewestInfo> newestFindGoodsList) {
+        this.newestFindGoodsList = newestFindGoodsList;
     }
 
     public List<ReleaseFindGoods> getReleaseFindGoodsList() {
@@ -61,7 +71,8 @@ public class FindDataBean {
     public String toString() {
         return "FindDataBean{" +
                 "findTypeList=" + findTypeList +
-                ", findNewestInfoList=" + findNewestInfoList +
+                ", newestFindPeopleList=" + newestFindPeopleList +
+                ", newestFindGoodsList=" + newestFindGoodsList +
                 ", releaseFindGoodsList=" + releaseFindGoodsList +
                 ", likeFindGoodsList=" + likeFindGoodsList +
                 '}';
@@ -71,7 +82,6 @@ public class FindDataBean {
         private String fg_id;
         private String fg_name;
         private String fg_desc;
-        private int fg_type;
         private String fg_pic1;
         private String fg_pic2;
         private String fg_pic3;
@@ -87,11 +97,10 @@ public class FindDataBean {
         public FindNewestInfo() {
         }
 
-        public FindNewestInfo(String fg_id, String fg_name, String fg_desc, int fg_type, String fg_pic1, String fg_pic2, String fg_pic3, int fg_state, int fg_like, Date fg_updateTime, String fg_ft_id, String fg_u_id, String fg_u_nick, String fg_u_photo, String fg_u_sex) {
+        public FindNewestInfo(String fg_id, String fg_name, String fg_desc, String fg_pic1, String fg_pic2, String fg_pic3, int fg_state, int fg_like, Date fg_updateTime, String fg_ft_id, String fg_u_id, String fg_u_nick, String fg_u_photo, String fg_u_sex) {
             this.fg_id = fg_id;
             this.fg_name = fg_name;
             this.fg_desc = fg_desc;
-            this.fg_type = fg_type;
             this.fg_pic1 = fg_pic1;
             this.fg_pic2 = fg_pic2;
             this.fg_pic3 = fg_pic3;
@@ -127,14 +136,6 @@ public class FindDataBean {
 
         public void setFg_desc(String fg_desc) {
             this.fg_desc = fg_desc;
-        }
-
-        public int getFg_type() {
-            return fg_type;
-        }
-
-        public void setFg_type(int fg_type) {
-            this.fg_type = fg_type;
         }
 
         public String getFg_pic1() {
@@ -231,7 +232,6 @@ public class FindDataBean {
                     "fg_id='" + fg_id + '\'' +
                     ", fg_name='" + fg_name + '\'' +
                     ", fg_desc='" + fg_desc + '\'' +
-                    ", fg_type=" + fg_type +
                     ", fg_pic1='" + fg_pic1 + '\'' +
                     ", fg_pic2='" + fg_pic2 + '\'' +
                     ", fg_pic3='" + fg_pic3 + '\'' +

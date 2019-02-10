@@ -63,7 +63,8 @@ public class FindFragment extends BaseFragment {
     // 返回的数据
     private FindDataBean findDataBean;
 
-    private BroadcastReceiver receiver;
+    private BroadcastReceiver receiver_findPeople;
+    private BroadcastReceiver receiver_findGoods;
     private LocalBroadcastManager localBroadcastManager;
 
     @Override
@@ -84,15 +85,24 @@ public class FindFragment extends BaseFragment {
 
         // 注册广播监听器
         localBroadcastManager = LocalBroadcastManager.getInstance(mContext);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Constant.RELEASE_NEW_RELEASE);
-        receiver = new BroadcastReceiver() {
+        IntentFilter intentFilter_findPeople = new IntentFilter();
+        IntentFilter intentFilter_findGoods = new IntentFilter();
+        intentFilter_findPeople.addAction(Constant.RELEASE_NEW_RELEASE_FIND_PEOPLE);
+        intentFilter_findGoods.addAction(Constant.RELEASE_NEW_RELEASE_FIND_GOODS);
+        receiver_findPeople = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                adapter.requestNewestGoods();
+                adapter.requestNewestFindPeople();
             }
         };
-        localBroadcastManager.registerReceiver(receiver, intentFilter);
+        receiver_findGoods = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                adapter.requestNewestFindGoods();
+            }
+        };
+        localBroadcastManager.registerReceiver(receiver_findPeople, intentFilter_findPeople);
+        localBroadcastManager.registerReceiver(receiver_findGoods, intentFilter_findGoods);
         return view;
     }
 
@@ -188,9 +198,13 @@ public class FindFragment extends BaseFragment {
         super.onDestroy();
         CacheUtils.clearImageAllCache(mContext);
         Glide.get(mContext).clearMemory();
-        if (receiver != null) {
-            localBroadcastManager.unregisterReceiver(receiver);
-            receiver = null;
+        if (receiver_findPeople != null) {
+            localBroadcastManager.unregisterReceiver(receiver_findPeople);
+            receiver_findPeople = null;
+        }
+        if (receiver_findGoods != null) {
+            localBroadcastManager.unregisterReceiver(receiver_findGoods);
+            receiver_findGoods = null;
         }
     }
 }

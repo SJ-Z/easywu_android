@@ -5,6 +5,8 @@ public class Constant {
     // 广播
     public static String RELEASE_CHOOSE_TYPE = "com.cose.easywu.release.chooseType";
     public static String RELEASE_NEW_RELEASE = "com.cose.easywu.release.newRelease";
+    public static String RELEASE_NEW_RELEASE_FIND_PEOPLE = "com.cose.easywu.release.newReleaseFindPeople";
+    public static String RELEASE_NEW_RELEASE_FIND_GOODS = "com.cose.easywu.release.newReleaseFindGoods";
 //    public static String HX_USER_INFO = "com.cose.easywu.chat_userInfo"; // 在EaseConstant中声明
     public static String RECEIVE_NEW_MESSAGE = "com.cose.easywu.receive_new_message"; // 收到新消息
 
@@ -44,6 +46,8 @@ public class Constant {
     public static String NEW_GOODS_ORDER_REFUSE_URL = BASE_URL + "/goods/newGoodsOrderRefuse"; // 拒绝商品订单
 
     public static String HOME_FIND_URL = BASE_URL + "/home/find"; // 失物招领主页
-    public static String RELEASE_FIND_PEOPLE_URL = BASE_URL + "/goods/release_find_people"; // 发布寻找失主
+    public static String RELEASE_FIND_URL = BASE_URL + "/goods/release_find"; // 发布失物招领信息
+    public static String NEWEST_FIND_GOODS_URL = BASE_URL + "/goods/newestFindGoods"; // 最新发布的寻找失物
+    public static String NEWEST_FIND_PEOPLE_URL = BASE_URL + "/goods/newestFindPeople"; // 最新发布的寻找失主
 
 }

@@ -9,7 +9,6 @@ public class ReleaseFindGoods extends LitePalSupport {
     private String fg_id;
     private String fg_name;
     private String fg_desc;
-    private int fg_type;
     private String fg_pic1;
     private String fg_pic2;
     private String fg_pic3;
@@ -22,11 +21,10 @@ public class ReleaseFindGoods extends LitePalSupport {
     public ReleaseFindGoods() {
     }
 
-    public ReleaseFindGoods(String fg_id, String fg_name, String fg_desc, int fg_type, String fg_pic1, String fg_pic2, String fg_pic3, int fg_state, int fg_like, Date fg_updateTime, String fg_u_id, String fg_ft_id) {
+    public ReleaseFindGoods(String fg_id, String fg_name, String fg_desc, String fg_pic1, String fg_pic2, String fg_pic3, int fg_state, int fg_like, Date fg_updateTime, String fg_u_id, String fg_ft_id) {
         this.fg_id = fg_id;
         this.fg_name = fg_name;
         this.fg_desc = fg_desc;
-        this.fg_type = fg_type;
         this.fg_pic1 = fg_pic1;
         this.fg_pic2 = fg_pic2;
         this.fg_pic3 = fg_pic3;
@@ -59,14 +57,6 @@ public class ReleaseFindGoods extends LitePalSupport {
 
     public void setFg_desc(String fg_desc) {
         this.fg_desc = fg_desc;
-    }
-
-    public int getFg_type() {
-        return fg_type;
-    }
-
-    public void setFg_type(int fg_type) {
-        this.fg_type = fg_type;
     }
 
     public String getFg_pic1() {
@@ -139,7 +129,6 @@ public class ReleaseFindGoods extends LitePalSupport {
                 "fg_id='" + fg_id + '\'' +
                 ", fg_name='" + fg_name + '\'' +
                 ", fg_desc='" + fg_desc + '\'' +
-                ", fg_type=" + fg_type +
                 ", fg_pic1='" + fg_pic1 + '\'' +
                 ", fg_pic2='" + fg_pic2 + '\'' +
                 ", fg_pic3='" + fg_pic3 + '\'' +
