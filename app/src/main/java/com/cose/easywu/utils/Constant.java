@@ -49,5 +49,10 @@ public class Constant {
     public static String RELEASE_FIND_URL = BASE_URL + "/goods/release_find"; // 发布失物招领信息
     public static String NEWEST_FIND_GOODS_URL = BASE_URL + "/goods/newestFindGoods"; // 最新发布的寻找失物
     public static String NEWEST_FIND_PEOPLE_URL = BASE_URL + "/goods/newestFindPeople"; // 最新发布的寻找失主
+    public static String FIND_GOODS_COMMENT_URL = BASE_URL + "/goods/findGoodsComment"; // 获取失物招领的评论
+    public static String SET_LIKE_FIND_GOODS_URL = BASE_URL + "/goods/setLikeFindGoods"; // 修改收藏的失物招领
+    public static String FIND_GOODS_ADD_COMMENT_URL = BASE_URL + "/goods/findGoodsAddComment"; // 添加失物招领评论
+    public static String FIND_GOODS_ADD_REPLY_URL = BASE_URL + "/goods/findGoodsAddReply"; // 添加失物招领回复
+    public static String DELETE_FIND_GOODS_URL = BASE_URL + "/goods/deleteFindGoods"; // 删除失物招领信息（将信息从发布移到下架）
 
 }

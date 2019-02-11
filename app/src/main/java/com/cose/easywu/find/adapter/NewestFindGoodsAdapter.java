@@ -1,23 +1,29 @@
 package com.cose.easywu.find.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
+import com.cose.easywu.find.activity.FindGoodsInfoActivity;
 import com.cose.easywu.find.bean.FindDataBean;
+import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.DateUtil;
 
 import java.util.Date;
 import java.util.List;
+
+import static com.cose.easywu.find.adapter.FindFragmentAdapter.GOODS_BEAN;
 
 public class NewestFindGoodsAdapter extends RecyclerView.Adapter<NewestFindGoodsAdapter.ViewHolder> {
 
@@ -38,7 +44,7 @@ public class NewestFindGoodsAdapter extends RecyclerView.Adapter<NewestFindGoods
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        FindDataBean.FindNewestInfo goods = mGoodsList.get(position);
+        final FindDataBean.FindNewestInfo goods = mGoodsList.get(position);
         Glide.with(mContext).load(Constant.BASE_FIND_PIC_URL + goods.getFg_pic1())
                 .apply(new RequestOptions().placeholder(R.drawable.ic_loading_pic).error(R.drawable.ic_error_goods))
                 .into(holder.ivGoodsPic);
@@ -48,6 +54,16 @@ public class NewestFindGoodsAdapter extends RecyclerView.Adapter<NewestFindGoods
         holder.tvGoodsName.setText(goods.getFg_name());
         holder.tvUserNick.setText(goods.getFg_u_nick());
         holder.tvUpdateTime.setText(DateUtil.getDatePoor(goods.getFg_updateTime(), new Date()));
+
+        holder.rlAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, FindGoodsInfoActivity.class);
+                intent.putExtra("isFindGoods", true);
+                intent.putExtra(GOODS_BEAN, goods);
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -58,6 +74,7 @@ public class NewestFindGoodsAdapter extends RecyclerView.Adapter<NewestFindGoods
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivGoodsPic, ivUserPhoto;
         TextView tvGoodsName, tvUserNick, tvUpdateTime;
+        RelativeLayout rlAll;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,6 +83,7 @@ public class NewestFindGoodsAdapter extends RecyclerView.Adapter<NewestFindGoods
             ivUserPhoto = itemView.findViewById(R.id.iv_find_goods_user_photo);
             tvUserNick = itemView.findViewById(R.id.tv_find_goods_user_nick);
             tvUpdateTime = itemView.findViewById(R.id.tv_find_goods_update_time);
+            rlAll = itemView.findViewById(R.id.rl_find_goods_all);
         }
     }
 

@@ -2,7 +2,7 @@
 
     <dbname value="easywu" />
 
-    <version value="4" />
+    <version value="6" />
 
     <list>
         <mapping class="com.cose.easywu.db.User" />
@@ -15,7 +15,9 @@
         <mapping class="com.cose.easywu.db.Notification" />
         <mapping class="com.cose.easywu.db.FindType" />
         <mapping class="com.cose.easywu.db.ReleaseFindGoods" />
+        <mapping class="com.cose.easywu.db.ReleaseFindPeople" />
         <mapping class="com.cose.easywu.db.LikeFindGoods" />
+        <mapping class="com.cose.easywu.db.LikeFindPeople" />
     </list>
 
 </litepal>

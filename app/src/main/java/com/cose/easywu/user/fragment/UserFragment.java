@@ -22,6 +22,8 @@ import com.cose.easywu.base.BaseFragment;
 import com.cose.easywu.base.MyApplication;
 import com.cose.easywu.db.BuyGoods;
 import com.cose.easywu.db.LikeGoods;
+import com.cose.easywu.db.ReleaseFindGoods;
+import com.cose.easywu.db.ReleaseFindPeople;
 import com.cose.easywu.db.ReleaseGoods;
 import com.cose.easywu.db.SellGoods;
 import com.cose.easywu.gson.User;
@@ -90,7 +92,9 @@ public class UserFragment extends BaseFragment {
         int likeGoodsCount = LitePal.findAll(LikeGoods.class).size();
         mTvMylikeCount.setText(String.valueOf(likeGoodsCount));
         // 更新“我发布的”、“我卖出的”、“我买到的”商品数量
-        int myReleaseCount = LitePal.where("g_state=?", "0").count(ReleaseGoods.class);
+        int myReleaseCount = LitePal.where("g_state=?", "0").count(ReleaseGoods.class)
+                + LitePal.where("fg_state=?", "0").count(ReleaseFindGoods.class)
+                + LitePal.where("fg_state=?", "0").count(ReleaseFindPeople.class);
         List<SellGoods> sellGoodsList = LitePal.findAll(SellGoods.class);
         int myBuyCount = LitePal.count(BuyGoods.class);
         mTvMyreleaseCount.setText(String.valueOf(myReleaseCount));

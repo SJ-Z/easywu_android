@@ -26,8 +26,10 @@ import com.cose.easywu.base.BaseFragment;
 import com.cose.easywu.db.BuyGoods;
 import com.cose.easywu.db.FindType;
 import com.cose.easywu.db.LikeFindGoods;
+import com.cose.easywu.db.LikeFindPeople;
 import com.cose.easywu.db.LikeGoods;
 import com.cose.easywu.db.ReleaseFindGoods;
+import com.cose.easywu.db.ReleaseFindPeople;
 import com.cose.easywu.db.ReleaseGoods;
 import com.cose.easywu.db.SellGoods;
 import com.cose.easywu.db.Type;
@@ -168,13 +170,15 @@ public class FindFragment extends BaseFragment {
 
                         // 将用户收藏的失物招领信息存储到本地数据库
                         LitePal.deleteAll(LikeFindGoods.class);
-                        for (LikeFindGoods goods : findDataBean.getLikeFindGoodsList()) {
-                            goods.save();
-                        }
+                        LitePal.saveAll(findDataBean.getLikeFindGoodsList());
+                        LitePal.deleteAll(LikeFindPeople.class);
+                        LitePal.saveAll(findDataBean.getLikeFindPeopleList());
 
                         // 将“我发布的”失物招领信息存储到本地数据库
                         LitePal.deleteAll(ReleaseFindGoods.class);
                         LitePal.saveAll(findDataBean.getReleaseFindGoodsList());
+                        LitePal.deleteAll(ReleaseFindPeople.class);
+                        LitePal.saveAll(findDataBean.getReleaseFindPeopleList());
                     }
                 });
             }

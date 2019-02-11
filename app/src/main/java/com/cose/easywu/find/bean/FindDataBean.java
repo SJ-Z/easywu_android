@@ -2,7 +2,9 @@ package com.cose.easywu.find.bean;
 
 import com.cose.easywu.db.FindType;
 import com.cose.easywu.db.LikeFindGoods;
+import com.cose.easywu.db.LikeFindPeople;
 import com.cose.easywu.db.ReleaseFindGoods;
+import com.cose.easywu.db.ReleaseFindPeople;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,17 +16,21 @@ public class FindDataBean {
     private List<FindNewestInfo> newestFindPeopleList;
     private List<FindNewestInfo> newestFindGoodsList;
     private List<ReleaseFindGoods> releaseFindGoodsList;
+    private List<ReleaseFindPeople> releaseFindPeopleList;
     private List<LikeFindGoods> likeFindGoodsList;
+    private List<LikeFindPeople> likeFindPeopleList;
 
     public FindDataBean() {
     }
 
-    public FindDataBean(List<FindType> findTypeList, List<FindNewestInfo> newestFindPeopleList, List<FindNewestInfo> newestFindGoodsList, List<ReleaseFindGoods> releaseFindGoodsList, List<LikeFindGoods> likeFindGoodsList) {
+    public FindDataBean(List<FindType> findTypeList, List<FindNewestInfo> newestFindPeopleList, List<FindNewestInfo> newestFindGoodsList, List<ReleaseFindGoods> releaseFindGoodsList, List<ReleaseFindPeople> releaseFindPeopleList, List<LikeFindGoods> likeFindGoodsList, List<LikeFindPeople> likeFindPeopleList) {
         this.findTypeList = findTypeList;
         this.newestFindPeopleList = newestFindPeopleList;
         this.newestFindGoodsList = newestFindGoodsList;
         this.releaseFindGoodsList = releaseFindGoodsList;
+        this.releaseFindPeopleList = releaseFindPeopleList;
         this.likeFindGoodsList = likeFindGoodsList;
+        this.likeFindPeopleList = likeFindPeopleList;
     }
 
     public List<FindType> getFindTypeList() {
@@ -59,12 +65,28 @@ public class FindDataBean {
         this.releaseFindGoodsList = releaseFindGoodsList;
     }
 
+    public List<ReleaseFindPeople> getReleaseFindPeopleList() {
+        return releaseFindPeopleList;
+    }
+
+    public void setReleaseFindPeopleList(List<ReleaseFindPeople> releaseFindPeopleList) {
+        this.releaseFindPeopleList = releaseFindPeopleList;
+    }
+
     public List<LikeFindGoods> getLikeFindGoodsList() {
         return likeFindGoodsList;
     }
 
     public void setLikeFindGoodsList(List<LikeFindGoods> likeFindGoodsList) {
         this.likeFindGoodsList = likeFindGoodsList;
+    }
+
+    public List<LikeFindPeople> getLikeFindPeopleList() {
+        return likeFindPeopleList;
+    }
+
+    public void setLikeFindPeopleList(List<LikeFindPeople> likeFindPeopleList) {
+        this.likeFindPeopleList = likeFindPeopleList;
     }
 
     @Override
@@ -74,7 +96,9 @@ public class FindDataBean {
                 ", newestFindPeopleList=" + newestFindPeopleList +
                 ", newestFindGoodsList=" + newestFindGoodsList +
                 ", releaseFindGoodsList=" + releaseFindGoodsList +
+                ", releaseFindPeopleList=" + releaseFindPeopleList +
                 ", likeFindGoodsList=" + likeFindGoodsList +
+                ", likeFindPeopleList=" + likeFindPeopleList +
                 '}';
     }
 
@@ -92,12 +116,12 @@ public class FindDataBean {
         private String fg_u_id;
         private String fg_u_nick;
         private String fg_u_photo;
-        private String fg_u_sex;
+        private int fg_u_sex;
 
         public FindNewestInfo() {
         }
 
-        public FindNewestInfo(String fg_id, String fg_name, String fg_desc, String fg_pic1, String fg_pic2, String fg_pic3, int fg_state, int fg_like, Date fg_updateTime, String fg_ft_id, String fg_u_id, String fg_u_nick, String fg_u_photo, String fg_u_sex) {
+        public FindNewestInfo(String fg_id, String fg_name, String fg_desc, String fg_pic1, String fg_pic2, String fg_pic3, int fg_state, int fg_like, Date fg_updateTime, String fg_ft_id, String fg_u_id, String fg_u_nick, String fg_u_photo, int fg_u_sex) {
             this.fg_id = fg_id;
             this.fg_name = fg_name;
             this.fg_desc = fg_desc;
@@ -218,11 +242,11 @@ public class FindDataBean {
             this.fg_u_photo = fg_u_photo;
         }
 
-        public String getFg_u_sex() {
+        public int getFg_u_sex() {
             return fg_u_sex;
         }
 
-        public void setFg_u_sex(String fg_u_sex) {
+        public void setFg_u_sex(int fg_u_sex) {
             this.fg_u_sex = fg_u_sex;
         }
 

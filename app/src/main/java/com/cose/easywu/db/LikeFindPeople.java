@@ -4,7 +4,7 @@ import org.litepal.crud.LitePalSupport;
 
 import java.util.Date;
 
-public class LikeFindGoods extends LitePalSupport {
+public class LikeFindPeople extends LitePalSupport {
 
     private String fg_id;
     private String fg_name;
@@ -21,10 +21,10 @@ public class LikeFindGoods extends LitePalSupport {
     private String fg_u_photo;
     private int fg_u_sex;
 
-    public LikeFindGoods() {
+    public LikeFindPeople() {
     }
 
-    public LikeFindGoods(String fg_id, String fg_name, String fg_desc, String fg_pic1, String fg_pic2, String fg_pic3, int fg_state, int fg_like, Date fg_updateTime, String fg_ft_id, String fg_u_id, String fg_u_nick, String fg_u_photo, int fg_u_sex) {
+    public LikeFindPeople(String fg_id, String fg_name, String fg_desc, String fg_pic1, String fg_pic2, String fg_pic3, int fg_state, int fg_like, Date fg_updateTime, String fg_ft_id, String fg_u_id, String fg_u_nick, String fg_u_photo, int fg_u_sex) {
         this.fg_id = fg_id;
         this.fg_name = fg_name;
         this.fg_desc = fg_desc;

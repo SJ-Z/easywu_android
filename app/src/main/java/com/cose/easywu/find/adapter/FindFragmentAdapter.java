@@ -51,7 +51,6 @@ public class FindFragmentAdapter extends RecyclerView.Adapter {
     public static final int TYPE = 1; // 分类类型
     public static final int NEWEST_FIND_PEOPLE = 2; // 最新发布的寻找失主类型
     public static final int NEWEST_FIND_GOODS = 3; // 最新发布的寻找失物类型
-
     public static final String GOODS_BEAN = "findGoodsBean";
 
     private int currentType = 0;
@@ -372,13 +371,6 @@ public class FindFragmentAdapter extends RecyclerView.Adapter {
 
     public void requestNewestFindGoods() {
         newestFindGoodsViewHolder.requestNewestFindGoods();
-    }
-
-    // 启动商品详情页面
-    private void startGoodsInfoActivity(HomeDataBean.NewestInfoBean goods) {
-        Intent intent = new Intent(mContext, GoodsInfoActivity.class);
-        intent.putExtra(GOODS_BEAN, goods);
-        mContext.startActivity(intent);
     }
 
     @Override

@@ -36,6 +36,7 @@ import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
 import com.cose.easywu.db.FindType;
 import com.cose.easywu.db.ReleaseFindGoods;
+import com.cose.easywu.db.ReleaseFindPeople;
 import com.cose.easywu.db.ReleaseGoods;
 import com.cose.easywu.db.Type;
 import com.cose.easywu.gson.msg.ReleaseMsg;
@@ -291,7 +292,7 @@ public class ReleaseFindPeopleActivity extends BaseActivity {
                             }
                             // 保存发布的商品到本地
                             if (!TextUtils.isEmpty(fg_id)) { // 商品不是新发布的
-                                ReleaseFindGoods goods = LitePal.where("fg_id=?", fg_id).findFirst(ReleaseFindGoods.class);
+                                ReleaseFindPeople goods = LitePal.where("fg_id=?", fg_id).findFirst(ReleaseFindPeople.class);
                                 goods.setFg_name(fg_name);
                                 goods.setFg_desc(fg_desc);
                                 goods.setFg_pic1(filenames.get(0));
@@ -306,7 +307,7 @@ public class ReleaseFindPeopleActivity extends BaseActivity {
                                 goods.setFg_state(0);
                                 goods.save();
                             } else { // 商品是新发布的
-                                ReleaseFindGoods goods = new ReleaseFindGoods();
+                                ReleaseFindPeople goods = new ReleaseFindPeople();
                                 goods.setFg_id(msg.getG_id());
                                 goods.setFg_name(fg_name);
                                 goods.setFg_desc(fg_desc);
