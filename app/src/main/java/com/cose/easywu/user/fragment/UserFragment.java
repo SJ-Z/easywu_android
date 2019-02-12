@@ -21,6 +21,8 @@ import com.cose.easywu.base.ActivityCollector;
 import com.cose.easywu.base.BaseFragment;
 import com.cose.easywu.base.MyApplication;
 import com.cose.easywu.db.BuyGoods;
+import com.cose.easywu.db.LikeFindGoods;
+import com.cose.easywu.db.LikeFindPeople;
 import com.cose.easywu.db.LikeGoods;
 import com.cose.easywu.db.ReleaseFindGoods;
 import com.cose.easywu.db.ReleaseFindPeople;
@@ -89,7 +91,8 @@ public class UserFragment extends BaseFragment {
                     .into(mIvPhoto);
         }
         // 更新收藏的商品数量
-        int likeGoodsCount = LitePal.findAll(LikeGoods.class).size();
+        int likeGoodsCount = LitePal.count(LikeGoods.class) + LitePal.count(LikeFindPeople.class) +
+                LitePal.count(LikeFindGoods.class);
         mTvMylikeCount.setText(String.valueOf(likeGoodsCount));
         // 更新“我发布的”、“我卖出的”、“我买到的”商品数量
         int myReleaseCount = LitePal.where("g_state=?", "0").count(ReleaseGoods.class)

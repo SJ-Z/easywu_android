@@ -1,5 +1,7 @@
 package com.hyphenate.easeui.model;
 
+import android.text.TextUtils;
+
 import com.hyphenate.chat.EMMessage;
 
 public class GoodsMessageHelper {
@@ -18,6 +20,7 @@ public class GoodsMessageHelper {
 
     public static boolean isGoodsChatType(EMMessage emMessage) {
         String TYPE = emMessage.getStringAttribute("CHATTYPE", null);
+        String PRICE = emMessage.getStringAttribute(GOODS_PRICE, null);
         if (TYPE == null){
             return false;
         }
@@ -26,5 +29,10 @@ public class GoodsMessageHelper {
         }
 
         return false;
+    }
+
+    public static boolean isFindGoods(EMMessage emMessage) {
+        String PRICE = emMessage.getStringAttribute(GOODS_PRICE, "");
+        return TextUtils.isEmpty(PRICE);
     }
 }

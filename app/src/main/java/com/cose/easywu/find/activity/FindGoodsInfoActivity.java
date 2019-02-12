@@ -45,6 +45,7 @@ import com.cose.easywu.find.adapter.FindFragmentAdapter;
 import com.cose.easywu.find.bean.FindDataBean;
 import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.gson.msg.CommentMsg;
+import com.cose.easywu.gson.msg.FindGoodsMsg;
 import com.cose.easywu.gson.msg.GoodsMsg;
 import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.home.adapter.CommentExpandAdapter;
@@ -210,11 +211,15 @@ public class FindGoodsInfoActivity extends BaseActivity {
         // 传递参数，会话id即环信id
         intent.putExtra(EaseConstant.EXTRA_USER_ID, goods.getFg_u_id());
         // 传递商品信息
-        intent.putExtra("isGoods", true);
+        intent.putExtra("isFindGoods", true);
         intent.putExtra(GoodsMessageHelper.GOODS_ID, goods.getFg_id());
         intent.putExtra(GoodsMessageHelper.GOODS_NAME, goods.getFg_name());
         intent.putExtra(GoodsMessageHelper.GOODS_PIC, Constant.BASE_FIND_PIC_URL + goods.getFg_pic1());
-//        intent.putExtra(GoodsMessageHelper.GOODS_PRICE, goods.getG_price());
+        if (isFindGoods) {
+            intent.putExtra("findGoods", true);
+        } else {
+            intent.putExtra("findGoods", false);
+        }
         startActivity(intent);
     }
 
@@ -308,19 +313,35 @@ public class FindGoodsInfoActivity extends BaseActivity {
 
     private void handleDelete() {
         MessageDialog messageDialog = new MessageDialog(FindGoodsInfoActivity.this, R.style.MessageDialog);
-        messageDialog.setTitle("提示").setContent("确认删除该宝贝？")
-                .setCancel("删除", new MessageDialog.IOnCancelListener() {
-                    @Override
-                    public void onCancel(MessageDialog dialog) {
-                        // 去服务器删除商品
-                        deleteGoodsToServer();
-                    }
-                }).setConfirm("取消", new MessageDialog.IOnConfirmListener() {
-            @Override
-            public void onConfirm(MessageDialog dialog) {
-                // do nothing
-            }
-        }).show();
+        if (isFindGoods) {
+            messageDialog.setTitle("提示").setContent("确认删除该寻物启示？")
+                    .setCancel("删除", new MessageDialog.IOnCancelListener() {
+                        @Override
+                        public void onCancel(MessageDialog dialog) {
+                            // 去服务器删除商品
+                            deleteGoodsToServer();
+                        }
+                    }).setConfirm("取消", new MessageDialog.IOnConfirmListener() {
+                @Override
+                public void onConfirm(MessageDialog dialog) {
+                    // do nothing
+                }
+            }).show();
+        } else {
+            messageDialog.setTitle("提示").setContent("确认删除该失物招领？")
+                    .setCancel("删除", new MessageDialog.IOnCancelListener() {
+                        @Override
+                        public void onCancel(MessageDialog dialog) {
+                            // 去服务器删除商品
+                            deleteGoodsToServer();
+                        }
+                    }).setConfirm("取消", new MessageDialog.IOnConfirmListener() {
+                @Override
+                public void onConfirm(MessageDialog dialog) {
+                    // do nothing
+                }
+            }).show();
+        }
     }
 
     private void deleteGoodsToServer() {
@@ -471,7 +492,7 @@ public class FindGoodsInfoActivity extends BaseActivity {
                     loadGoodsInfo(goods);
                 } else {
                     // 利用商品id去服务器请求数据
-//                    loadGoodsFromServer(intent.getStringExtra(GoodsMessageHelper.GOODS_ID));
+                    loadGoodsFromServer(intent.getStringExtra(GoodsMessageHelper.GOODS_ID), true);
                 }
             } else {
                 ReleaseFindPeople releaseFindPeople = LitePal.where("fg_id=?",
@@ -485,7 +506,7 @@ public class FindGoodsInfoActivity extends BaseActivity {
                     loadGoodsInfo(goods);
                 } else {
                     // 利用商品id去服务器请求数据
-//                    loadGoodsFromServer(intent.getStringExtra(GoodsMessageHelper.GOODS_ID));
+                    loadGoodsFromServer(intent.getStringExtra(GoodsMessageHelper.GOODS_ID), false);
                 }
             }
         } else {
@@ -497,44 +518,47 @@ public class FindGoodsInfoActivity extends BaseActivity {
         }
     }
 
-//    private void loadGoodsFromServer(String g_id) {
-//        HttpUtil.sendPostRequest(Constant.GET_GOODS_URL, g_id, new Callback() {
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                ToastUtil.showMsgOnCenter(FindGoodsInfoActivity.this, "加载商品失败", Toast.LENGTH_SHORT);
-//                Log.e("FindGoodsInfoActivity", "加载商品失败:" + e.getMessage());
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
-//                if (null == response.body()) {
-//                    return;
-//                }
-//
-//                String responseText = URLDecoder.decode(response.body().string(), "utf-8");
-//                final GoodsMsg msg = Utility.handleGoodsResponse(responseText);
-//                if (null == msg) {
-//                    return;
-//                }
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (msg.getCode().equals("1")) {
-//                            goods = new HomeDataBean.NewestInfoBean(msg.getGoods().getG_id(), msg.getGoods().getG_name(),
-//                                    msg.getGoods().getG_desc(), msg.getGoods().getG_price(), msg.getGoods().getG_originalPrice(),
-//                                    msg.getGoods().getG_pic1(), msg.getGoods().getG_pic2(), msg.getGoods().getG_pic3(),
-//                                    msg.getGoods().getG_state(), msg.getGoods().getG_like(), new Date(msg.getGoods().getG_updateTime()),
-//                                    msg.getGoods().getG_t_id(), u_id, user.getU_nick(), user.getU_photo(), user.getU_sex());
-//                            loadGoodsInfo(goods);
-//                        } else {
-//                            ToastUtil.showMsgOnCenter(FindGoodsInfoActivity.this, "商品已失效", Toast.LENGTH_SHORT);
-//                            Log.e("FindGoodsInfoActivity", "商品已失效");
-//                        }
-//                    }
-//                });
-//            }
-//        });
-//    }
+    private void loadGoodsFromServer(String fg_id, boolean isFindGoods) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("fg_id", fg_id);
+            jsonObject.put("isFindGoods", isFindGoods);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        HttpUtil.sendPostRequest(Constant.GET_FIND_GOODS_URL, jsonObject.toString(), new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                ToastUtil.showMsgOnCenter(FindGoodsInfoActivity.this, "加载失物招领失败", Toast.LENGTH_SHORT);
+                Log.e("FindGoodsInfoActivity", "加载失物招领失败:" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (null == response.body()) {
+                    return;
+                }
+
+                String responseText = URLDecoder.decode(response.body().string(), "utf-8");
+                final FindGoodsMsg msg = Utility.handleFindGoodsResponse(responseText);
+                if (null == msg) {
+                    return;
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (msg.getCode().equals("1")) {
+                            goods = msg.getFindGoods();
+                            loadGoodsInfo(goods);
+                        } else {
+                            ToastUtil.showMsgOnCenter(FindGoodsInfoActivity.this, "该信息已失效", Toast.LENGTH_SHORT);
+                            Log.e("FindGoodsInfoActivity", "该信息已失效");
+                        }
+                    }
+                });
+            }
+        });
+    }
 
     private void loadGoodsInfo(FindDataBean.FindNewestInfo goods) {
         // 加载图片

@@ -1,6 +1,8 @@
 package com.hyphenate.easeui.widget.chatrow;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,7 +41,13 @@ public class GoodsChatRow extends EaseChatRow {
         try {
             if (message.getStringAttribute("CHATTYPE").equals(GoodsMessageHelper.CHATTYPE)) {
                 tv_name.setText(message.getStringAttribute(GoodsMessageHelper.GOODS_NAME));
-                tv_price.setText(message.getStringAttribute(GoodsMessageHelper.GOODS_PRICE));
+                String price = message.getStringAttribute(GoodsMessageHelper.GOODS_PRICE);
+                if (TextUtils.isEmpty(price)) {
+                    tv_price.setVisibility(GONE);
+                    findViewById(R.id.tv_goods_chat_row_price_symbol).setVisibility(GONE);
+                } else {
+                    tv_price.setText(price);
+                }
                 Glide.with(context).load(message.getStringAttribute(GoodsMessageHelper.GOODS_PIC)).into(iv_pic);
             }
         } catch (HyphenateException e) {

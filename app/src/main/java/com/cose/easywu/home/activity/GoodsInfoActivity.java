@@ -517,7 +517,8 @@ public class GoodsInfoActivity extends BaseActivity {
                                     msg.getGoods().getG_desc(), msg.getGoods().getG_price(), msg.getGoods().getG_originalPrice(),
                                     msg.getGoods().getG_pic1(), msg.getGoods().getG_pic2(), msg.getGoods().getG_pic3(),
                                     msg.getGoods().getG_state(), msg.getGoods().getG_like(), new Date(msg.getGoods().getG_updateTime()),
-                                    msg.getGoods().getG_t_id(), u_id, user.getU_nick(), user.getU_photo(), user.getU_sex());
+                                    msg.getGoods().getG_t_id(), msg.getGoods().getG_u_id(), msg.getGoods().getG_u_nick(),
+                                    msg.getGoods().getG_u_photo(), msg.getGoods().getG_u_sex());
                             loadGoodsInfo(goods);
                         } else {
                             ToastUtil.showMsgOnCenter(GoodsInfoActivity.this, "商品已失效", Toast.LENGTH_SHORT);

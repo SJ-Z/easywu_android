@@ -55,6 +55,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_mylikegoods_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp">
@@ -174,7 +175,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:padding="5dp"
-                android:visibility="gone">
+                android:visibility="gone"
+                android:layout_alignParentRight="true">
                 <ImageView
                     android:id="@+id/iv_mylikegoods_dislike"
                     android:layout_width="wrap_content"

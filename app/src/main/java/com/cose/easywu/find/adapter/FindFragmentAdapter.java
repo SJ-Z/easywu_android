@@ -22,17 +22,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.cose.easywu.R;
 import com.cose.easywu.db.FindType;
+import com.cose.easywu.find.activity.MoreFindGoodsActivity;
 import com.cose.easywu.find.bean.FindDataBean;
-import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.home.activity.MoreGoodsActivity;
 import com.cose.easywu.home.activity.SearchResultActivity;
 import com.cose.easywu.home.activity.TypeGoodsActivity;
-import com.cose.easywu.home.bean.HomeDataBean;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
-import com.cose.easywu.utils.NoScrollGridView;
 import com.cose.easywu.utils.RecycleViewDivider;
 import com.cose.easywu.utils.ToastUtil;
 
@@ -127,16 +126,6 @@ public class FindFragmentAdapter extends RecyclerView.Adapter {
             adapter = new NewestFindGoodsAdapter(mContext, goodsList);
             rv_newest.setAdapter(adapter);
 
-            // 设置item的监听
-//            rv_newest.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                @Override
-//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-////                    HomeDataBean.NewestInfoBean newestInfoBean = homeDataBean.getNewest_info().get(position);
-////                    // 商品信息类
-////                    startGoodsInfoActivity(newestInfoBean);
-//                }
-//            });
-
             // 设置刷新按钮的监听
             iv_newest_refresh.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -149,7 +138,9 @@ public class FindFragmentAdapter extends RecyclerView.Adapter {
             tv_newest_more.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mContext.startActivity(new Intent(mContext, MoreGoodsActivity.class));
+                    Intent intent = new Intent(mContext, MoreFindGoodsActivity.class);
+                    intent.putExtra("isFindGoods", true);
+                    mContext.startActivity(intent);
                 }
             });
         }
@@ -199,9 +190,9 @@ public class FindFragmentAdapter extends RecyclerView.Adapter {
         }
 
         private void processData(String json) {
-//            homeDataBean.setNewest_info(JSON.parseArray(json, HomeDataBean.NewestInfoBean.class));
-//            adapter.setDatas(homeDataBean.getNewest_info());
-//            adapter.notifyDataSetChanged();
+            findDataBean.setNewestFindGoodsList(JSON.parseArray(json, FindDataBean.FindNewestInfo.class));
+            adapter.setDatas(findDataBean.getNewestFindGoodsList());
+            adapter.notifyDataSetChanged();
         }
     }
 
@@ -229,16 +220,6 @@ public class FindFragmentAdapter extends RecyclerView.Adapter {
             adapter = new NewestFindPeopleAdapter(mContext, goodsList);
             rv_newest.setAdapter(adapter);
 
-            // 设置item的监听
-//            rv_newest.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                @Override
-//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-////                    HomeDataBean.NewestInfoBean newestInfoBean = homeDataBean.getNewest_info().get(position);
-////                    // 商品信息类
-////                    startGoodsInfoActivity(newestInfoBean);
-//                }
-//            });
-
             // 设置刷新按钮的监听
             iv_newest_refresh.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -251,7 +232,9 @@ public class FindFragmentAdapter extends RecyclerView.Adapter {
             tv_newest_more.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mContext.startActivity(new Intent(mContext, MoreGoodsActivity.class));
+                    Intent intent = new Intent(mContext, MoreFindGoodsActivity.class);
+                    intent.putExtra("isFindGoods", false);
+                    mContext.startActivity(intent);
                 }
             });
         }
@@ -301,9 +284,9 @@ public class FindFragmentAdapter extends RecyclerView.Adapter {
         }
 
         private void processData(String json) {
-//            homeDataBean.setNewest_info(JSON.parseArray(json, HomeDataBean.NewestInfoBean.class));
-//            adapter.setDatas(homeDataBean.getNewest_info());
-//            adapter.notifyDataSetChanged();
+            findDataBean.setNewestFindPeopleList(JSON.parseArray(json, FindDataBean.FindNewestInfo.class));
+            adapter.setDatas(findDataBean.getNewestFindPeopleList());
+            adapter.notifyDataSetChanged();
         }
     }
 

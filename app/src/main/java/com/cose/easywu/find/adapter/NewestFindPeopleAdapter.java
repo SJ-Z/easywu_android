@@ -70,6 +70,10 @@ public class NewestFindPeopleAdapter extends RecyclerView.Adapter<NewestFindPeop
         return mGoodsList == null ? 0 : mGoodsList.size();
     }
 
+    public void setDatas(List<FindDataBean.FindNewestInfo> newestFindPeopleList) {
+        mGoodsList = newestFindPeopleList;
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivGoodsPic, ivUserPhoto;
         TextView tvGoodsName, tvUserNick, tvUpdateTime;

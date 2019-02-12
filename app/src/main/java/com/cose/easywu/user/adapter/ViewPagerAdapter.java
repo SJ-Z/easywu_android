@@ -41,9 +41,9 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             if (position == 0) {
                 return "宝贝";
             } else if (position == 1) {
-                return "寻找失物";
+                return "寻物启示";
             } else if (position == 2) {
-                return "寻找失主";
+                return "失物招领";
             } else {
                 return "";
             }

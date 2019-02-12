@@ -67,7 +67,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="寻找失主"
+                    android:text="失物招领"
                     android:layout_marginTop="15dp"
                     android:textColor="#fff" />
             </LinearLayout>
@@ -92,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="寻找失物"
+                    android:text="寻物启示"
                     android:layout_marginTop="15dp"
                     android:textColor="#fff" />
             </LinearLayout>

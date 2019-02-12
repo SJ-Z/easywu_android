@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.gson.msg.CommentMsg;
+import com.cose.easywu.gson.msg.FindGoodsMsg;
 import com.cose.easywu.gson.msg.GoodsMsg;
 import com.cose.easywu.gson.msg.HXMsg;
 import com.cose.easywu.gson.msg.LoginMsg;
@@ -25,6 +26,27 @@ import java.lang.reflect.Type;
 import java.util.Date;
 
 public class Utility {
+
+    /**
+     * 解析和处理服务器返回的失物招领信息
+     */
+    public static FindGoodsMsg handleFindGoodsResponse(String response) {
+        if (!TextUtils.isEmpty(response)) {
+            GsonBuilder builder = new GsonBuilder();
+
+            // Register an adapter to manage the date types as long values
+            builder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+                public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                    return new Date(json.getAsJsonPrimitive().getAsLong());
+                }
+            });
+
+            Gson gson = builder.create();
+
+            return gson.fromJson(response, FindGoodsMsg.class);
+        }
+        return null;
+    }
 
     /**
      * 解析和处理服务器返回的商品信息

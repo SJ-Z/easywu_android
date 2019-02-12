@@ -5,6 +5,7 @@ import android.preference.PreferenceManager;
 import android.view.View;
 
 import com.cose.easywu.db.HXUserInfo;
+import com.cose.easywu.find.activity.FindGoodsInfoActivity;
 import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.easeui.model.GoodsMessageHelper;
@@ -65,15 +66,28 @@ public class MyChatFragment extends EaseChatFragment implements EaseChatFragment
     public boolean onMessageBubbleClick(EMMessage message) {
         //消息框点击事件，这里不做覆盖，如需覆盖，return true
         if (GoodsMessageHelper.isGoodsChatType(message)) { // 当消息为商品信息时，覆盖消息的点击事件
-            Intent intent = new Intent(getContext(), GoodsInfoActivity.class);
-            intent.putExtra(GoodsMessageHelper.CHATTYPE, true);
-            try {
-                intent.putExtra(GoodsMessageHelper.GOODS_ID, message.getStringAttribute("goods_id"));
-            } catch (HyphenateException e) {
-                e.printStackTrace();
+            if (GoodsMessageHelper.isFindGoods(message)) {
+                Intent intent = new Intent(getContext(), FindGoodsInfoActivity.class);
+                intent.putExtra(GoodsMessageHelper.CHATTYPE, true);
+                try {
+                    intent.putExtra(GoodsMessageHelper.GOODS_ID, message.getStringAttribute("goods_id"));
+                    intent.putExtra("isFindGoods", message.getBooleanAttribute("findGoods"));
+                } catch (HyphenateException e) {
+                    e.printStackTrace();
+                }
+                startActivity(intent);
+                return true;
+            } else {
+                Intent intent = new Intent(getContext(), GoodsInfoActivity.class);
+                intent.putExtra(GoodsMessageHelper.CHATTYPE, true);
+                try {
+                    intent.putExtra(GoodsMessageHelper.GOODS_ID, message.getStringAttribute("goods_id"));
+                } catch (HyphenateException e) {
+                    e.printStackTrace();
+                }
+                startActivity(intent);
+                return true;
             }
-            startActivity(intent);
-            return true;
         }
         return false;
     }

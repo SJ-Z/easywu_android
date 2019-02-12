@@ -213,6 +213,19 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
         Log.d(TAG, "sendGoodsMessage: 发送商品消息");
     }
 
+    // 发送失物招领消息
+    protected void sendGoodsMessage(String id, String name, String pic, boolean findGoods) {
+        EMMessage message = EMMessage.createTxtSendMessage(name, toChatUsername);
+        message.setAttribute(GoodsMessageHelper.GOODS_ID, id);
+        message.setAttribute(GoodsMessageHelper.GOODS_NAME, name);
+        message.setAttribute(GoodsMessageHelper.GOODS_PIC, pic);
+        message.setAttribute(GoodsMessageHelper.GOODS_PRICE, "");
+        message.setAttribute("CHATTYPE", GoodsMessageHelper.CHATTYPE);
+        message.setAttribute("findGoods", findGoods);
+        EMClient.getInstance().chatManager().sendMessage(message);
+        Log.d(TAG, "sendGoodsMessage: 发送失物招领消息");
+    }
+
     protected boolean turnOnTyping() {
         return false;
     }
@@ -223,6 +236,7 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
     protected void initView() {
 
         boolean isGoods = fragmentArgs.getBoolean("isGoods");
+        boolean isFindGoods = fragmentArgs.getBoolean("isFindGoods");
         if (isGoods) {
             if (getView() != null) {
                 ll_goods_item = getView().findViewById(R.id.ll_chat_goods_item);
@@ -246,6 +260,49 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
                             fragmentArgs.getString(GoodsMessageHelper.GOODS_NAME),
                             fragmentArgs.getString(GoodsMessageHelper.GOODS_PIC),
                             fragmentArgs.getDouble(GoodsMessageHelper.GOODS_PRICE));
+                    ll_goods_item.setVisibility(View.GONE);
+                    messageList.refresh();
+                }
+            });
+            iv_goods_delete.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ll_goods_item.setVisibility(View.GONE);
+                }
+            });
+            ll_goods_item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (onGoodsItemClicked != null) {
+                        onGoodsItemClicked.onclick(fragmentArgs.getString(GoodsMessageHelper.GOODS_ID));
+                    }
+                }
+            });
+        } else if (isFindGoods) {
+            if (getView() != null) {
+                ll_goods_item = getView().findViewById(R.id.ll_chat_goods_item);
+                iv_goods_pic = getView().findViewById(R.id.iv_chat_goods_pic);
+                iv_goods_delete = getView().findViewById(R.id.iv_chat_goods_delete);
+                tv_goods_name = getView().findViewById(R.id.tv_chat_goods_name);
+                tv_goods_price = getView().findViewById(R.id.tv_chat_goods_price);
+                btn_goods_send = getView().findViewById(R.id.btn_chat_goods_send);
+                getView().findViewById(R.id.tv_chat_goods_price_symbol).setVisibility(View.GONE);
+            }
+            btn_goods_send.setText("发送信息");
+            ll_goods_item.setVisibility(View.VISIBLE);
+            Glide.with(getContext()).load(fragmentArgs.getString(GoodsMessageHelper.GOODS_PIC))
+                    .apply(new RequestOptions()
+                            .placeholder(R.drawable.ic_loading_pic).error(R.drawable.ic_error_goods))
+                    .into(iv_goods_pic);
+            tv_goods_name.setText(fragmentArgs.getString(GoodsMessageHelper.GOODS_NAME));
+            tv_goods_price.setVisibility(View.GONE);
+            btn_goods_send.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sendGoodsMessage(fragmentArgs.getString(GoodsMessageHelper.GOODS_ID),
+                            fragmentArgs.getString(GoodsMessageHelper.GOODS_NAME),
+                            fragmentArgs.getString(GoodsMessageHelper.GOODS_PIC),
+                            fragmentArgs.getBoolean("findGoods"));
                     ll_goods_item.setVisibility(View.GONE);
                     messageList.refresh();
                 }
