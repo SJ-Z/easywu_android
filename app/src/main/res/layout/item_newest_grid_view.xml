@@ -68,7 +68,6 @@
                 android:id="@+id/tv_newest_item_name"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="名称描述"
                 android:textSize="15sp"
                 android:textColor="@android:color/black"
                 android:layout_marginTop="10dp"/>
@@ -117,8 +116,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
-                    android:textColor="@color/colorHint"
-                    android:text="0"/>
+                    android:textColor="@color/colorHint"/>
             </LinearLayout>
 
         </LinearLayout>

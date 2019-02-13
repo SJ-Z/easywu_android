@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.cose.easywu.R;
 import com.cose.easywu.base.ActivityCollector;
 import com.cose.easywu.db.Notification;
+import com.cose.easywu.find.activity.FindGoodsInfoActivity;
 import com.cose.easywu.find.fragment.FindFragment;
 import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.home.fragment.HomeFragment;
@@ -91,11 +92,27 @@ public class MainActivity extends FragmentActivity {
             return;
         } else {
             if (originIntent.getBooleanExtra(GoodsMessageHelper.CHATTYPE, false)) {
-                Intent intent = new Intent(MainActivity.this, GoodsInfoActivity.class);
-                intent.putExtra(GoodsMessageHelper.CHATTYPE, true); // 让GoodsInfoActivity识别的标志位
-                intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
-                startActivity(intent);
-                originIntent.setType("1");
+                if (originIntent.getBooleanExtra("isFindGoods", false)) {
+                    Intent intent = new Intent(MainActivity.this, FindGoodsInfoActivity.class);
+                    intent.putExtra("isFindGoods", true);
+                    intent.putExtra(GoodsMessageHelper.CHATTYPE, true); // 让FindGoodsInfoActivity识别的标志位
+                    intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
+                    startActivity(intent);
+                    originIntent.setType("1");
+                } else if (originIntent.getBooleanExtra("isFindPeople", false)) {
+                    Intent intent = new Intent(MainActivity.this, FindGoodsInfoActivity.class);
+                    intent.putExtra("isFindGoods", false);
+                    intent.putExtra(GoodsMessageHelper.CHATTYPE, true); // 让FindGoodsInfoActivity识别的标志位
+                    intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
+                    startActivity(intent);
+                    originIntent.setType("1");
+                } else {
+                    Intent intent = new Intent(MainActivity.this, GoodsInfoActivity.class);
+                    intent.putExtra(GoodsMessageHelper.CHATTYPE, true); // 让GoodsInfoActivity识别的标志位
+                    intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
+                    startActivity(intent);
+                    originIntent.setType("1");
+                }
             } else if (originIntent.getBooleanExtra(GoodsMessageHelper.NewGoodsOrderType, false)) {
                 Intent intent = new Intent(MainActivity.this, MySellActivity.class);
                 startActivity(intent);

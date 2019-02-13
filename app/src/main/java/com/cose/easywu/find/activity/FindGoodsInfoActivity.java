@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,29 +32,21 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.cose.easywu.R;
 import com.cose.easywu.base.BaseActivity;
-import com.cose.easywu.db.BuyGoods;
 import com.cose.easywu.db.LikeFindGoods;
 import com.cose.easywu.db.LikeFindPeople;
-import com.cose.easywu.db.LikeGoods;
 import com.cose.easywu.db.ReleaseFindGoods;
 import com.cose.easywu.db.ReleaseFindPeople;
-import com.cose.easywu.db.ReleaseGoods;
 import com.cose.easywu.db.User;
 import com.cose.easywu.find.adapter.FindFragmentAdapter;
 import com.cose.easywu.find.bean.FindDataBean;
 import com.cose.easywu.gson.msg.BaseMsg;
 import com.cose.easywu.gson.msg.CommentMsg;
 import com.cose.easywu.gson.msg.FindGoodsMsg;
-import com.cose.easywu.gson.msg.GoodsMsg;
-import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.home.adapter.CommentExpandAdapter;
-import com.cose.easywu.home.adapter.HomeFragmentAdapter;
 import com.cose.easywu.home.bean.CommentBean;
 import com.cose.easywu.home.bean.CommentDetailBean;
-import com.cose.easywu.home.bean.HomeDataBean;
 import com.cose.easywu.home.bean.ReplyDetailBean;
 import com.cose.easywu.message.activity.ChatActivity;
-import com.cose.easywu.release.activity.ReleaseActivity;
 import com.cose.easywu.release.activity.ReleaseFindGoodsActivity;
 import com.cose.easywu.release.activity.ReleaseFindPeopleActivity;
 import com.cose.easywu.utils.Constant;
@@ -476,9 +467,7 @@ public class FindGoodsInfoActivity extends BaseActivity {
         // 判断进入该Activity的intent是否携带指定信息
         Intent intent = getIntent();
         isFindGoods = intent.getBooleanExtra("isFindGoods", false);
-        if (intent.getBooleanExtra(GoodsMessageHelper.CHATTYPE, false)
-                || intent.getBooleanExtra(GoodsMessageHelper.ConfirmGoodsOrderType, false)
-                || intent.getBooleanExtra(GoodsMessageHelper.RefuseGoodsOrderType, false)) {
+        if (intent.getBooleanExtra(GoodsMessageHelper.CHATTYPE, false)) {
             // 利用商品id查找本地数据库
             if (isFindGoods) {
                 ReleaseFindGoods releaseFindGoods = LitePal.where("fg_id=?",

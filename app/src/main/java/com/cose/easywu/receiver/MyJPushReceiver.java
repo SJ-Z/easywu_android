@@ -51,11 +51,31 @@ public class MyJPushReceiver extends BroadcastReceiver {
                             jsonObject.getString(GoodsMessageHelper.GOODS_ID),
                             jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME),
                             NotificationHelper.TYPE_GOODS_COMMENT);
-                } else {
+                } else if (jsonObject.getInteger(GoodsMessageHelper.MESSAGE_TYPE) == NotificationHelper.TYPE_GOODS_REPLY) {
                     notification = new Notification(NotificationHelper.GOODS, content,
                             jsonObject.getString(GoodsMessageHelper.GOODS_ID),
                             jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME),
                             NotificationHelper.TYPE_GOODS_REPLY);
+                } else if (jsonObject.getInteger(GoodsMessageHelper.MESSAGE_TYPE) == NotificationHelper.TYPE_FIND_GOODS_COMMENT) {
+                    notification = new Notification(NotificationHelper.GOODS, content,
+                            jsonObject.getString(GoodsMessageHelper.GOODS_ID),
+                            jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME),
+                            NotificationHelper.TYPE_FIND_GOODS_COMMENT);
+                } else if (jsonObject.getInteger(GoodsMessageHelper.MESSAGE_TYPE) == NotificationHelper.TYPE_FIND_GOODS_REPLY) {
+                    notification = new Notification(NotificationHelper.GOODS, content,
+                            jsonObject.getString(GoodsMessageHelper.GOODS_ID),
+                            jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME),
+                            NotificationHelper.TYPE_FIND_GOODS_REPLY);
+                } else if (jsonObject.getInteger(GoodsMessageHelper.MESSAGE_TYPE) == NotificationHelper.TYPE_FIND_PEOPLE_COMMENT) {
+                    notification = new Notification(NotificationHelper.GOODS, content,
+                            jsonObject.getString(GoodsMessageHelper.GOODS_ID),
+                            jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME),
+                            NotificationHelper.TYPE_FIND_PEOPLE_COMMENT);
+                } else {
+                    notification = new Notification(NotificationHelper.GOODS, content,
+                            jsonObject.getString(GoodsMessageHelper.GOODS_ID),
+                            jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME),
+                            NotificationHelper.TYPE_FIND_PEOPLE_REPLY);
                 }
                 notification.save();
             } else if (null != jsonObject.getBoolean(GoodsMessageHelper.NewGoodsOrderType) &&
@@ -121,6 +141,13 @@ public class MyJPushReceiver extends BroadcastReceiver {
                 Intent i = new Intent(context, WelcomeActivity.class);
                 i.putExtra(GoodsMessageHelper.CHATTYPE, true); // 让GoodsInfoActivity识别的标志位
                 i.putExtra(GoodsMessageHelper.GOODS_ID, jsonObject.getString(GoodsMessageHelper.GOODS_ID));
+                if (jsonObject.getInteger(GoodsMessageHelper.MESSAGE_TYPE) == NotificationHelper.TYPE_FIND_GOODS_COMMENT
+                        || jsonObject.getInteger(GoodsMessageHelper.MESSAGE_TYPE) == NotificationHelper.TYPE_FIND_GOODS_REPLY) {
+                    i.putExtra("isFindGoods", true);
+                } else if (jsonObject.getInteger(GoodsMessageHelper.MESSAGE_TYPE) == NotificationHelper.TYPE_FIND_PEOPLE_COMMENT
+                        || jsonObject.getInteger(GoodsMessageHelper.MESSAGE_TYPE) == NotificationHelper.TYPE_FIND_PEOPLE_REPLY) {
+                    i.putExtra("isFindPeople", true);
+                }
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
             } else if (null != jsonObject.getBoolean(GoodsMessageHelper.ConfirmGoodsOrderType) &&

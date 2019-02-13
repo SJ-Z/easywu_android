@@ -25,11 +25,10 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.cose.easywu.R;
 import com.cose.easywu.db.FindType;
+import com.cose.easywu.find.activity.FindGoodsSearchResultActivity;
+import com.cose.easywu.find.activity.FindTypeGoodsActivity;
 import com.cose.easywu.find.activity.MoreFindGoodsActivity;
 import com.cose.easywu.find.bean.FindDataBean;
-import com.cose.easywu.home.activity.MoreGoodsActivity;
-import com.cose.easywu.home.activity.SearchResultActivity;
-import com.cose.easywu.home.activity.TypeGoodsActivity;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
 import com.cose.easywu.utils.RecycleViewDivider;
@@ -304,7 +303,7 @@ public class FindFragmentAdapter extends RecyclerView.Adapter {
             gv_type.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(mContext, TypeGoodsActivity.class);
+                    Intent intent = new Intent(mContext, FindTypeGoodsActivity.class);
                     FindType type = findDataBean.getFindTypeList().get(position);
                     intent.putExtra("type_id", type.getFt_id());
                     intent.putExtra("type_name", type.getFt_name());
@@ -339,7 +338,7 @@ public class FindFragmentAdapter extends RecyclerView.Adapter {
                 public void onClick(View v) {
                     String key = mEtSearch.getText().toString();
                     if (!TextUtils.isEmpty(key)) {
-                        Intent intent = new Intent(mContext, SearchResultActivity.class);
+                        Intent intent = new Intent(mContext, FindGoodsSearchResultActivity.class);
                         intent.putExtra("key", key);
                         mContext.startActivity(intent);
                     }

@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.cose.easywu.R;
 import com.cose.easywu.db.Notification;
+import com.cose.easywu.find.activity.FindGoodsInfoActivity;
 import com.cose.easywu.home.activity.GoodsInfoActivity;
 import com.cose.easywu.user.activity.MySellActivity;
 import com.cose.easywu.utils.DateUtil;
@@ -75,17 +77,40 @@ public class SystemMsgAdapter extends RecyclerView.Adapter<SystemMsgAdapter.View
                     mContext.startActivity(intent);
                 }
             });
+        } else if (type == NotificationHelper.TYPE_FIND_GOODS_COMMENT || type == NotificationHelper.TYPE_FIND_GOODS_REPLY) {
+            holder.mTvTitle.setText(NotificationHelper.FIND_GOODS);
+            Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_lost_and_found);
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            holder.mTvTitle.setCompoundDrawables(drawable, null, null, null);
+            // 设置条目的点击事件为跳转到寻物启示详情页
+            holder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, FindGoodsInfoActivity.class);
+                    intent.putExtra(GoodsMessageHelper.CHATTYPE, true);
+                    intent.putExtra(GoodsMessageHelper.GOODS_ID, notification.getG_id());
+                    intent.putExtra("isFindGoods", true);
+                    mContext.startActivity(intent);
+                }
+            });
+        } else if (type == NotificationHelper.TYPE_FIND_PEOPLE_COMMENT || type == NotificationHelper.TYPE_FIND_PEOPLE_REPLY) {
+            holder.mTvTitle.setText(NotificationHelper.FIND_PEOPLE);
+            Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_lost_and_found);
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            holder.mTvTitle.setCompoundDrawables(drawable, null, null, null);
+            // 设置条目的点击事件为跳转到失物招领详情页
+            holder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, FindGoodsInfoActivity.class);
+                    intent.putExtra(GoodsMessageHelper.CHATTYPE, true);
+                    intent.putExtra(GoodsMessageHelper.GOODS_ID, notification.getG_id());
+                    intent.putExtra("isFindGoods", false);
+                    mContext.startActivity(intent);
+                }
+            });
         }
         holder.mTvContent.setText(notification.getContent());
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, GoodsInfoActivity.class);
-                intent.putExtra(GoodsMessageHelper.CHATTYPE, true);
-                intent.putExtra(GoodsMessageHelper.GOODS_ID, notification.getG_id());
-                mContext.startActivity(intent);
-            }
-        });
         holder.mTvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

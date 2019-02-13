@@ -54,7 +54,10 @@ public class Constant {
     public static String FIND_GOODS_ADD_COMMENT_URL = BASE_URL + "/goods/findGoodsAddComment"; // 添加失物招领评论
     public static String FIND_GOODS_ADD_REPLY_URL = BASE_URL + "/goods/findGoodsAddReply"; // 添加失物招领回复
     public static String DELETE_FIND_GOODS_URL = BASE_URL + "/goods/deleteFindGoods"; // 删除失物招领信息（将信息从发布移到下架）
+    public static String REMOVE_FIND_GOODS_URL = BASE_URL + "/goods/removeFindGoods"; // 移除失物招领信息（用户界面不再显示）
     public static String GET_FIND_GOODS_URL = BASE_URL + "/goods/getFindGoodsInfo"; // 查询失物招领信息
     public static String POLISH_FIND_GOODS_URL = BASE_URL + "/goods/polishFindGoods"; // 擦亮失物招领信息
+    public static String TYPE_FIND_GOODS_URL = BASE_URL + "/goods/typeFindGoods"; // 分页查询某一分类下的失物招领
+    public static String SEARCH_FIND_GOODS_URL = BASE_URL + "/goods/searchFindGoods"; // 按关键字搜索失物招领
 
 }

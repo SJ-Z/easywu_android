@@ -38,6 +38,11 @@ public class WelcomeActivity extends BaseActivity {
                     if (originIntent.getBooleanExtra(GoodsMessageHelper.CHATTYPE, false)) {
                         intent.putExtra(GoodsMessageHelper.CHATTYPE, true); // 让GoodsInfoActivity识别的标志位
                         intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
+                        if (originIntent.getBooleanExtra("isFindGoods", false)) {
+                            intent.putExtra("isFindGoods", true);
+                        } else if (originIntent.getBooleanExtra("isFindPeople", false)){
+                            intent.putExtra("isFindPeople", true);
+                        }
                     } else if (originIntent.getBooleanExtra(GoodsMessageHelper.NewGoodsOrderType, false)) {
                         intent.putExtra(GoodsMessageHelper.NewGoodsOrderType, true); // 标志位
                         intent.putExtra(GoodsMessageHelper.GOODS_ID, originIntent.getStringExtra(GoodsMessageHelper.GOODS_ID));
