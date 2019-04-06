@@ -109,6 +109,21 @@ public class SystemMsgAdapter extends RecyclerView.Adapter<SystemMsgAdapter.View
                     mContext.startActivity(intent);
                 }
             });
+        } else if (type == NotificationHelper.TYPE_NOTIFICATION_TZSC_ADMIN) {
+            holder.mTvTitle.setText(NotificationHelper.GOODS);
+            Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_goodsmarket);
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            holder.mTvTitle.setCompoundDrawables(drawable, null, null, null);
+        } else if (type == NotificationHelper.TYPE_NOTIFICATION_SWZL_ADMIN) {
+            holder.mTvTitle.setText(NotificationHelper.FIND_PEOPLE);
+            Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_lost_and_found);
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            holder.mTvTitle.setCompoundDrawables(drawable, null, null, null);
+        } else if (type == NotificationHelper.TYPE_NOTIFICATION_SUPER_ADMIN) {
+            holder.mTvTitle.setText(NotificationHelper.SUPER_ADMIN);
+            Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_superadmin);
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            holder.mTvTitle.setCompoundDrawables(drawable, null, null, null);
         }
         holder.mTvContent.setText(notification.getContent());
         holder.mTvDelete.setOnClickListener(new View.OnClickListener() {

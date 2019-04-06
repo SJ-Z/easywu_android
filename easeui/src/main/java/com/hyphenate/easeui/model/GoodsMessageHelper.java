@@ -10,6 +10,7 @@ public class GoodsMessageHelper {
     public static String NewGoodsOrderType = "NewGoodsOrderType";
     public static String ConfirmGoodsOrderType = "ConfirmGoodsOrderType";
     public static String RefuseGoodsOrderType = "RefuseGoodsOrderType";
+    public static String NotificationType = "NotificationType";
     public static String GOODS_ID = "goods_id";
     public static String GOODS_NAME = "goods_name";
     public static String GOODS_PRICE = "goods_price";

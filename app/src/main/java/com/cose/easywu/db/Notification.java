@@ -27,6 +27,13 @@ public class Notification extends LitePalSupport {
         this.state = NotificationHelper.STATE_RECEIVE; // 新建通知时，通知的类型应为收到
     }
 
+    public Notification(String title, String content, long time, int type) {
+        this.title = title;
+        this.content = content;
+        this.time = new Date(time);
+        this.type = type;
+    }
+
     public String getTitle() {
         return title;
     }

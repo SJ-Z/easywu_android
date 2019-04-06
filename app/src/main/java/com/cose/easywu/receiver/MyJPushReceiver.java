@@ -116,6 +116,21 @@ public class MyJPushReceiver extends BroadcastReceiver {
                 // 删除本地数据库“我买到的”该商品
                 BuyGoods buyGoods = LitePal.where("g_id=?", g_id).findFirst(BuyGoods.class);
                 buyGoods.delete();
+            } else if (null != jsonObject.getBoolean(GoodsMessageHelper.NotificationType) &&
+                    jsonObject.getBoolean(GoodsMessageHelper.NotificationType)) { // 为true说明是管理员发布的通知
+                String notification_content = jsonObject.getString("content");
+                String id = jsonObject.getString("id");
+                int notification_id;
+                if (id.equals("0")) {
+                    notification_id = NotificationHelper.TYPE_NOTIFICATION_TZSC_ADMIN;
+                } else if (id.equals("1")) {
+                    notification_id = NotificationHelper.TYPE_NOTIFICATION_SWZL_ADMIN;
+                } else {
+                    notification_id = NotificationHelper.TYPE_NOTIFICATION_SUPER_ADMIN;
+                }
+                Notification notification = new Notification(content, notification_content,
+                        jsonObject.getLong(GoodsMessageHelper.MESSAGE_TIME), notification_id);
+                notification.save();
             }
         } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent.getAction())) { // 通知被点击
             Log.d(TAG, "[MyReceiver] 用户点击打开了通知");
@@ -164,6 +179,12 @@ public class MyJPushReceiver extends BroadcastReceiver {
                 Intent i = new Intent(context, WelcomeActivity.class);
                 i.putExtra(GoodsMessageHelper.RefuseGoodsOrderType, true); // 标志位
                 i.putExtra(GoodsMessageHelper.GOODS_ID, jsonObject.getString(GoodsMessageHelper.GOODS_ID));
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
+            } else if (null != jsonObject.getBoolean(GoodsMessageHelper.NotificationType) &&
+                    jsonObject.getBoolean(GoodsMessageHelper.NotificationType)) { // 为true说明是管理员发布的通知
+                //打开自定义的Activity
+                Intent i = new Intent(context, WelcomeActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
             }
