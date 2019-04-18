@@ -35,6 +35,7 @@ import com.cose.easywu.user.activity.MyBuyActivity;
 import com.cose.easywu.user.activity.MyLikeActivity;
 import com.cose.easywu.user.activity.MyReleaseActivity;
 import com.cose.easywu.user.activity.MySellActivity;
+import com.cose.easywu.user.activity.SendAdviseActivity;
 import com.cose.easywu.utils.CacheUtils;
 import com.cose.easywu.utils.Constant;
 import com.cose.easywu.utils.HttpUtil;
@@ -64,7 +65,7 @@ public class UserFragment extends BaseFragment {
     private TextView mTvNick, mTvGain, mTvMyreleaseCount, mTvMysellCount, mTvMybuyCount, mTvMylikeCount, mTvCacheSize;
     private static CircleImageView mIvPhoto;
     private ImageView mIvSex;
-    private LinearLayout mLlMyrelease, mLlMysell, mLlMybuy, mLlMylike, mLlSettinng, mLlClear;
+    private LinearLayout mLlMyrelease, mLlMysell, mLlMybuy, mLlMylike, mLlSettinng, mLlClear, mLlAdvise;
     private Button mBtnExit;
 
     private SharedPreferences pref;
@@ -360,6 +361,13 @@ public class UserFragment extends BaseFragment {
                 startActivity(new Intent(mContext, MyBuyActivity.class));
             }
         });
+        // 反馈与建议
+        mLlAdvise.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mContext, SendAdviseActivity.class));
+            }
+        });
     }
 
     @Override
@@ -380,6 +388,7 @@ public class UserFragment extends BaseFragment {
         mLlMylike = view.findViewById(R.id.ll_user_mylike);
         mLlSettinng = view.findViewById(R.id.ll_user_setting);
         mLlClear = view.findViewById(R.id.ll_user_clear);
+        mLlAdvise = view.findViewById(R.id.ll_user_advise);
         mBtnExit = view.findViewById(R.id.btn_main_exit);
 
         // 设置点击事件

@@ -21,6 +21,8 @@ public class NotificationHelper {
     public static String FIND_GOODS = "寻物启示";
     public static String FIND_PEOPLE = "失物招领";
     public static String SUPER_ADMIN = "超级管理员";
+    public static String GOODS_ADMIN = "跳蚤市场管理员";
+    public static String FIND_ADMIN = "失物招领管理员";
 
     // 通知的状态
     public static int STATE_RECEIVE = 0; // 收到

@@ -110,12 +110,12 @@ public class SystemMsgAdapter extends RecyclerView.Adapter<SystemMsgAdapter.View
                 }
             });
         } else if (type == NotificationHelper.TYPE_NOTIFICATION_TZSC_ADMIN) {
-            holder.mTvTitle.setText(NotificationHelper.GOODS);
+            holder.mTvTitle.setText(NotificationHelper.GOODS_ADMIN);
             Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_goodsmarket);
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
             holder.mTvTitle.setCompoundDrawables(drawable, null, null, null);
         } else if (type == NotificationHelper.TYPE_NOTIFICATION_SWZL_ADMIN) {
-            holder.mTvTitle.setText(NotificationHelper.FIND_PEOPLE);
+            holder.mTvTitle.setText(NotificationHelper.FIND_ADMIN);
             Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_lost_and_found);
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
             holder.mTvTitle.setCompoundDrawables(drawable, null, null, null);

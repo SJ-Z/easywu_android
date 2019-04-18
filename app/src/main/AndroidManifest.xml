@@ -225,7 +225,8 @@
         <activity android:name=".find.activity.FindGoodsInfoActivity" />
         <activity android:name=".find.activity.MoreFindGoodsActivity" />
         <activity android:name=".find.activity.FindTypeGoodsActivity" />
-        <activity android:name=".find.activity.FindGoodsSearchResultActivity"></activity>
+        <activity android:name=".find.activity.FindGoodsSearchResultActivity" />
+        <activity android:name=".user.activity.SendAdviseActivity"></activity>
     </application>
 
 </manifest>

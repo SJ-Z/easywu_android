@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorLoginButton">
+        <ImageView
+            android:id="@+id/iv_advise_back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_arrow_left"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center_vertical"
+            android:text="反馈与建议"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="15dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="反馈内容"
+                android:textSize="18sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="  *  "
+                android:textSize="20sp"
+                android:textColor="@color/colorLoginButton"/>
+            <TextView
+                android:id="@+id/tv_advise_count"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="0"
+                android:textSize="16sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="/255"
+                android:textSize="16sp"/>
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorCut"/>
+        <com.cose.easywu.utils.NoEmojiEditText
+            android:id="@+id/et_advise_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:textSize="16sp"
+            android:background="@android:color/white"
+            android:hint="请写下您的意见或建议"
+            android:gravity="top|left"
+            android:minLines="13"
+            android:maxLength="255"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:id="@+id/btn_advise_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="#DADADA"
+            android:text="提交"
+            android:textSize="20sp"
+            android:textColor="#909090"
+            android:layout_margin="10dp"/>
+    </RelativeLayout>
+
+</LinearLayout>

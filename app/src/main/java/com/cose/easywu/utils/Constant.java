@@ -12,7 +12,8 @@ public class Constant {
 
     // 服务器地址
 //    public static String BASE_URL = "http://10.0.2.2:8080/easywu";
-    public static String BASE_URL = "http://172.20.10.8:8080/easywu";
+//    public static String BASE_URL = "http://172.20.10.8:8080/easywu";
+    public static String BASE_URL = "http://seuzsj.club:8080/easywu";
     public static String BASE_PHOTO_URL = BASE_URL + "/user_photo/";
     public static String BASE_PIC_URL = BASE_URL + "/goods_pic/";
     public static String BASE_FIND_PIC_URL = BASE_URL + "/find_goods_pic/";
@@ -59,5 +60,7 @@ public class Constant {
     public static String POLISH_FIND_GOODS_URL = BASE_URL + "/goods/polishFindGoods"; // 擦亮失物招领信息
     public static String TYPE_FIND_GOODS_URL = BASE_URL + "/goods/typeFindGoods"; // 分页查询某一分类下的失物招领
     public static String SEARCH_FIND_GOODS_URL = BASE_URL + "/goods/searchFindGoods"; // 按关键字搜索失物招领
+
+    public static String ADD_ADVISE_URL = BASE_URL + "/user/addAdvise"; // 添加反馈与建议
 
 }

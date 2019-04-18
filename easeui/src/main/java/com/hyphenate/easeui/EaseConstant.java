@@ -15,7 +15,8 @@ package com.hyphenate.easeui;
 
 public class EaseConstant {
 
-    public static final String BASE_PHOTO_URL = "http://172.20.10.8:8080/easywu/user_photo/";
+//    public static final String BASE_PHOTO_URL = "http://172.20.10.8:8080/easywu/user_photo/";
+    public static final String BASE_PHOTO_URL = "http://seuzsj.club:8080/easywu/user_photo/";
     public static final String HX_USER_INFO = "com.cose.easywu.chat_userInfo";
 
     public static final String MESSAGE_ATTR_IS_VOICE_CALL = "is_voice_call";

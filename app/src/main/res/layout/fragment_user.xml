@@ -318,6 +318,32 @@
             android:layout_height="15dp"
             android:background="@color/colorCut"/>
 
+        <LinearLayout
+            android:id="@+id/ll_user_advise"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:gravity="center"
+            android:background="@drawable/user_linearlayout_selector"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_my_advise"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:text="反馈与建议"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
